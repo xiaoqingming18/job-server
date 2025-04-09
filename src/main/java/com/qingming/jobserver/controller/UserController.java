@@ -3,8 +3,8 @@ package com.qingming.jobserver.controller;
 import com.qingming.jobserver.common.BaseResponse;
 import com.qingming.jobserver.common.ErrorCode;
 import com.qingming.jobserver.common.ResultUtils;
+import com.qingming.jobserver.model.dao.user.AdminLoginDao;
 import com.qingming.jobserver.model.entity.User;
-import com.qingming.jobserver.model.request.LoginRequest;
 import com.qingming.jobserver.model.dao.user.JobSeekerRegisterDao;
 import com.qingming.jobserver.service.UserService;
 import org.springframework.web.bind.annotation.*;
@@ -21,7 +21,7 @@ public class UserController {
     }
 
     @PostMapping("/admin-login")
-    public BaseResponse<User> adminLogin(@RequestBody LoginRequest loginRequest) {
+    public BaseResponse<User> adminLogin(@RequestBody @Valid AdminLoginDao loginRequest) {
         User user = userService.getByUsernameAndPassword(loginRequest.getUsername(), loginRequest.getPassword());
         if (user != null) {
             return ResultUtils.success(user);
