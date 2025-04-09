@@ -29,15 +29,31 @@
         SELECT * FROM user 
         WHERE username = #{username} AND password = #{password}
     </select>
-    <insert id="insertJobSeekerUser" parameterType="map" useGeneratedKeys="true" keyProperty="id">
-        INSERT INTO user (username, password, mobile, role, account_status)
-        VALUES (#{username}, #{password}, #{mobile}, 'job_seeker', 'pending');
-        
-        <selectKey resultType="long" keyProperty="id" order="AFTER">
+
+    <!-- 插入用户基础信息 -->
+    <insert id="insertJobSeekerUser" parameterType="map">
+        INSERT INTO user (
+            username, password, mobile, email, role, account_status
+        ) VALUES (
+            #{params.username},
+            #{params.password},
+            #{params.mobile},
+            #{params.email},
+            'job_seeker',
+            'pending'
+        )
+        <selectKey resultType="long" keyProperty="params.id" order="AFTER">
             SELECT LAST_INSERT_ID()
         </selectKey>
-        
-        INSERT INTO job_seeker (user_id, job_status)
-        VALUES (#{id}, #{job_status})
+    </insert>
+
+    <!-- 插入求职者扩展信息 -->
+    <insert id="insertJobSeekerExt" parameterType="map">
+        INSERT INTO job_seeker (
+            user_id, job_status
+        ) VALUES (
+            #{params.id},
+            'seeking'
+        )
     </insert>
 </mapper>

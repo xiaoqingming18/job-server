@@ -3,8 +3,8 @@ CREATE TABLE `user` (
   `id` BIGINT UNSIGNED NOT NULL AUTO_INCREMENT COMMENT '用户ID',
   `username` VARCHAR(50) NOT NULL COMMENT '用户名（唯一）',
   `password` VARCHAR(50) NOT NULL COMMENT '密码（明文）',  -- 改为明文存储
-  `mobile` VARCHAR(20) NOT NULL COMMENT '手机号',
-  `email` VARCHAR(100) NULL COMMENT '电子邮箱',
+  `mobile` VARCHAR(20) NULL COMMENT '手机号',
+  `email` VARCHAR(100) NOT NULL COMMENT '电子邮箱',
   `avatar` VARCHAR(255) COMMENT '头像URL',
   `role` ENUM('system_admin', 'project_manager', 'job_seeker') NOT NULL COMMENT '用户角色',
   `create_time` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '注册时间',
