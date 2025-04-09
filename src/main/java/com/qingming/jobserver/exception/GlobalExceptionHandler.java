@@ -5,15 +5,17 @@ import com.qingming.jobserver.common.ErrorCode;
 import com.qingming.jobserver.common.ResultUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.validation.BindException;
+import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
-import javax.validation.ConstraintViolation;
-import javax.validation.ConstraintViolationException;
+import jakarta.validation.ConstraintViolation;
+import jakarta.validation.ConstraintViolationException;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  * 全局异常处理器
@@ -33,11 +35,12 @@ public class GlobalExceptionHandler {
 
     /**
      * 处理参数校验异常 (JSR-303 validation)
+     * 增强处理：支持多字段校验错误
      */
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public BaseResponse<?> handleMethodArgumentNotValidException(MethodArgumentNotValidException e) {
-        List<FieldError> fieldErrors = e.getBindingResult().getFieldErrors();
-        String message = fieldErrors.isEmpty() ? "参数错误" : fieldErrors.get(0).getDefaultMessage();
+        BindingResult bindingResult = e.getBindingResult();
+        String message = formatBindingResult(bindingResult);
         log.error("参数校验异常：{}", message);
         return ResultUtils.error(ErrorCode.PARAMS_ERROR.getCode(), message);
     }
@@ -47,8 +50,7 @@ public class GlobalExceptionHandler {
      */
     @ExceptionHandler(BindException.class)
     public BaseResponse<?> handleBindException(BindException e) {
-        List<FieldError> fieldErrors = e.getBindingResult().getFieldErrors();
-        String message = fieldErrors.isEmpty() ? "参数错误" : fieldErrors.get(0).getDefaultMessage();
+        String message = formatBindingResult(e);
         log.error("参数绑定异常：{}", message);
         return ResultUtils.error(ErrorCode.PARAMS_ERROR.getCode(), message);
     }
@@ -59,8 +61,11 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(ConstraintViolationException.class)
     public BaseResponse<?> handleConstraintViolationException(ConstraintViolationException e) {
         Set<ConstraintViolation<?>> violations = e.getConstraintViolations();
-        String message = violations.isEmpty() ? 
-                "参数错误" : violations.iterator().next().getMessage();
+        String message = violations.isEmpty()
+                ? "参数错误"
+                : violations.stream()
+                .map(violation -> violation.getPropertyPath() + ": " + violation.getMessage())
+                .collect(Collectors.joining("; "));
         log.error("约束违反异常：{}", message);
         return ResultUtils.error(ErrorCode.PARAMS_ERROR.getCode(), message);
     }
@@ -72,5 +77,20 @@ public class GlobalExceptionHandler {
     public BaseResponse<?> handleException(Exception e) {
         log.error("系统异常：", e);
         return ResultUtils.error(ErrorCode.SYSTEM_ERROR.getCode(), "系统内部错误，请联系管理员");
+    }
+
+    /**
+     * 格式化绑定结果中的错误信息
+     */
+    private String formatBindingResult(BindingResult bindingResult) {
+        List<FieldError> fieldErrors = bindingResult.getFieldErrors();
+        if (fieldErrors.isEmpty()) {
+            return "参数错误";
+        }
+
+        // 收集所有字段的错误信息
+        return fieldErrors.stream()
+                .map(error -> error.getField() + ": " + error.getDefaultMessage())
+                .collect(Collectors.joining("; "));
     }
 }
