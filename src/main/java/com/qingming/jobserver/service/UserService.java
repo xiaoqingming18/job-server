@@ -3,6 +3,7 @@ package com.qingming.jobserver.service;
 import com.qingming.jobserver.model.dao.user.JobSeekerRegisterDao;
 import com.qingming.jobserver.model.dao.user.JobSeekerUpdateInfoDao;
 import com.qingming.jobserver.model.entity.User;
+import com.qingming.jobserver.model.vo.JobSeekerProfileVO;
 
 public interface UserService {
     User getByUsername(String username);
@@ -18,4 +19,11 @@ public interface UserService {
      * @return 更新后的用户对象
      */
     User updateJobSeekerProfile(JobSeekerUpdateInfoDao updateInfo);
+    
+    /**
+     * 获取求职者完整资料
+     * @param userId 用户ID
+     * @return 求职者完整资料VO对象
+     */
+    JobSeekerProfileVO getJobSeekerProfile(Long userId);
 }

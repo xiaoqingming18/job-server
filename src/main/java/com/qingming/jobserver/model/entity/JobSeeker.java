@@ -1,58 +1,46 @@
 package com.qingming.jobserver.model.entity;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
-import jakarta.persistence.*;
+import com.baomidou.mybatisplus.annotation.TableField;
+import com.baomidou.mybatisplus.annotation.TableId;
+import com.baomidou.mybatisplus.annotation.TableName;
+import com.qingming.jobserver.model.enums.GenderEnum;
+import com.qingming.jobserver.model.enums.JobStatusEnum;
 import lombok.Data;
-import java.time.LocalDate;
+import java.io.Serializable;
+import java.util.Date;
 
-@Entity
-@Table(name = "job_seeker")
 @Data
-public class JobSeeker {
-    @Id
-    @Column(name = "user_id")
+@TableName("job_seeker")
+public class JobSeeker implements Serializable {
+    private static final long serialVersionUID = 1L;
+
+    @TableId(value = "user_id")
     private Long userId;
 
-    @MapsId
-    @OneToOne
-    @JoinColumn(name = "user_id", referencedColumnName = "id")
-    private User user;
-
-    @Column(name = "real_name", length = 50)
+    @TableField("real_name")
     private String realName;
 
-    @Enumerated(EnumType.STRING)
-    @Column(name = "gender", columnDefinition = "enum('male','female','other')")
-    private Gender gender;
+    @TableField("gender")
+    private GenderEnum gender;
 
-    @Column(name = "birthday")
-    private LocalDate birthday;
+    @TableField("birthday")
+    private Date birthday;
 
-    @Enumerated(EnumType.STRING)
-    @Column(name = "job_status", columnDefinition = "enum('seeking','employed','inactive')")
-    private JobStatus jobStatus = JobStatus.SEEKING;
+    @TableField("job_status")
+    private JobStatusEnum jobStatus;
 
-    @Column(name = "expect_position", length = 100)
+    @TableField("expect_position")
     private String expectPosition;
 
-    @Column(name = "work_years")
+    @TableField("work_years")
     private Integer workYears;
 
-    @Column(name = "skill", columnDefinition = "text")
+    @TableField("skill")
     private String skill;
 
-    @Convert(converter = JsonConverter.class)
-    @Column(name = "certificates", columnDefinition = "json")
-    private Object certificates;
+    @TableField("certificates")
+    private String certificates;
 
-    @Column(name = "resume_url", length = 255)
+    @TableField("resume_url")
     private String resumeUrl;
-
-    public enum Gender {
-        MALE, FEMALE, OTHER
-    }
-
-    public enum JobStatus {
-        SEEKING, EMPLOYED, INACTIVE
-    }
 }

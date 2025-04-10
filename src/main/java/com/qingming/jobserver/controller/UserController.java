@@ -5,6 +5,7 @@ import com.qingming.jobserver.model.dao.user.AdminLoginDao;
 import com.qingming.jobserver.model.entity.User;
 import com.qingming.jobserver.model.dao.user.JobSeekerRegisterDao;
 import com.qingming.jobserver.model.dao.user.JobSeekerUpdateInfoDao;
+import com.qingming.jobserver.model.vo.JobSeekerProfileVO;
 import com.qingming.jobserver.model.vo.TokenVO;
 import com.qingming.jobserver.service.UserService;
 import lombok.extern.slf4j.Slf4j;
@@ -52,5 +53,19 @@ public class UserController {
         updateInfo.setUserId(currentUserId);
         User updatedUser = userService.updateJobSeekerProfile(updateInfo);
         return ResultUtils.success(updatedUser);
+    }
+    
+    /**
+     * 获取当前登录求职者的完整资料
+     * @return 求职者完整资料
+     */
+    @GetMapping("/jobseeker-profile")
+    public BaseResponse<JobSeekerProfileVO> getJobSeekerProfile() {
+        // 从token中获取当前用户ID
+        Long currentUserId = CurrentUserUtils.getCurrentUserId();
+        // 调用Service层方法获取求职者完整资料
+        JobSeekerProfileVO profileVO = userService.getJobSeekerProfile(currentUserId);
+        // 返回结果
+        return ResultUtils.success(profileVO);
     }
 }

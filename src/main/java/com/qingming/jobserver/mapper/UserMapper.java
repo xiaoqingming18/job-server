@@ -2,6 +2,7 @@ package com.qingming.jobserver.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.qingming.jobserver.model.entity.User;
+import com.qingming.jobserver.model.vo.JobSeekerProfileVO;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.Map;
@@ -27,4 +28,11 @@ public interface UserMapper extends BaseMapper<User> {
      * @return 影响行数
      */
     int updateJobSeeker(@Param("params") Map<String, Object> params);
+    
+    /**
+     * 获取求职者完整资料，包括用户基本信息和求职者详细信息
+     * @param userId 用户ID
+     * @return 求职者完整资料VO对象
+     */
+    JobSeekerProfileVO getJobSeekerProfile(@Param("userId") Long userId);
 }

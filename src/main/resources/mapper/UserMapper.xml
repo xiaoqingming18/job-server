@@ -13,6 +13,30 @@
         <result column="account_status" property="accountStatus" typeHandler="org.apache.ibatis.type.EnumTypeHandler"/>
     </resultMap>
 
+    <!-- 求职者完整资料结果映射 -->
+    <resultMap id="JobSeekerProfileResultMap" type="com.qingming.jobserver.model.vo.JobSeekerProfileVO">
+        <!-- 用户基本信息 -->
+        <id column="id" property="id"/>
+        <result column="username" property="username"/>
+        <result column="mobile" property="mobile"/>
+        <result column="email" property="email"/>
+        <result column="avatar" property="avatar"/>
+        <result column="role" property="role" typeHandler="org.apache.ibatis.type.EnumTypeHandler"/>
+        <result column="create_time" property="createTime"/>
+        <result column="account_status" property="accountStatus" typeHandler="org.apache.ibatis.type.EnumTypeHandler"/>
+        
+        <!-- 求职者详细信息 -->
+        <result column="real_name" property="realName"/>
+        <result column="gender" property="gender" typeHandler="org.apache.ibatis.type.EnumTypeHandler"/>
+        <result column="birthday" property="birthday"/>
+        <result column="job_status" property="jobStatus" typeHandler="org.apache.ibatis.type.EnumTypeHandler"/>
+        <result column="expect_position" property="expectPosition"/>
+        <result column="work_years" property="workYears"/>
+        <result column="skill" property="skill"/>
+        <result column="certificates" property="certificates"/>
+        <result column="resume_url" property="resumeUrl"/>
+    </resultMap>
+
     <select id="selectByUsername" resultMap="BaseResultMap">
         SELECT * FROM user WHERE username = #{username}
     </select>
@@ -86,4 +110,18 @@
         </set>
         WHERE user_id = #{params.id}
     </update>
+    
+    <!-- 获取求职者完整资料 -->
+    <select id="getJobSeekerProfile" resultMap="JobSeekerProfileResultMap">
+        SELECT 
+            u.id, u.username, u.mobile, u.email, u.avatar, u.role, u.create_time, u.account_status,
+            js.real_name, js.gender, js.birthday, js.job_status, js.expect_position, 
+            js.work_years, js.skill, js.certificates, js.resume_url
+        FROM 
+            user u
+        LEFT JOIN 
+            job_seeker js ON u.id = js.user_id
+        WHERE 
+            u.id = #{userId} AND u.role = 'job_seeker'
+    </select>
 </mapper>
