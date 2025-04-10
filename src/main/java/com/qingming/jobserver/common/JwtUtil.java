@@ -4,8 +4,12 @@ import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 
 import javax.crypto.SecretKey;
 import java.nio.charset.StandardCharsets;
@@ -16,6 +20,8 @@ import java.util.function.Function;
 
 @Component
 public class JwtUtil {
+
+    private static final Logger log = LoggerFactory.getLogger(JwtUtil.class);
 
     // 密钥，实际项目中应该从配置文件中读取并加密存储
     @Value("${jwt.secret}")
@@ -33,8 +39,14 @@ public class JwtUtil {
 
         // 如果输入的密钥不够长，可以使用哈希算法来扩展它
         if (keyBytes.length < 32) {
-            // 这里我们使用一个固定的、足够长的密钥
-            return Keys.secretKeyFor(SignatureAlgorithm.HS256);
+            log.warn("jwt.secret长度不足（当前{}字节），请使用至少32字节的密钥", keyBytes.length);
+            try {
+                MessageDigest digest = MessageDigest.getInstance("SHA-256");
+                byte[] hashedBytes = digest.digest(keyBytes);
+                return Keys.hmacShaKeyFor(hashedBytes);
+            } catch (NoSuchAlgorithmException e) {
+                throw new RuntimeException("SHA-256算法不可用", e);
+            }
         }
 
         return Keys.hmacShaKeyFor(keyBytes);
