@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.qingming.jobserver.mapper.CompanyMapper">
+    <resultMap id="BaseResultMap" type="com.qingming.jobserver.model.entity.Company">
+        <id column="id" property="id" jdbcType="INTEGER"/>
+        <result column="name" property="name"/>
+        <result column="license_number" property="licenseNumber"/>
+        <result column="address" property="address"/>
+        <result column="legal_person" property="legalPerson"/>
+        <result column="create_time" property="createTime"/>
+    </resultMap>
+
+    <select id="selectByLicenseNumber" resultMap="BaseResultMap">
+        SELECT * FROM company WHERE license_number = #{licenseNumber}
+    </select>
+    
+    <insert id="insertCompany" parameterType="com.qingming.jobserver.model.entity.Company" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO company (
+            name, license_number, address, legal_person
+        ) VALUES (
+            #{name}, #{licenseNumber}, #{address}, #{legalPerson}
+        )
+    </insert>
+    
+    <!-- 插入项目经理信息 -->
+    <insert id="insertProjectManager">
+        INSERT INTO project_manager (
+            user_id, company_id, position
+        ) VALUES (
+            #{userId}, #{companyId}, #{position}
+        )
+    </insert>
+</mapper>

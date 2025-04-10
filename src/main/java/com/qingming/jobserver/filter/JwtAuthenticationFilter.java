@@ -30,6 +30,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             "/user/admin-login",
             "/user/jobseeker-login",
             "/user/jobseeker-register",
+            "/company/register",
             // 其他不需要验证的路径
             "/error"
     );
