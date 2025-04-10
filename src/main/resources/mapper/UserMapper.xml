@@ -124,4 +124,11 @@
         WHERE 
             u.id = #{userId} AND u.role = 'job_seeker'
     </select>
+
+    <!-- 更新用户密码 -->
+    <update id="updatePassword">
+        UPDATE user 
+        SET password = #{newPassword}
+        WHERE id = #{userId}
+    </update>
 </mapper>

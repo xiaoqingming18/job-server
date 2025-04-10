@@ -35,4 +35,12 @@ public interface UserMapper extends BaseMapper<User> {
      * @return 求职者完整资料VO对象
      */
     JobSeekerProfileVO getJobSeekerProfile(@Param("userId") Long userId);
+
+    /**
+     * 更新用户密码
+     * @param userId 用户ID
+     * @param newPassword 新密码
+     * @return 影响行数
+     */
+    int updatePassword(@Param("userId") Long userId, @Param("newPassword") String newPassword);
 }

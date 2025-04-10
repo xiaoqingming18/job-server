@@ -2,6 +2,7 @@ package com.qingming.jobserver.controller;
 
 import com.qingming.jobserver.common.*;
 import com.qingming.jobserver.model.dao.user.AdminLoginDao;
+import com.qingming.jobserver.model.dao.user.UpdatePasswordDao;
 import com.qingming.jobserver.model.entity.User;
 import com.qingming.jobserver.model.dao.user.JobSeekerRegisterDao;
 import com.qingming.jobserver.model.dao.user.JobSeekerUpdateInfoDao;
@@ -67,5 +68,26 @@ public class UserController {
         JobSeekerProfileVO profileVO = userService.getJobSeekerProfile(currentUserId);
         // 返回结果
         return ResultUtils.success(profileVO);
+    }
+
+    /**
+     * 求职者修改密码
+     * @param updatePasswordDao 修改密码请求参数
+     * @return 修改结果
+     */
+    @PostMapping("/update-password")
+    public BaseResponse<String> updatePassword(@RequestBody @Valid UpdatePasswordDao updatePasswordDao) {
+        // 从token中获取当前用户ID
+        Long currentUserId = CurrentUserUtils.getCurrentUserId();
+        
+        // 调用Service层修改密码
+        boolean result = userService.updatePassword(currentUserId, updatePasswordDao);
+        
+        // 返回结果
+        if (result) {
+            return ResultUtils.success("修改成功");
+        } else {
+            return ResultUtils.error(ErrorCode.SYSTEM_ERROR.getCode(), "修改失败");
+        }
     }
 }

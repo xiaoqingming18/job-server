@@ -4,6 +4,7 @@ import com.qingming.jobserver.common.ErrorCode;
 import com.qingming.jobserver.exception.BusinessException;
 import com.qingming.jobserver.mapper.UserMapper;
 import com.qingming.jobserver.model.dao.user.JobSeekerUpdateInfoDao;
+import com.qingming.jobserver.model.dao.user.UpdatePasswordDao;
 import com.qingming.jobserver.model.entity.User;
 import com.qingming.jobserver.model.vo.JobSeekerProfileVO;
 import com.qingming.jobserver.service.UserService;
@@ -104,5 +105,27 @@ public class UserServiceImpl implements UserService {
         }
         
         return profileVO;
+    }
+
+    @Override
+    public boolean updatePassword(Long userId, UpdatePasswordDao updatePasswordDao) {
+        // 验证新密码与确认密码是否一致
+        if (!updatePasswordDao.getNewPassword().equals(updatePasswordDao.getConfirmPassword())) {
+            throw new BusinessException(ErrorCode.PARAMS_ERROR, "新密码与确认密码不一致");
+        }
+        
+        // 验证旧密码是否正确
+        User user = userMapper.selectById(userId);
+        if (user == null) {
+            throw new BusinessException(ErrorCode.NOT_FOUND, "用户不存在");
+        }
+        
+        if (!user.getPassword().equals(updatePasswordDao.getOldPassword())) {
+            throw new BusinessException(ErrorCode.PARAMS_ERROR, "旧密码不正确");
+        }
+        
+        // 更新密码
+        int rows = userMapper.updatePassword(userId, updatePasswordDao.getNewPassword());
+        return rows > 0;
     }
 }

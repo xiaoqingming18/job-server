@@ -2,6 +2,7 @@ package com.qingming.jobserver.service;
 
 import com.qingming.jobserver.model.dao.user.JobSeekerRegisterDao;
 import com.qingming.jobserver.model.dao.user.JobSeekerUpdateInfoDao;
+import com.qingming.jobserver.model.dao.user.UpdatePasswordDao;
 import com.qingming.jobserver.model.entity.User;
 import com.qingming.jobserver.model.vo.JobSeekerProfileVO;
 
@@ -26,4 +27,12 @@ public interface UserService {
      * @return 求职者完整资料VO对象
      */
     JobSeekerProfileVO getJobSeekerProfile(Long userId);
+
+    /**
+     * 修改用户密码
+     * @param userId 用户ID
+     * @param updatePasswordDao 修改密码请求数据
+     * @return 是否更新成功
+     */
+    boolean updatePassword(Long userId, UpdatePasswordDao updatePasswordDao);
 }
