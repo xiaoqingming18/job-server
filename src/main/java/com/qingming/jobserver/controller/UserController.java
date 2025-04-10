@@ -47,12 +47,12 @@ public class UserController {
     }
 
     @PostMapping("/jobseeker-update-info")
-    public BaseResponse<User> updateJobSeekerInfo(@RequestBody @Valid JobSeekerUpdateInfoDao updateInfo) {
+    public BaseResponse<JobSeekerProfileVO> updateJobSeekerInfo(@RequestBody @Valid JobSeekerUpdateInfoDao updateInfo) {
         Long currentUserId = CurrentUserUtils.getCurrentUserId();
         System.out.println("===========================userId:" + currentUserId.toString());
         updateInfo.setUserId(currentUserId);
-        User updatedUser = userService.updateJobSeekerProfile(updateInfo);
-        return ResultUtils.success(updatedUser);
+        JobSeekerProfileVO profileVO = userService.updateJobSeekerProfile(updateInfo);
+        return ResultUtils.success(profileVO);
     }
     
     /**

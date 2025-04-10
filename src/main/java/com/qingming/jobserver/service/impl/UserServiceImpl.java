@@ -68,7 +68,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional
-    public User updateJobSeekerProfile(JobSeekerUpdateInfoDao updateInfo) {
+    public JobSeekerProfileVO updateJobSeekerProfile(JobSeekerUpdateInfoDao updateInfo) {
         Map<String, Object> params = new HashMap<>();
         params.put("id", updateInfo.getUserId());
         params.put("avatar", updateInfo.getAvatar());
@@ -76,10 +76,17 @@ public class UserServiceImpl implements UserService {
         params.put("email", updateInfo.getEmail());
         params.put("realName", updateInfo.getRealName());
         params.put("gender", updateInfo.getGender());
+        params.put("birthday", updateInfo.getBirthday());
+        params.put("expectPosition", updateInfo.getExpectPosition());
+        params.put("workYears", updateInfo.getWorkYears());
+        params.put("skill", updateInfo.getSkill());
+        params.put("certificates", updateInfo.getCertificates());
+        params.put("resumeUrl", updateInfo.getResumeUrl());
         
         userMapper.updateJobSeeker(params);
         
-        return userMapper.selectById(updateInfo.getUserId());
+        // 返回更新后的完整求职者资料
+        return userMapper.getJobSeekerProfile(updateInfo.getUserId());
     }
     
     @Override

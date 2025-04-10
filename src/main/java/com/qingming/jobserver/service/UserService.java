@@ -16,9 +16,9 @@ public interface UserService {
     /**
      * 更新求职者资料
      * @param updateInfo 包含更新信息的DAO对象
-     * @return 更新后的用户对象
+     * @return 更新后的求职者完整资料VO
      */
-    User updateJobSeekerProfile(JobSeekerUpdateInfoDao updateInfo);
+    JobSeekerProfileVO updateJobSeekerProfile(JobSeekerUpdateInfoDao updateInfo);
     
     /**
      * 获取求职者完整资料
