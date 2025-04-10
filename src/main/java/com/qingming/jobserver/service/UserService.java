@@ -1,5 +1,6 @@
 package com.qingming.jobserver.service;
 
+import com.qingming.jobserver.model.dao.user.JobSeekerLoginDao;
 import com.qingming.jobserver.model.dao.user.JobSeekerRegisterDao;
 import com.qingming.jobserver.model.dao.user.JobSeekerUpdateInfoDao;
 import com.qingming.jobserver.model.dao.user.UpdatePasswordDao;
@@ -35,4 +36,11 @@ public interface UserService {
      * @return 是否更新成功
      */
     boolean updatePassword(Long userId, UpdatePasswordDao updatePasswordDao);
+    
+    /**
+     * 求职者登录
+     * @param loginDao 登录信息DAO对象
+     * @return 登录成功的用户信息
+     */
+    User jobSeekerLogin(JobSeekerLoginDao loginDao);
 }

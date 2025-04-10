@@ -3,15 +3,16 @@ package com.qingming.jobserver.service.impl;
 import com.qingming.jobserver.common.ErrorCode;
 import com.qingming.jobserver.exception.BusinessException;
 import com.qingming.jobserver.mapper.UserMapper;
+import com.qingming.jobserver.model.dao.user.JobSeekerLoginDao;
 import com.qingming.jobserver.model.dao.user.JobSeekerUpdateInfoDao;
 import com.qingming.jobserver.model.dao.user.UpdatePasswordDao;
 import com.qingming.jobserver.model.entity.User;
+import com.qingming.jobserver.model.enums.UserRoleEnum;
 import com.qingming.jobserver.model.vo.JobSeekerProfileVO;
 import com.qingming.jobserver.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import com.qingming.jobserver.model.dao.user.JobSeekerRegisterDao;
@@ -127,5 +128,23 @@ public class UserServiceImpl implements UserService {
         // 更新密码
         int rows = userMapper.updatePassword(userId, updatePasswordDao.getNewPassword());
         return rows > 0;
+    }
+
+    @Override
+    public User jobSeekerLogin(JobSeekerLoginDao loginDao) {
+        // 根据用户名和密码查询用户
+        User user = userMapper.selectByUsernameAndPassword(loginDao.getUsername(), loginDao.getPassword());
+        
+        // 判断用户是否存在
+        if (user == null) {
+            throw new BusinessException(ErrorCode.LOGIN_PARAMS_ERROR);
+        }
+        
+        // 判断用户角色是否为求职者
+        if (user.getRole() != UserRoleEnum.job_seeker) {
+            throw new BusinessException(ErrorCode.FORBIDDEN, "非求职者账号，无法登录");
+        }
+        
+        return user;
     }
 }
