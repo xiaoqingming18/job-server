@@ -1,17 +1,19 @@
 package com.qingming.jobserver.controller;
 
-import com.qingming.jobserver.common.BaseResponse;
-import com.qingming.jobserver.common.ErrorCode;
-import com.qingming.jobserver.common.JwtUtil;
-import com.qingming.jobserver.common.ResultUtils;
+import com.qingming.jobserver.common.*;
 import com.qingming.jobserver.model.dao.user.AdminLoginDao;
 import com.qingming.jobserver.model.entity.User;
 import com.qingming.jobserver.model.dao.user.JobSeekerRegisterDao;
+import com.qingming.jobserver.model.dao.user.JobSeekerUpdateInfoDao;
 import com.qingming.jobserver.model.vo.TokenVO;
 import com.qingming.jobserver.service.UserService;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 import jakarta.validation.Valid;
 
+import static java.rmi.server.LogStream.log;
+
+@Slf4j
 @RestController
 @RequestMapping("/user")
 public class UserController {
@@ -41,5 +43,14 @@ public class UserController {
         String token = jwtUtil.generateToken(registeredUser.getId(), registeredUser.getUsername());
         TokenVO tokenVO = new TokenVO(token);
         return ResultUtils.success(tokenVO);
+    }
+
+    @PostMapping("/jobseeker-update-info")
+    public BaseResponse<User> updateJobSeekerInfo(@RequestBody @Valid JobSeekerUpdateInfoDao updateInfo) {
+        Long currentUserId = CurrentUserUtils.getCurrentUserId();
+        System.out.println("===========================userId:" + currentUserId.toString());
+        updateInfo.setUserId(currentUserId);
+        User updatedUser = userService.updateJobSeekerProfile(updateInfo);
+        return ResultUtils.success(updatedUser);
     }
 }

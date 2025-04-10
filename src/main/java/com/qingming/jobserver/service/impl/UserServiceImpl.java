@@ -3,11 +3,13 @@ package com.qingming.jobserver.service.impl;
 import com.qingming.jobserver.common.ErrorCode;
 import com.qingming.jobserver.exception.BusinessException;
 import com.qingming.jobserver.mapper.UserMapper;
+import com.qingming.jobserver.model.dao.user.JobSeekerUpdateInfoDao;
 import com.qingming.jobserver.model.entity.User;
 import com.qingming.jobserver.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import com.qingming.jobserver.model.dao.user.JobSeekerRegisterDao;
@@ -61,5 +63,21 @@ public class UserServiceImpl implements UserService {
         userMapper.insertJobSeekerExt(extParams);
         
         return userMapper.selectById(userId);
+    }
+
+    @Override
+    @Transactional
+    public User updateJobSeekerProfile(JobSeekerUpdateInfoDao updateInfo) {
+        Map<String, Object> params = new HashMap<>();
+        params.put("id", updateInfo.getUserId());
+        params.put("avatar", updateInfo.getAvatar());
+        params.put("mobile", updateInfo.getMobile());
+        params.put("email", updateInfo.getEmail());
+        params.put("realName", updateInfo.getRealName());
+        params.put("gender", updateInfo.getGender());
+        
+        userMapper.updateJobSeeker(params);
+        
+        return userMapper.selectById(updateInfo.getUserId());
     }
 }

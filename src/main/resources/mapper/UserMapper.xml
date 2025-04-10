@@ -56,4 +56,34 @@
             'seeking'
         )
     </insert>
+
+    <!-- 动态更新求职者信息 -->
+    <update id="updateJobSeeker" parameterType="map">
+        <if test="params.avatar != null or params.mobile != null or params.email != null">
+            UPDATE user
+            <set>
+                <if test="params.avatar != null">avatar = #{params.avatar},</if>
+                <if test="params.mobile != null">mobile = #{params.mobile},</if>
+                <if test="params.email != null">email = #{params.email},</if>
+                <!-- 添加默认字段防止SET空 -->
+                create_time = create_time
+            </set>
+            WHERE id = #{params.id};
+        </if>
+
+        UPDATE job_seeker
+        <set>
+            <if test="params.realName != null">real_name = #{params.realName},</if>
+            <if test="params.gender != null">gender = #{params.gender},</if>
+            <if test="params.birthday != null">birthday = #{params.birthday},</if>
+            <if test="params.expectPosition != null">expect_position = #{params.expectPosition},</if>
+            <if test="params.workYears != null">work_years = #{params.workYears},</if>
+            <if test="params.skill != null">skill = #{params.skill},</if>
+            <if test="params.certificates != null">certificates = #{params.certificates},</if>
+            <if test="params.resumeUrl != null">resume_url = #{params.resumeUrl},</if>
+            <!-- 添加默认字段防止SET空 -->
+            job_status = job_status
+        </set>
+        WHERE user_id = #{params.id}
+    </update>
 </mapper>

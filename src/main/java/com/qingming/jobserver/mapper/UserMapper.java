@@ -20,4 +20,11 @@ public interface UserMapper extends BaseMapper<User> {
      * @return 影响行数
      */
     int insertJobSeekerExt(@Param("params") Map<String, Object> params);
+
+    /**
+     * 动态更新求职者信息
+     * @param params 包含更新字段的Map对象
+     * @return 影响行数
+     */
+    int updateJobSeeker(@Param("params") Map<String, Object> params);
 }
