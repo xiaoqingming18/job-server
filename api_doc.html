@@ -496,6 +496,162 @@
                     </div>
                 </div>
                 
+                <!-- Company Admin Login API -->
+                <div class="api-endpoint">
+                    <div class="endpoint-header">
+                        <span class="http-method method-post">POST</span>
+                        <span class="endpoint-path">/user/company-admin-login</span>
+                        <span class="endpoint-summary">企业管理员登录</span>
+                    </div>
+                    <div class="endpoint-content">
+                        <p>验证企业管理员身份并返回JWT令牌，非企业管理员角色账号将无法登录。</p>
+                        
+                        <h3 class="section-title">请求参数</h3>
+                        <table class="param-table">
+                            <thead>
+                                <tr>
+                                    <th>参数名</th>
+                                    <th>类型</th>
+                                    <th>是否必须</th>
+                                    <th>描述</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>username</td>
+                                    <td>String</td>
+                                    <td class="param-required">必须</td>
+                                    <td>企业管理员用户名</td>
+                                </tr>
+                                <tr>
+                                    <td>password</td>
+                                    <td>String</td>
+                                    <td class="param-required">必须</td>
+                                    <td>企业管理员密码</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        
+                        <h3 class="section-title">请求示例</h3>
+                        <div class="code-block">
+                            <div class="code-header">
+                                <span>JSON</span>
+                                <button class="copy-button" data-clipboard-target="#company-admin-login-request">复制</button>
+                            </div>
+                            <pre id="company-admin-login-request"><code>{
+  "username": "admin1",
+  "password": "admin123"
+}</code></pre>
+                        </div>
+                        
+                        <h3 class="section-title">响应示例</h3>
+                        <div class="code-block">
+                            <div class="code-header">
+                                <span>JSON</span>
+                                <button class="copy-button" data-clipboard-target="#company-admin-login-response">复制</button>
+                            </div>
+                            <pre id="company-admin-login-response"><code>{
+  "code": 0,
+  "data": {
+    "token": "eyJhbGciOiJIUzI1NiJ9.eyJ1c2VySWQiOjQsInVzZXJuYW1lIjoiYWRtaW4xIiwiaWF0IjoxNjE2NDI2NzAwLCJleHAiOjE2MTY1MTMxMDB9.AbCdEfGhIjKlMnOpQrStUvWxYz0123456789"
+  },
+  "message": "success"
+}</code></pre>
+                        </div>
+                        
+                        <h3 class="section-title">错误响应示例</h3>
+                        <div class="code-block">
+                            <div class="code-header">
+                                <span>JSON</span>
+                                <button class="copy-button" data-clipboard-target="#company-admin-login-error">复制</button>
+                            </div>
+                            <pre id="company-admin-login-error"><code>{
+  "code": 40300,
+  "data": null,
+  "message": "非企业管理员账号，无法登录"
+}</code></pre>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Project Manager Login API -->
+                <div class="api-endpoint">
+                    <div class="endpoint-header">
+                        <span class="http-method method-post">POST</span>
+                        <span class="endpoint-path">/user/project-manager-login</span>
+                        <span class="endpoint-summary">项目经理登录</span>
+                    </div>
+                    <div class="endpoint-content">
+                        <p>验证项目经理身份并返回JWT令牌，非项目经理角色账号将无法登录。</p>
+                        
+                        <h3 class="section-title">请求参数</h3>
+                        <table class="param-table">
+                            <thead>
+                                <tr>
+                                    <th>参数名</th>
+                                    <th>类型</th>
+                                    <th>是否必须</th>
+                                    <th>描述</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>username</td>
+                                    <td>String</td>
+                                    <td class="param-required">必须</td>
+                                    <td>项目经理用户名</td>
+                                </tr>
+                                <tr>
+                                    <td>password</td>
+                                    <td>String</td>
+                                    <td class="param-required">必须</td>
+                                    <td>项目经理密码</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        
+                        <h3 class="section-title">请求示例</h3>
+                        <div class="code-block">
+                            <div class="code-header">
+                                <span>JSON</span>
+                                <button class="copy-button" data-clipboard-target="#project-manager-login-request">复制</button>
+                            </div>
+                            <pre id="project-manager-login-request"><code>{
+  "username": "manager1",
+  "password": "manager123"
+}</code></pre>
+                        </div>
+                        
+                        <h3 class="section-title">响应示例</h3>
+                        <div class="code-block">
+                            <div class="code-header">
+                                <span>JSON</span>
+                                <button class="copy-button" data-clipboard-target="#project-manager-login-response">复制</button>
+                            </div>
+                            <pre id="project-manager-login-response"><code>{
+  "code": 0,
+  "data": {
+    "token": "eyJhbGciOiJIUzI1NiJ9.eyJ1c2VySWQiOjUsInVzZXJuYW1lIjoibWFuYWdlcjEiLCJpYXQiOjE2MTY0MjY3MDAsImV4cCI6MTYxNjUxMzEwMH0.ZxCvBnMs45Hg6JTyzLyH7KmfP8G987654321"
+  },
+  "message": "success"
+}</code></pre>
+                        </div>
+                        
+                        <h3 class="section-title">错误响应示例</h3>
+                        <div class="code-block">
+                            <div class="code-header">
+                                <span>JSON</span>
+                                <button class="copy-button" data-clipboard-target="#project-manager-login-error">复制</button>
+                            </div>
+                            <pre id="project-manager-login-error"><code>{
+  "code": 40300,
+  "data": null,
+  "message": "非项目经理账号，无法登录"
+}</code></pre>
+                        </div>
+                    </div>
+                </div>
+                
                 <!-- Job Seeker Register API -->
                 <div class="api-endpoint">
                     <div class="endpoint-header">

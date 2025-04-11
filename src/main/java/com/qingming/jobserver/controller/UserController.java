@@ -3,7 +3,9 @@ package com.qingming.jobserver.controller;
 import com.qingming.jobserver.common.*;
 import com.qingming.jobserver.exception.BusinessException;
 import com.qingming.jobserver.model.dao.user.AdminLoginDao;
+import com.qingming.jobserver.model.dao.user.CompanyAdminLoginDao;
 import com.qingming.jobserver.model.dao.user.JobSeekerLoginDao;
+import com.qingming.jobserver.model.dao.user.ProjectManagerLoginDao;
 import com.qingming.jobserver.model.dao.user.UpdatePasswordDao;
 import com.qingming.jobserver.model.entity.User;
 import com.qingming.jobserver.model.dao.user.JobSeekerRegisterDao;
@@ -37,6 +39,62 @@ public class UserController {
             return ResultUtils.success(tokenVO);
         }
         return ResultUtils.error(ErrorCode.LOGIN_PARAMS_ERROR.getCode(), ErrorCode.LOGIN_PARAMS_ERROR.getMessage());
+    }
+    
+    /**
+     * 企业管理员登录
+     * @param loginDao 登录请求参数
+     * @return 包含token的响应
+     */
+    @PostMapping("/company-admin-login")
+    public BaseResponse<TokenVO> companyAdminLogin(@RequestBody @Valid CompanyAdminLoginDao loginDao) {
+        try {
+            // 调用Service层进行登录验证
+            User user = userService.companyAdminLogin(loginDao);
+            
+            // 生成JWT令牌
+            String token = jwtUtil.generateToken(user.getId(), user.getUsername());
+            TokenVO tokenVO = new TokenVO(token);
+            
+            // 返回带有token的成功响应
+            return ResultUtils.success(tokenVO);
+        } catch (BusinessException e) {
+            // 捕获业务异常并返回错误响应
+            log.error("企业管理员登录失败: {}", e.getMessage());
+            return ResultUtils.error(e.getCode(), e.getMessage());
+        } catch (Exception e) {
+            // 捕获其他异常并返回系统错误
+            log.error("企业管理员登录发生系统异常", e);
+            return ResultUtils.error(ErrorCode.SYSTEM_ERROR.getCode(), "登录失败，系统异常");
+        }
+    }
+    
+    /**
+     * 项目经理登录
+     * @param loginDao 登录请求参数
+     * @return 包含token的响应
+     */
+    @PostMapping("/project-manager-login")
+    public BaseResponse<TokenVO> projectManagerLogin(@RequestBody @Valid ProjectManagerLoginDao loginDao) {
+        try {
+            // 调用Service层进行登录验证
+            User user = userService.projectManagerLogin(loginDao);
+            
+            // 生成JWT令牌
+            String token = jwtUtil.generateToken(user.getId(), user.getUsername());
+            TokenVO tokenVO = new TokenVO(token);
+            
+            // 返回带有token的成功响应
+            return ResultUtils.success(tokenVO);
+        } catch (BusinessException e) {
+            // 捕获业务异常并返回错误响应
+            log.error("项目经理登录失败: {}", e.getMessage());
+            return ResultUtils.error(e.getCode(), e.getMessage());
+        } catch (Exception e) {
+            // 捕获其他异常并返回系统错误
+            log.error("项目经理登录发生系统异常", e);
+            return ResultUtils.error(ErrorCode.SYSTEM_ERROR.getCode(), "登录失败，系统异常");
+        }
     }
     
     /**

@@ -3,8 +3,10 @@ package com.qingming.jobserver.service.impl;
 import com.qingming.jobserver.common.ErrorCode;
 import com.qingming.jobserver.exception.BusinessException;
 import com.qingming.jobserver.mapper.UserMapper;
+import com.qingming.jobserver.model.dao.user.CompanyAdminLoginDao;
 import com.qingming.jobserver.model.dao.user.JobSeekerLoginDao;
 import com.qingming.jobserver.model.dao.user.JobSeekerUpdateInfoDao;
+import com.qingming.jobserver.model.dao.user.ProjectManagerLoginDao;
 import com.qingming.jobserver.model.dao.user.UpdatePasswordDao;
 import com.qingming.jobserver.model.entity.User;
 import com.qingming.jobserver.model.enums.UserRoleEnum;
@@ -143,6 +145,42 @@ public class UserServiceImpl implements UserService {
         // 判断用户角色是否为求职者
         if (user.getRole() != UserRoleEnum.job_seeker) {
             throw new BusinessException(ErrorCode.FORBIDDEN, "非求职者账号，无法登录");
+        }
+        
+        return user;
+    }
+    
+    @Override
+    public User companyAdminLogin(CompanyAdminLoginDao loginDao) {
+        // 根据用户名和密码查询用户
+        User user = userMapper.selectByUsernameAndPassword(loginDao.getUsername(), loginDao.getPassword());
+        
+        // 判断用户是否存在
+        if (user == null) {
+            throw new BusinessException(ErrorCode.LOGIN_PARAMS_ERROR);
+        }
+        
+        // 判断用户角色是否为企业管理员
+        if (user.getRole() != UserRoleEnum.company_admin) {
+            throw new BusinessException(ErrorCode.FORBIDDEN, "非企业管理员账号，无法登录");
+        }
+        
+        return user;
+    }
+    
+    @Override
+    public User projectManagerLogin(ProjectManagerLoginDao loginDao) {
+        // 根据用户名和密码查询用户
+        User user = userMapper.selectByUsernameAndPassword(loginDao.getUsername(), loginDao.getPassword());
+        
+        // 判断用户是否存在
+        if (user == null) {
+            throw new BusinessException(ErrorCode.LOGIN_PARAMS_ERROR);
+        }
+        
+        // 判断用户角色是否为项目经理
+        if (user.getRole() != UserRoleEnum.project_manager) {
+            throw new BusinessException(ErrorCode.FORBIDDEN, "非项目经理账号，无法登录");
         }
         
         return user;
