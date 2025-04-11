@@ -1,5 +1,6 @@
 package com.qingming.jobserver.service;
 
+import com.qingming.jobserver.model.dao.company.AddProjectManagerDao;
 import com.qingming.jobserver.model.dao.company.CompanyRegisterDao;
 import com.qingming.jobserver.model.dao.company.CompanyUpdateDao;
 import com.qingming.jobserver.model.entity.Company;
@@ -61,4 +62,12 @@ public interface CompanyService {
      * @return 如果是系统管理员返回true，否则返回false
      */
     boolean isSystemAdmin(Long userId);
+    
+    /**
+     * 添加项目经理
+     * @param addProjectManagerDao 添加项目经理请求参数
+     * @param currentUserId 当前操作用户ID
+     * @return 添加成功返回true，否则返回false
+     */
+    boolean addProjectManager(AddProjectManagerDao addProjectManagerDao, Long currentUserId);
 }

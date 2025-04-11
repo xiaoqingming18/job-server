@@ -6,6 +6,7 @@ import com.qingming.jobserver.common.ErrorCode;
 import com.qingming.jobserver.common.JwtUtil;
 import com.qingming.jobserver.common.ResultUtils;
 import com.qingming.jobserver.exception.BusinessException;
+import com.qingming.jobserver.model.dao.company.AddProjectManagerDao;
 import com.qingming.jobserver.model.dao.company.CompanyRegisterDao;
 import com.qingming.jobserver.model.dao.company.CompanyUpdateDao;
 import com.qingming.jobserver.model.entity.User;
@@ -110,6 +111,36 @@ public class CompanyController {
             // 捕获其他异常并返回系统错误
             log.error("更新企业信息发生系统异常", e);
             return ResultUtils.error(ErrorCode.SYSTEM_ERROR.getCode(), "更新企业信息失败，系统异常");
+        }
+    }
+    
+    /**
+     * 添加项目经理
+     * @param addProjectManagerDao 添加项目经理请求参数
+     * @return 添加结果响应
+     */
+    @PostMapping("/add-project-manager")
+    public BaseResponse<String> addProjectManager(@RequestBody @Valid AddProjectManagerDao addProjectManagerDao) {
+        try {
+            // 获取当前登录用户ID
+            Long currentUserId = CurrentUserUtils.getCurrentUserId();
+            if (currentUserId == null) {
+                return ResultUtils.error(ErrorCode.NOT_LOGIN.getCode(), "用户未登录");
+            }
+            
+            // 调用服务层添加项目经理
+            boolean result = companyService.addProjectManager(addProjectManagerDao, currentUserId);
+            
+            // 返回成功响应
+            return ResultUtils.success("添加成功");
+        } catch (BusinessException e) {
+            // 捕获业务异常并返回错误响应
+            log.error("添加项目经理失败: {}", e.getMessage());
+            return ResultUtils.error(e.getCode(), e.getMessage());
+        } catch (Exception e) {
+            // 捕获其他异常并返回系统错误
+            log.error("添加项目经理发生系统异常", e);
+            return ResultUtils.error(ErrorCode.SYSTEM_ERROR.getCode(), "添加项目经理失败，系统异常");
         }
     }
 }

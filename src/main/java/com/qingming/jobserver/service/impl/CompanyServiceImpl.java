@@ -4,6 +4,7 @@ import com.qingming.jobserver.common.ErrorCode;
 import com.qingming.jobserver.exception.BusinessException;
 import com.qingming.jobserver.mapper.CompanyMapper;
 import com.qingming.jobserver.mapper.UserMapper;
+import com.qingming.jobserver.model.dao.company.AddProjectManagerDao;
 import com.qingming.jobserver.model.dao.company.CompanyRegisterDao;
 import com.qingming.jobserver.model.dao.company.CompanyUpdateDao;
 import com.qingming.jobserver.model.entity.Company;
@@ -194,5 +195,61 @@ public class CompanyServiceImpl implements CompanyService {
         
         // 检查用户角色是否为系统管理员
         return UserRoleEnum.system_admin.equals(user.getRole());
+    }
+    
+    @Override
+    @Transactional
+    public boolean addProjectManager(AddProjectManagerDao addProjectManagerDao, Long currentUserId) {
+        // 1. 验证参数
+        if (addProjectManagerDao == null || addProjectManagerDao.getCompanyId() == null || 
+            addProjectManagerDao.getUsername() == null || addProjectManagerDao.getPassword() == null || 
+            addProjectManagerDao.getEmail() == null) {
+            throw new BusinessException(ErrorCode.PARAMS_ERROR, "参数不能为空");
+        }
+        
+        // 2. 验证企业是否存在
+        Company company = companyMapper.selectById(addProjectManagerDao.getCompanyId());
+        if (company == null) {
+            throw new BusinessException(ErrorCode.NOT_FOUND, "企业不存在");
+        }
+        
+        // 3. 验证当前用户是否为该企业的管理员
+        if (!isCompanyAdmin(currentUserId, addProjectManagerDao.getCompanyId())) {
+            throw new BusinessException(ErrorCode.NO_COMPANY_AUTH, "只有企业管理员才能添加项目经理");
+        }
+        
+        // 4. 验证用户名是否已存在
+        User existingUser = userMapper.selectByUsername(addProjectManagerDao.getUsername());
+        if (existingUser != null) {
+            throw new BusinessException(ErrorCode.REGISTER_USER_EXIST, "用户名已被注册");
+        }
+        
+        // 5. 验证邮箱是否已存在
+        existingUser = userMapper.selectByEmail(addProjectManagerDao.getEmail());
+        if (existingUser != null) {
+            throw new BusinessException(ErrorCode.PARAMS_ERROR, "该邮箱已被注册");
+        }
+        
+        // 6. 获取最新的用户ID并为新用户递增ID
+        Long latestUserId = userMapper.getLatestUserId();
+        Long newUserId = latestUserId + 1;
+        
+        // 7. 创建项目经理用户
+        Date now = new Date();
+        Map<String, Object> userParams = new HashMap<>();
+        userParams.put("id", newUserId);
+        userParams.put("username", addProjectManagerDao.getUsername());
+        userParams.put("password", addProjectManagerDao.getPassword());
+        userParams.put("email", addProjectManagerDao.getEmail());
+        userParams.put("role", UserRoleEnum.project_manager.toString());
+        userParams.put("accountStatus", AccountStatusEnum.enabled.toString());
+        userParams.put("createTime", now);
+        userMapper.insertProjectManagerUser(userParams);
+        
+        // 8. 添加项目经理与企业的关联
+        companyMapper.insertProjectManager(newUserId, addProjectManagerDao.getCompanyId(), 
+                addProjectManagerDao.getPosition() != null ? addProjectManagerDao.getPosition() : "项目经理");
+        
+        return true;
     }
 }

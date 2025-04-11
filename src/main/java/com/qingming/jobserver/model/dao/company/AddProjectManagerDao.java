@@ -1,10 +1,10 @@
 package com.qingming.jobserver.model.dao.company;
 
-import jakarta.validation.constraints.Email;
+import lombok.Data;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
-import lombok.Data;
+import jakarta.validation.constraints.Email;
 
 /**
  * 添加项目经理接口入参数据对象
@@ -12,7 +12,7 @@ import lombok.Data;
 @Data
 public class AddProjectManagerDao {
     /**
-     * 公司ID（必填）
+     * 所属企业ID（必填）
      */
     @NotNull(message = "企业ID不能为空")
     private Integer companyId;
