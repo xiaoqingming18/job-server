@@ -68,26 +68,41 @@ public class UserServiceImpl implements UserService {
         userMapper.insertJobSeekerExt(extParams);
         
         return userMapper.selectById(userId);
-    }
-
-    @Override
+    }    @Override
     @Transactional
     public JobSeekerProfileVO updateJobSeekerProfile(JobSeekerUpdateInfoDao updateInfo) {
         Map<String, Object> params = new HashMap<>();
         params.put("id", updateInfo.getUserId());
-        params.put("avatar", updateInfo.getAvatar());
-        params.put("mobile", updateInfo.getMobile());
-        params.put("email", updateInfo.getEmail());
-        params.put("realName", updateInfo.getRealName());
-        params.put("gender", updateInfo.getGender());
-        params.put("birthday", updateInfo.getBirthday());
-        params.put("expectPosition", updateInfo.getExpectPosition());
-        params.put("workYears", updateInfo.getWorkYears());
-        params.put("skill", updateInfo.getSkill());
-        params.put("certificates", updateInfo.getCertificates());
-        params.put("resumeUrl", updateInfo.getResumeUrl());
         
-        userMapper.updateJobSeeker(params);
+        // 检查是否需要更新用户基本信息（user表）
+        if (updateInfo.getAvatar() != null || updateInfo.getMobile() != null || updateInfo.getEmail() != null) {
+            Map<String, Object> userParams = new HashMap<>();
+            userParams.put("id", updateInfo.getUserId());
+            userParams.put("avatar", updateInfo.getAvatar());
+            userParams.put("mobile", updateInfo.getMobile());
+            userParams.put("email", updateInfo.getEmail());
+            userMapper.updateUserBasicInfo(userParams);
+        }
+        
+        // 检查是否需要更新求职者扩展信息（job_seeker表）
+        if (updateInfo.getRealName() != null || updateInfo.getGender() != null || 
+            updateInfo.getBirthday() != null || updateInfo.getExpectPosition() != null || 
+            updateInfo.getWorkYears() != null || updateInfo.getSkill() != null ||
+            updateInfo.getCertificates() != null || updateInfo.getResumeUrl() != null) {
+            
+            Map<String, Object> seekerParams = new HashMap<>();
+            seekerParams.put("id", updateInfo.getUserId());
+            seekerParams.put("realName", updateInfo.getRealName());
+            seekerParams.put("gender", updateInfo.getGender());
+            seekerParams.put("birthday", updateInfo.getBirthday());
+            seekerParams.put("expectPosition", updateInfo.getExpectPosition());
+            seekerParams.put("workYears", updateInfo.getWorkYears());
+            seekerParams.put("skill", updateInfo.getSkill());
+            seekerParams.put("certificates", updateInfo.getCertificates());
+            seekerParams.put("resumeUrl", updateInfo.getResumeUrl());
+            
+            userMapper.updateJobSeeker(seekerParams);
+        }
         
         // 返回更新后的完整求职者资料
         return userMapper.getJobSeekerProfile(updateInfo.getUserId());

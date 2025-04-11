@@ -14,6 +14,7 @@ import com.qingming.jobserver.model.vo.JobSeekerProfileVO;
 import com.qingming.jobserver.model.vo.TokenVO;
 import com.qingming.jobserver.service.UserService;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import jakarta.validation.Valid;
 
@@ -132,12 +133,9 @@ public class UserController {
         String token = jwtUtil.generateToken(registeredUser.getId(), registeredUser.getUsername());
         TokenVO tokenVO = new TokenVO(token);
         return ResultUtils.success(tokenVO);
-    }
-
-    @PostMapping("/jobseeker-update-info")
-    public BaseResponse<JobSeekerProfileVO> updateJobSeekerInfo(@RequestBody @Valid JobSeekerUpdateInfoDao updateInfo) {
+    }    @PostMapping("/jobseeker-update-info")
+    public BaseResponse<JobSeekerProfileVO> updateJobSeekerInfo(@RequestBody @Validated({JobSeekerUpdateInfoDao.UpdateGroup.class}) JobSeekerUpdateInfoDao updateInfo) {
         Long currentUserId = CurrentUserUtils.getCurrentUserId();
-        System.out.println("===========================userId:" + currentUserId.toString());
         updateInfo.setUserId(currentUserId);
         JobSeekerProfileVO profileVO = userService.updateJobSeekerProfile(updateInfo);
         return ResultUtils.success(profileVO);
