@@ -3,6 +3,7 @@ package com.qingming.jobserver.service;
 import com.qingming.jobserver.model.dao.company.CompanyRegisterDao;
 import com.qingming.jobserver.model.entity.Company;
 import com.qingming.jobserver.model.entity.User;
+import com.qingming.jobserver.model.vo.CompanyInfoVO;
 
 /**
  * 公司服务接口
@@ -21,4 +22,11 @@ public interface CompanyService {
      * @return 公司实体，若不存在则返回null
      */
     Company getByLicenseNumber(String licenseNumber);
+    
+    /**
+     * 根据企业ID查询企业详细信息
+     * @param companyId 企业ID
+     * @return 企业详细信息VO对象
+     */
+    CompanyInfoVO getCompanyInfo(Integer companyId);
 }

@@ -9,6 +9,16 @@
         <result column="legal_person" property="legalPerson"/>
         <result column="create_time" property="createTime"/>
     </resultMap>
+    
+    <!-- 企业详情结果映射 -->
+    <resultMap id="CompanyInfoResultMap" type="com.qingming.jobserver.model.vo.CompanyInfoVO">
+        <id column="id" property="id"/>
+        <result column="name" property="name"/>
+        <result column="license_number" property="licenseNumber"/>
+        <result column="address" property="address"/>
+        <result column="legal_person" property="legalPerson"/>
+        <result column="create_time" property="createTime"/>
+    </resultMap>
 
     <select id="selectByLicenseNumber" resultMap="BaseResultMap">
         SELECT * FROM company WHERE license_number = #{licenseNumber}
@@ -30,4 +40,14 @@
             #{userId}, #{companyId}, #{position}
         )
     </insert>
+    
+    <!-- 根据ID查询企业详情 -->
+    <select id="getCompanyInfoById" resultMap="CompanyInfoResultMap">
+        SELECT 
+            id, name, license_number, address, legal_person, create_time
+        FROM 
+            company
+        WHERE 
+            id = #{companyId}
+    </select>
 </mapper>

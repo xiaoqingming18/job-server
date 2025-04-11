@@ -7,14 +7,12 @@ import com.qingming.jobserver.common.ResultUtils;
 import com.qingming.jobserver.exception.BusinessException;
 import com.qingming.jobserver.model.dao.company.CompanyRegisterDao;
 import com.qingming.jobserver.model.entity.User;
+import com.qingming.jobserver.model.vo.CompanyInfoVO;
 import com.qingming.jobserver.model.vo.TokenVO;
 import com.qingming.jobserver.service.CompanyService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import jakarta.validation.Valid;
 
@@ -60,6 +58,30 @@ public class CompanyController {
             // 捕获其他异常并返回系统错误
             log.error("公司注册发生系统异常", e);
             return ResultUtils.error(ErrorCode.SYSTEM_ERROR.getCode(), "注册失败，系统异常");
+        }
+    }
+    
+    /**
+     * 获取企业详细信息
+     * @param id 企业ID
+     * @return 企业详细信息
+     */
+    @GetMapping("/info/{id}")
+    public BaseResponse<CompanyInfoVO> getCompanyInfo(@PathVariable("id") Integer id) {
+        try {
+            // 调用服务层获取企业信息
+            CompanyInfoVO companyInfo = companyService.getCompanyInfo(id);
+            
+            // 返回成功响应
+            return ResultUtils.success(companyInfo);
+        } catch (BusinessException e) {
+            // 捕获业务异常并返回错误响应
+            log.error("获取企业信息失败: {}", e.getMessage());
+            return ResultUtils.error(e.getCode(), e.getMessage());
+        } catch (Exception e) {
+            // 捕获其他异常并返回系统错误
+            log.error("获取企业信息发生系统异常", e);
+            return ResultUtils.error(ErrorCode.SYSTEM_ERROR.getCode(), "获取企业信息失败，系统异常");
         }
     }
 }

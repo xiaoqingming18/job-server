@@ -9,6 +9,7 @@ import com.qingming.jobserver.model.entity.Company;
 import com.qingming.jobserver.model.entity.User;
 import com.qingming.jobserver.model.enums.AccountStatusEnum;
 import com.qingming.jobserver.model.enums.UserRoleEnum;
+import com.qingming.jobserver.model.vo.CompanyInfoVO;
 import com.qingming.jobserver.service.CompanyService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -59,17 +60,33 @@ public class CompanyServiceImpl implements CompanyService {
         company.setLegalPerson(registerDao.getLegalPerson());
         companyMapper.insertCompany(company);
         
-        // 5. 创建项目经理用户
+        // 5. 获取最新的用户ID并为新用户递增ID
+        Long latestUserId = userMapper.getLatestUserId();
+        Long newUserId = latestUserId + 1;
+        
+        // 6. 创建项目经理用户，使用指定的用户ID
+        Date now = new Date();
+        Map<String, Object> userParams = new HashMap<>();
+        userParams.put("id", newUserId);
+        userParams.put("username", registerDao.getUsername());
+        userParams.put("password", registerDao.getPassword());
+        userParams.put("email", registerDao.getEmail());
+        userParams.put("role", UserRoleEnum.project_manager.toString());
+        userParams.put("accountStatus", AccountStatusEnum.enabled.toString());
+        userParams.put("createTime", now);
+        userMapper.insertProjectManagerUser(userParams);
+        
+        // 7. 创建用户对象用于返回
         User user = new User();
+        user.setId(newUserId);
         user.setUsername(registerDao.getUsername());
         user.setPassword(registerDao.getPassword());
         user.setEmail(registerDao.getEmail());
         user.setRole(UserRoleEnum.project_manager);
         user.setAccountStatus(AccountStatusEnum.enabled);
-        user.setCreateTime(new Date());
-        userMapper.insert(user);
+        user.setCreateTime(now);
         
-        // 6. 关联项目经理与公司
+        // 8. 关联项目经理与公司
         String position = registerDao.getPosition();
         if (position == null || position.trim().isEmpty()) {
             position = "项目经理"; // 如果没有提供职位，使用默认值
@@ -82,5 +99,23 @@ public class CompanyServiceImpl implements CompanyService {
     @Override
     public Company getByLicenseNumber(String licenseNumber) {
         return companyMapper.selectByLicenseNumber(licenseNumber);
+    }
+    
+    @Override
+    public CompanyInfoVO getCompanyInfo(Integer companyId) {
+        // 参数验证
+        if (companyId == null || companyId <= 0) {
+            throw new BusinessException(ErrorCode.PARAMS_ERROR, "企业ID不合法");
+        }
+        
+        // 查询企业详细信息
+        CompanyInfoVO companyInfo = companyMapper.getCompanyInfoById(companyId);
+        
+        // 判断企业是否存在
+        if (companyInfo == null) {
+            throw new BusinessException(ErrorCode.NOT_FOUND, "企业信息不存在");
+        }
+        
+        return companyInfo;
     }
 }

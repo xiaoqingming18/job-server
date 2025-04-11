@@ -54,6 +54,26 @@
         WHERE username = #{username} AND password = #{password}
     </select>
 
+    <!-- 获取最新的用户ID -->
+    <select id="getLatestUserId" resultType="java.lang.Long">
+        SELECT IFNULL(MAX(id), 0) FROM user
+    </select>
+
+    <!-- 插入项目经理用户基础信息 -->
+    <insert id="insertProjectManagerUser" parameterType="map">
+        INSERT INTO user (
+            id, username, password, email, role, account_status, create_time
+        ) VALUES (
+            #{params.id},
+            #{params.username},
+            #{params.password},
+            #{params.email},
+            #{params.role},
+            #{params.accountStatus},
+            #{params.createTime}
+        )
+    </insert>
+
     <!-- 插入用户基础信息 -->
     <insert id="insertJobSeekerUser" parameterType="map">
         INSERT INTO user (

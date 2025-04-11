@@ -43,4 +43,17 @@ public interface UserMapper extends BaseMapper<User> {
      * @return 影响行数
      */
     int updatePassword(@Param("userId") Long userId, @Param("newPassword") String newPassword);
+    
+    /**
+     * 获取最新的用户ID
+     * @return 最新的用户ID，如果没有用户则返回0
+     */
+    Long getLatestUserId();
+    
+    /**
+     * 插入企业管理员用户
+     * @param params 包含用户信息的Map对象
+     * @return 影响行数
+     */
+    int insertProjectManagerUser(@Param("params") Map<String, Object> params);
 }

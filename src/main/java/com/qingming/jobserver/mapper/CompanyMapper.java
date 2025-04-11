@@ -2,6 +2,7 @@ package com.qingming.jobserver.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.qingming.jobserver.model.entity.Company;
+import com.qingming.jobserver.model.vo.CompanyInfoVO;
 import org.apache.ibatis.annotations.Param;
 
 /**
@@ -30,4 +31,11 @@ public interface CompanyMapper extends BaseMapper<Company> {
      * @return 影响行数
      */
     int insertProjectManager(@Param("userId") Long userId, @Param("companyId") Integer companyId, @Param("position") String position);
+    
+    /**
+     * 根据ID查询企业详细信息
+     * @param companyId 企业ID
+     * @return 企业详细信息VO
+     */
+    CompanyInfoVO getCompanyInfoById(@Param("companyId") Integer companyId);
 }

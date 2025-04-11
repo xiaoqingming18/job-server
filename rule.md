@@ -4,3 +4,4 @@
 - 编写代码时使用中文添加可读性强的注释；
 - 编写代码时注意**不要重复生成代码**，避免重复劳动；
 - 项目中的 controller 和 service 命名规则为 `驼峰命名法`，例如：`UserController` 和 `UserService`；
+- 如果正在开发的接口不需要登录，请在 `filter/wtAuthentication.java` 中配置白名单。
