@@ -41,13 +41,13 @@ public class CompanyServiceImpl implements CompanyService {
             throw new BusinessException(ErrorCode.PARAMS_ERROR, "该营业执照编号已被注册");
         }
         
-        // 2. 验证项目经理用户名是否存在
+        // 2. 验证用户名是否存在
         User existingUser = userMapper.selectByUsername(registerDao.getUsername());
         if (existingUser != null) {
             throw new BusinessException(ErrorCode.REGISTER_USER_EXIST, "该用户名已被注册");
         }
         
-        // 3. 验证项目经理邮箱是否存在
+        // 3. 验证邮箱是否存在
         existingUser = userMapper.selectByEmail(registerDao.getEmail());
         if (existingUser != null) {
             throw new BusinessException(ErrorCode.PARAMS_ERROR, "该邮箱已被注册");
@@ -65,17 +65,17 @@ public class CompanyServiceImpl implements CompanyService {
         Long latestUserId = userMapper.getLatestUserId();
         Long newUserId = latestUserId + 1;
         
-        // 6. 创建项目经理用户，使用指定的用户ID
+        // 6. 创建企业管理员用户，使用指定的用户ID
         Date now = new Date();
         Map<String, Object> userParams = new HashMap<>();
         userParams.put("id", newUserId);
         userParams.put("username", registerDao.getUsername());
         userParams.put("password", registerDao.getPassword());
         userParams.put("email", registerDao.getEmail());
-        userParams.put("role", UserRoleEnum.project_manager.toString());
+        userParams.put("role", UserRoleEnum.company_admin.toString());
         userParams.put("accountStatus", AccountStatusEnum.enabled.toString());
         userParams.put("createTime", now);
-        userMapper.insertProjectManagerUser(userParams);
+        userMapper.insertProjectManagerUser(userParams); // 复用现有方法插入用户
         
         // 7. 创建用户对象用于返回
         User user = new User();
@@ -83,16 +83,13 @@ public class CompanyServiceImpl implements CompanyService {
         user.setUsername(registerDao.getUsername());
         user.setPassword(registerDao.getPassword());
         user.setEmail(registerDao.getEmail());
-        user.setRole(UserRoleEnum.project_manager);
+        user.setRole(UserRoleEnum.company_admin);
         user.setAccountStatus(AccountStatusEnum.enabled);
         user.setCreateTime(now);
         
-        // 8. 关联项目经理与公司
-        String position = registerDao.getPosition();
-        if (position == null || position.trim().isEmpty()) {
-            position = "项目经理"; // 如果没有提供职位，使用默认值
-        }
-        companyMapper.insertProjectManager(user.getId(), company.getId(), position);
+        // 8. 更新公司的管理员ID
+        company.setAdminId(newUserId);
+        companyMapper.updateAdminId(company.getId(), newUserId);
         
         return user;
     }
@@ -134,9 +131,9 @@ public class CompanyServiceImpl implements CompanyService {
             throw new BusinessException(ErrorCode.NOT_FOUND, "企业信息不存在");
         }
         
-        // 验证用户是否为该企业的项目经理
-        if (!isProjectManagerOfCompany(userId, updateDao.getId())) {
-            throw new BusinessException(ErrorCode.NO_COMPANY_AUTH, "只有企业项目经理才能修改企业信息");
+        // 验证用户是否有权限修改企业信息（系统管理员、企业管理员或项目经理）
+        if (!isSystemAdmin(userId) && !isCompanyAdmin(userId, updateDao.getId()) && !isProjectManagerOfCompany(userId, updateDao.getId())) {
+            throw new BusinessException(ErrorCode.NO_COMPANY_AUTH, "无权修改企业信息");
         }
         
         // 构建更新对象，只更新非null字段
@@ -165,5 +162,37 @@ public class CompanyServiceImpl implements CompanyService {
         // 查询用户是否为企业的项目经理
         Integer count = companyMapper.countProjectManagerByUserIdAndCompanyId(userId, companyId);
         return count != null && count > 0;
+    }
+    
+    @Override
+    public boolean isCompanyAdmin(Long userId, Integer companyId) {
+        if (userId == null || userId <= 0 || companyId == null || companyId <= 0) {
+            return false;
+        }
+        
+        // 查询公司信息
+        Company company = companyMapper.selectById(companyId);
+        if (company == null) {
+            return false;
+        }
+        
+        // 检查当前用户是否是该公司的管理员
+        return userId.equals(company.getAdminId());
+    }
+    
+    @Override
+    public boolean isSystemAdmin(Long userId) {
+        if (userId == null || userId <= 0) {
+            return false;
+        }
+        
+        // 查询用户信息
+        User user = userMapper.selectById(userId);
+        if (user == null) {
+            return false;
+        }
+        
+        // 检查用户角色是否为系统管理员
+        return UserRoleEnum.system_admin.equals(user.getRole());
     }
 }

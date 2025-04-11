@@ -53,4 +53,12 @@ public interface CompanyMapper extends BaseMapper<Company> {
      * @return 记录数量，大于0表示是项目经理
      */
     Integer countProjectManagerByUserIdAndCompanyId(@Param("userId") Long userId, @Param("companyId") Integer companyId);
+    
+    /**
+     * 更新公司的管理员ID
+     * @param companyId 公司ID
+     * @param adminId 管理员用户ID
+     * @return 影响行数
+     */
+    int updateAdminId(@Param("companyId") Integer companyId, @Param("adminId") Long adminId);
 }

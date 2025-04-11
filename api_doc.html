@@ -903,7 +903,7 @@
                         <span class="endpoint-summary">注册新企业及管理员</span>
                     </div>
                     <div class="endpoint-content">
-                        <p>注册新企业并创建项目经理账号。返回项目经理的JWT令牌。</p>
+                        <p>注册新企业并创建企业管理员账号。成功返回"注册成功"提示。</p>
                         
                         <h3 class="section-title">请求参数</h3>
                         <table class="param-table">
@@ -944,25 +944,25 @@
                                     <td>username</td>
                                     <td>String</td>
                                     <td class="param-required">必须</td>
-                                    <td>项目经理用户名（4-50个字符）</td>
+                                    <td>企业管理员用户名（4-50个字符）</td>
                                 </tr>
                                 <tr>
                                     <td>password</td>
                                     <td>String</td>
                                     <td class="param-required">必须</td>
-                                    <td>项目经理密码（6-20个字符）</td>
+                                    <td>企业管理员密码（6-20个字符）</td>
                                 </tr>
                                 <tr>
                                     <td>email</td>
                                     <td>String</td>
                                     <td class="param-required">必须</td>
-                                    <td>项目经理电子邮箱地址</td>
+                                    <td>企业管理员电子邮箱地址</td>
                                 </tr>
                                 <tr>
                                     <td>position</td>
                                     <td>String</td>
                                     <td>可选</td>
-                                    <td>项目经理职位（最多50个字符）</td>
+                                    <td>企业管理员职位（最多50个字符）</td>
                                 </tr>
                             </tbody>
                         </table>
@@ -978,10 +978,10 @@
   "licenseNumber": "91110105MA00B4XC2X",
   "address": "北京市海淀区科技园区123号",
   "legalPerson": "李明",
-  "username": "manager1",
-  "password": "manager123",
-  "email": "manager@zhihuikeji.com",
-  "position": "人力资源总监"
+  "username": "admin1",
+  "password": "admin123",
+  "email": "admin@zhihuikeji.com",
+  "position": "总经理"
 }</code></pre>
                         </div>
                         
@@ -993,9 +993,7 @@
                             </div>
                             <pre id="register-company-response"><code>{
   "code": 0,
-  "data": {
-    "token": "eyJhbGciOiJIUzI1NiJ9.eyJ1c2VySWQiOjQsInVzZXJuYW1lIjoibWFuYWdlcjEiLCJpYXQiOjE2MTY0MjY3MDAsImV4cCI6MTYxNjUxMzEwMH0.example-token-project-manager"
-  },
+  "data": "注册成功",
   "message": "success"
 }</code></pre>
                         </div>
@@ -1062,7 +1060,7 @@
                         <span class="endpoint-summary">更新企业信息</span>
                     </div>
                     <div class="endpoint-content">
-                        <p>更新企业信息。只有企业的项目经理可以更新其企业信息。</p>
+                        <p>更新企业信息。系统管理员、企业管理员或企业的项目经理可以更新企业信息。</p>
                         
                         <h3 class="section-title">请求头</h3>
                         <table class="param-table">

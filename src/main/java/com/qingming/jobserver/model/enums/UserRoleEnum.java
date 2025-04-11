@@ -9,5 +9,7 @@ public enum UserRoleEnum {
     /** 项目经理 */
     project_manager,
     /** 求职者 */
-    job_seeker
+    job_seeker,
+    /** 企业管理员 */
+    company_admin
 }

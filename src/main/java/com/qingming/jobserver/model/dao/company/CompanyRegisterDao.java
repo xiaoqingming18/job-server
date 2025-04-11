@@ -39,28 +39,28 @@ public class CompanyRegisterDao {
     private String legalPerson;
 
     /**
-     * 项目经理用户名（必填）
+     * 企业管理员用户名（必填）
      */
     @NotBlank(message = "用户名不能为空")
     @Size(min = 4, max = 50, message = "用户名长度为4-50位")
     private String username;
 
     /**
-     * 项目经理密码（必填）
+     * 企业管理员密码（必填）
      */
     @NotBlank(message = "密码不能为空")
     @Size(min = 6, max = 20, message = "密码长度为6-20位")
     private String password;
     
     /**
-     * 项目经理邮箱（必填）
+     * 企业管理员邮箱（必填）
      */
     @NotBlank(message = "邮箱不能为空")
     @jakarta.validation.constraints.Email(message = "邮箱格式不正确")
     private String email;
     
     /**
-     * 项目经理职位名称
+     * 企业管理员职位名称
      */
     @Size(max = 50, message = "职位名称最长50字符")
     private String position;

@@ -27,6 +27,9 @@ public class Company implements Serializable {
     @TableField("legal_person")
     private String legalPerson;
 
+    @TableField("admin_id")
+    private Long adminId;
+
     @TableField("create_time")
     private Date createTime;
 }

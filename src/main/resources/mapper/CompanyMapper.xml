@@ -62,6 +62,13 @@
         WHERE id = #{id}
     </update>
     
+    <!-- 更新企业管理员ID -->
+    <update id="updateAdminId">
+        UPDATE company
+        SET admin_id = #{adminId}
+        WHERE id = #{companyId}
+    </update>
+    
     <!-- 统计用户是否为指定企业的项目经理 -->
     <select id="countProjectManagerByUserIdAndCompanyId" resultType="java.lang.Integer">
         SELECT COUNT(1)

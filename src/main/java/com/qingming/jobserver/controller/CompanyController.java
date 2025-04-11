@@ -36,22 +36,18 @@ public class CompanyController {
     }
     
     /**
-     * 注册公司并创建第一个项目经理账号
-     * @param registerDao 包含公司信息和项目经理信息的请求对象
-     * @return 包含JWT令牌的响应
+     * 注册公司并创建企业管理员账号
+     * @param registerDao 包含公司信息和企业管理员信息的请求对象
+     * @return 注册结果响应
      */
     @PostMapping("/register")
-    public BaseResponse<TokenVO> registerCompany(@RequestBody @Valid CompanyRegisterDao registerDao) {
+    public BaseResponse<String> registerCompany(@RequestBody @Valid CompanyRegisterDao registerDao) {
         try {
-            // 调用服务层注册公司和项目经理
-            User projectManager = companyService.registerCompanyWithManager(registerDao);
+            // 调用服务层注册公司和企业管理员
+            User companyAdmin = companyService.registerCompanyWithManager(registerDao);
             
-            // 生成JWT令牌
-            String token = jwtUtil.generateToken(projectManager.getId(), projectManager.getUsername());
-            TokenVO tokenVO = new TokenVO(token);
-            
-            // 返回成功响应，包含token
-            return ResultUtils.success(tokenVO);
+            // 返回成功响应
+            return ResultUtils.success("注册成功");
         } catch (BusinessException e) {
             // 捕获业务异常并返回错误响应
             log.error("公司注册失败: {}", e.getMessage());

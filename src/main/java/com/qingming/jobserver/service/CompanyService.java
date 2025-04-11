@@ -46,4 +46,19 @@ public interface CompanyService {
      * @return 如果是项目经理返回true，否则返回false
      */
     boolean isProjectManagerOfCompany(Long userId, Integer companyId);
+    
+    /**
+     * 检查用户是否为指定企业的管理员
+     * @param userId 用户ID
+     * @param companyId 企业ID
+     * @return 如果是企业管理员返回true，否则返回false
+     */
+    boolean isCompanyAdmin(Long userId, Integer companyId);
+    
+    /**
+     * 检查用户是否是系统管理员
+     * @param userId 用户ID
+     * @return 如果是系统管理员返回true，否则返回false
+     */
+    boolean isSystemAdmin(Long userId);
 }
