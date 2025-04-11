@@ -50,4 +50,22 @@
         WHERE 
             id = #{companyId}
     </select>
+    
+    <!-- 选择性更新企业信息（只更新非null字段） -->
+    <update id="updateCompanySelective" parameterType="com.qingming.jobserver.model.entity.Company">
+        UPDATE company
+        <set>
+            <if test="name != null">name = #{name},</if>
+            <if test="address != null">address = #{address},</if>
+            <if test="legalPerson != null">legal_person = #{legalPerson},</if>
+        </set>
+        WHERE id = #{id}
+    </update>
+    
+    <!-- 统计用户是否为指定企业的项目经理 -->
+    <select id="countProjectManagerByUserIdAndCompanyId" resultType="java.lang.Integer">
+        SELECT COUNT(1)
+        FROM project_manager
+        WHERE user_id = #{userId} AND company_id = #{companyId}
+    </select>
 </mapper>

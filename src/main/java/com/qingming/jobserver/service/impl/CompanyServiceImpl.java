@@ -5,6 +5,7 @@ import com.qingming.jobserver.exception.BusinessException;
 import com.qingming.jobserver.mapper.CompanyMapper;
 import com.qingming.jobserver.mapper.UserMapper;
 import com.qingming.jobserver.model.dao.company.CompanyRegisterDao;
+import com.qingming.jobserver.model.dao.company.CompanyUpdateDao;
 import com.qingming.jobserver.model.entity.Company;
 import com.qingming.jobserver.model.entity.User;
 import com.qingming.jobserver.model.enums.AccountStatusEnum;
@@ -117,5 +118,52 @@ public class CompanyServiceImpl implements CompanyService {
         }
         
         return companyInfo;
+    }
+    
+    @Override
+    @Transactional
+    public CompanyInfoVO updateCompanyInfo(CompanyUpdateDao updateDao, Long userId) {
+        // 参数验证
+        if (updateDao == null || updateDao.getId() == null || updateDao.getId() <= 0) {
+            throw new BusinessException(ErrorCode.PARAMS_ERROR, "企业ID不合法");
+        }
+        
+        // 验证企业是否存在
+        CompanyInfoVO existingCompany = companyMapper.getCompanyInfoById(updateDao.getId());
+        if (existingCompany == null) {
+            throw new BusinessException(ErrorCode.NOT_FOUND, "企业信息不存在");
+        }
+        
+        // 验证用户是否为该企业的项目经理
+        if (!isProjectManagerOfCompany(userId, updateDao.getId())) {
+            throw new BusinessException(ErrorCode.NO_COMPANY_AUTH, "只有企业项目经理才能修改企业信息");
+        }
+        
+        // 构建更新对象，只更新非null字段
+        Company company = new Company();
+        company.setId(updateDao.getId());
+        company.setName(updateDao.getName());
+        company.setAddress(updateDao.getAddress());
+        company.setLegalPerson(updateDao.getLegalPerson());
+        
+        // 执行更新操作
+        int rows = companyMapper.updateCompanySelective(company);
+        if (rows <= 0) {
+            throw new BusinessException(ErrorCode.SYSTEM_ERROR, "更新企业信息失败");
+        }
+        
+        // 返回更新后的企业信息
+        return companyMapper.getCompanyInfoById(updateDao.getId());
+    }
+    
+    @Override
+    public boolean isProjectManagerOfCompany(Long userId, Integer companyId) {
+        if (userId == null || userId <= 0 || companyId == null || companyId <= 0) {
+            return false;
+        }
+        
+        // 查询用户是否为企业的项目经理
+        Integer count = companyMapper.countProjectManagerByUserIdAndCompanyId(userId, companyId);
+        return count != null && count > 0;
     }
 }

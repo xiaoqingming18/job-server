@@ -1,6 +1,7 @@
 package com.qingming.jobserver.service;
 
 import com.qingming.jobserver.model.dao.company.CompanyRegisterDao;
+import com.qingming.jobserver.model.dao.company.CompanyUpdateDao;
 import com.qingming.jobserver.model.entity.Company;
 import com.qingming.jobserver.model.entity.User;
 import com.qingming.jobserver.model.vo.CompanyInfoVO;
@@ -29,4 +30,20 @@ public interface CompanyService {
      * @return 企业详细信息VO对象
      */
     CompanyInfoVO getCompanyInfo(Integer companyId);
+    
+    /**
+     * 更新企业信息
+     * @param updateDao 更新的企业信息
+     * @param userId 当前用户ID
+     * @return 更新后的企业对象
+     */
+    CompanyInfoVO updateCompanyInfo(CompanyUpdateDao updateDao, Long userId);
+    
+    /**
+     * 检查用户是否为指定企业的项目经理
+     * @param userId 用户ID
+     * @param companyId 企业ID
+     * @return 如果是项目经理返回true，否则返回false
+     */
+    boolean isProjectManagerOfCompany(Long userId, Integer companyId);
 }

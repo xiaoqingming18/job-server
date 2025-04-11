@@ -38,4 +38,19 @@ public interface CompanyMapper extends BaseMapper<Company> {
      * @return 企业详细信息VO
      */
     CompanyInfoVO getCompanyInfoById(@Param("companyId") Integer companyId);
+    
+    /**
+     * 选择性更新企业信息（只更新非null字段）
+     * @param company 包含要更新字段的企业对象
+     * @return 影响行数
+     */
+    int updateCompanySelective(Company company);
+    
+    /**
+     * 统计用户是否为指定企业的项目经理
+     * @param userId 用户ID
+     * @param companyId 企业ID
+     * @return 记录数量，大于0表示是项目经理
+     */
+    Integer countProjectManagerByUserIdAndCompanyId(@Param("userId") Long userId, @Param("companyId") Integer companyId);
 }

@@ -1,0 +1,13 @@
+[33m0162344[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mdev[m[33m)[m 完成企业信息接口开发
+[33m2cda364[m 初步实现企业注册接口 存在问题:项目管理员生成的id太大
+[33ma595b05[m 完成求职者登录接口开发
+[33mfb5e82e[m[33m ([m[1;31morigin/dev[m[33m)[m 完成求职者修改密码接口开发
+[33m64ff73a[m 修改求职者更新资料接口返回数据
+[33m34cc686[m 完成求职者资料GET接口开发
+[33m087771f[m 完成求职者资料更新接口 添加求职者entity
+[33m2c15a76[m 修复token校验问题
+[33m463505f[m 集成JWT，并实现接口鉴权
+[33m1a8df22[m[33m ([m[1;31morigin/user-system-reconstruct[m[33m, [m[1;31morigin/master[m[33m, [m[1;31morigin/HEAD[m[33m)[m 替换管理员登录接口入参类型为AdminLoginDao
+[33m2a80b60[m fix: 修复全局异常处理对参数校验的支持
+[33mfdf2728[m 添加求职者注册接口和全局异常处理
+[33m31b52be[m :tada: first commit
