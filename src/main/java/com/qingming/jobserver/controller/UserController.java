@@ -18,6 +18,9 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import jakarta.validation.Valid;
 
+import java.util.HashMap;
+import java.util.Map;
+
 @Slf4j
 @RestController
 @RequestMapping("/user")
@@ -153,9 +156,7 @@ public class UserController {
         JobSeekerProfileVO profileVO = userService.getJobSeekerProfile(currentUserId);
         // 返回结果
         return ResultUtils.success(profileVO);
-    }
-
-    /**
+    }    /**
      * 求职者修改密码
      * @param updatePasswordDao 修改密码请求参数
      * @return 修改结果
@@ -173,6 +174,39 @@ public class UserController {
             return ResultUtils.success("修改成功");
         } else {
             return ResultUtils.error(ErrorCode.SYSTEM_ERROR.getCode(), "修改失败");
+        }
+    }
+    
+    /**
+     * 验证token接口
+     * 验证请求头中的token是否有效，并返回用户角色信息
+     * 
+     * @return 包含token验证结果和用户角色的响应
+     */
+    @GetMapping("/verify-token")
+    public BaseResponse<Map<String, Object>> verifyToken() {
+        try {
+            // 从请求头中获取token已由过滤器完成，这里直接获取当前用户ID和用户名
+            Long userId = CurrentUserUtils.getCurrentUserId();
+            
+            // 调用Service层获取用户完整信息
+            User user = userService.getById(userId);
+            if (user == null) {
+                return ResultUtils.error(ErrorCode.NOT_FOUND.getCode(), "用户不存在");
+            }
+            
+            Map<String, Object> result = new HashMap<>();
+            result.put("valid", true);
+            result.put("userId", user.getId());
+            result.put("username", user.getUsername());
+            result.put("role", user.getRole());
+            
+            return ResultUtils.success(result);
+        } catch (Exception e) {
+            log.error("验证token时发生错误", e);
+            Map<String, Object> result = new HashMap<>();
+            result.put("valid", false);
+            return ResultUtils.success(result);
         }
     }
 }

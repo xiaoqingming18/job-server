@@ -29,15 +29,20 @@ public interface UserService {
      * @param userId 用户ID
      * @return 求职者完整资料VO对象
      */
-    JobSeekerProfileVO getJobSeekerProfile(Long userId);
-
-    /**
+    JobSeekerProfileVO getJobSeekerProfile(Long userId);    /**
      * 修改用户密码
      * @param userId 用户ID
      * @param updatePasswordDao 修改密码请求数据
      * @return 是否更新成功
      */
     boolean updatePassword(Long userId, UpdatePasswordDao updatePasswordDao);
+    
+    /**
+     * 根据用户ID查询用户信息
+     * @param userId 用户ID
+     * @return 用户信息
+     */
+    User getById(Long userId);
     
     /**
      * 求职者登录

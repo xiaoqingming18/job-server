@@ -24,7 +24,10 @@ import org.springframework.transaction.annotation.Transactional;
 public class UserServiceImpl implements UserService {
     
     @Autowired
-    private UserMapper userMapper;
+    private UserMapper userMapper;    @Override
+    public User getById(Long userId) {
+        return userMapper.selectById(userId);
+    }
 
     @Override
     public User getByUsername(String username) {
