@@ -16,6 +16,14 @@ public interface UserService {
     User getByUsernameAndPassword(String username, String password);
 
     User registerJobSeeker(JobSeekerRegisterDao registerDao);
+    
+    /**
+     * 更新用户头像
+     * @param userId 用户ID
+     * @param avatarUrl 头像URL
+     * @return 是否更新成功
+     */
+    boolean updateUserAvatar(Long userId, String avatarUrl);
 
     /**
      * 更新求职者资料

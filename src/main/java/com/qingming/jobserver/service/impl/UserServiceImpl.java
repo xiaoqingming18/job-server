@@ -37,9 +37,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public User getByMobile(String mobile) {
         return userMapper.selectByMobile(mobile);
-    }
-
-    @Override
+    }    @Override
     public User getByEmail(String email) {
         return userMapper.selectByEmail(email);
     }
@@ -47,6 +45,31 @@ public class UserServiceImpl implements UserService {
     @Override
     public User getByUsernameAndPassword(String username, String password) {
         return userMapper.selectByUsernameAndPassword(username, password);
+    }
+    
+    @Override
+    public boolean updateUserAvatar(Long userId, String avatarUrl) {
+        if (userId == null || userId <= 0) {
+            throw new BusinessException(ErrorCode.PARAMS_ERROR, "用户ID不合法");
+        }
+        
+        if (avatarUrl == null || avatarUrl.trim().isEmpty()) {
+            throw new BusinessException(ErrorCode.PARAMS_ERROR, "头像URL不能为空");
+        }
+        
+        // 验证用户是否存在
+        User user = userMapper.selectById(userId);
+        if (user == null) {
+            throw new BusinessException(ErrorCode.NOT_FOUND, "用户不存在");
+        }
+        
+        // 更新用户头像
+        Map<String, Object> params = new HashMap<>();
+        params.put("id", userId);
+        params.put("avatar", avatarUrl);
+        
+        int rows = userMapper.updateUserBasicInfo(params);
+        return rows > 0;
     }
 
     @Override
