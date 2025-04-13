@@ -13,6 +13,7 @@ import com.qingming.jobserver.model.dao.user.JobSeekerUpdateInfoDao;
 import com.qingming.jobserver.model.vo.JobSeekerProfileVO;
 import com.qingming.jobserver.model.vo.TokenVO;
 import com.qingming.jobserver.service.UserService;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -176,18 +177,36 @@ public class UserController {
             return ResultUtils.error(ErrorCode.SYSTEM_ERROR.getCode(), "修改失败");
         }
     }
-    
-    /**
+      /**
      * 验证token接口
      * 验证请求头中的token是否有效，并返回用户角色信息
      * 
      * @return 包含token验证结果和用户角色的响应
      */
     @GetMapping("/verify-token")
-    public BaseResponse<Map<String, Object>> verifyToken() {
+    public BaseResponse<Map<String, Object>> verifyToken(HttpServletRequest request) {
         try {
-            // 从请求头中获取token已由过滤器完成，这里直接获取当前用户ID和用户名
-            Long userId = CurrentUserUtils.getCurrentUserId();
+            // 获取Authorization头
+            String authHeader = request.getHeader("Authorization");
+
+            // 检查是否有token
+            if (authHeader == null || !authHeader.startsWith("Bearer ")) {
+                return ResultUtils.error(ErrorCode.TOKEN_INVALID.getCode(), ErrorCode.TOKEN_INVALID.getMessage());
+            }
+
+            // 提取token
+            String token = authHeader.substring(7);
+            
+            // 验证token并区分错误类型
+            int tokenStatus = jwtUtil.validateTokenWithErrorType(token);
+            if (tokenStatus == 1) { // token已过期
+                return ResultUtils.error(ErrorCode.TOKEN_EXPIRED.getCode(), ErrorCode.TOKEN_EXPIRED.getMessage());
+            } else if (tokenStatus == 2) { // token无效
+                return ResultUtils.error(ErrorCode.TOKEN_INVALID.getCode(), ErrorCode.TOKEN_INVALID.getMessage());
+            }
+            
+            // 从token中提取用户ID
+            Long userId = jwtUtil.getUserIdFromToken(token);
             
             // 调用Service层获取用户完整信息
             User user = userService.getById(userId);
@@ -204,9 +223,7 @@ public class UserController {
             return ResultUtils.success(result);
         } catch (Exception e) {
             log.error("验证token时发生错误", e);
-            Map<String, Object> result = new HashMap<>();
-            result.put("valid", false);
-            return ResultUtils.success(result);
+            return ResultUtils.error(ErrorCode.SYSTEM_ERROR.getCode(), "验证token时发生系统错误");
         }
     }
 }

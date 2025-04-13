@@ -34,6 +34,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             "/user/project-manager-login",
             "/company/register",
             "/company/info/*",
+            "/user/verify-token",
             // 其他不需要验证的路径
             "/error"
     );
@@ -64,11 +65,14 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         }
 
         // 提取token
-        String token = authHeader.substring(7);
-
-        // 验证token
-        if (!jwtUtil.validateToken(token)) {
-            sendErrorResponse(response, ErrorCode.UNAUTHORIZED, "未授权：无效的token");
+        String token = authHeader.substring(7);        // 验证token并区分错误类型
+        int tokenStatus = jwtUtil.validateTokenWithErrorType(token);
+        if (tokenStatus != 0) {
+            if (tokenStatus == 1) { // token已过期
+                sendErrorResponse(response, ErrorCode.TOKEN_EXPIRED, ErrorCode.TOKEN_EXPIRED.getMessage());
+            } else { // token无效（格式错误或被篡改）
+                sendErrorResponse(response, ErrorCode.TOKEN_INVALID, ErrorCode.TOKEN_INVALID.getMessage());
+            }
             return;
         }
 

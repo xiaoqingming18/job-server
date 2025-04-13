@@ -104,14 +104,28 @@ public class JwtUtil {
                 .setExpiration(new Date(System.currentTimeMillis() + expiration))
                 .signWith(getSigningKey(), SignatureAlgorithm.HS256)
                 .compact();
-    }
-
-    // 验证token是否有效
+    }    // 验证token是否有效
     public boolean validateToken(String token) {
         try {
             return !isTokenExpired(token);
         } catch (Exception e) {
             return false;
+        }
+    }
+    
+    /**
+     * 验证token并区分不同的错误类型
+     * @param token JWT令牌
+     * @return 0: 有效, 1: 已过期, 2: 无效(格式错误或被篡改)
+     */
+    public int validateTokenWithErrorType(String token) {
+        try {
+            if (isTokenExpired(token)) {
+                return 1; // token已过期
+            }
+            return 0; // token有效
+        } catch (Exception e) {
+            return 2; // token无效（格式错误或被篡改）
         }
     }
 }

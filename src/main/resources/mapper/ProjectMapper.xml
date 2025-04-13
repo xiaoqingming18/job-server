@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.qingming.jobserver.mapper.ProjectMapper">
+    <resultMap id="BaseResultMap" type="com.qingming.jobserver.model.entity.ConstructionProject">
+        <id column="id" property="id" jdbcType="INTEGER"/>
+        <result column="company_id" property="companyId"/>
+        <result column="name" property="name"/>
+        <result column="address" property="address"/>
+        <result column="project_manager_id" property="projectManagerId"/>
+        <result column="start_date" property="startDate"/>
+        <result column="expected_end_date" property="expectedEndDate"/>
+        <result column="project_type" property="projectType"/>
+        <result column="project_scale" property="projectScale"/>
+        <result column="total_area" property="totalArea"/>
+        <result column="budget" property="budget"/>
+        <result column="description" property="description"/>
+        <result column="status" property="status"/>
+        <result column="create_time" property="createTime"/>
+        <result column="update_time" property="updateTime"/>
+    </resultMap>
+    
+    <!-- 项目详情结果映射 -->
+    <resultMap id="ProjectInfoResultMap" type="com.qingming.jobserver.model.vo.ProjectInfoVO">
+        <id column="id" property="id"/>
+        <result column="company_id" property="companyId"/>
+        <result column="name" property="name"/>
+        <result column="address" property="address"/>
+        <result column="project_manager_id" property="projectManagerId"/>
+        <result column="project_manager_name" property="projectManagerName"/>
+        <result column="start_date" property="startDate"/>
+        <result column="expected_end_date" property="expectedEndDate"/>
+        <result column="project_type" property="projectType"/>
+        <result column="project_scale" property="projectScale"/>
+        <result column="total_area" property="totalArea"/>
+        <result column="budget" property="budget"/>
+        <result column="description" property="description"/>
+        <result column="status" property="status"/>
+        <result column="create_time" property="createTime"/>
+        <result column="update_time" property="updateTime"/>
+    </resultMap>
+
+    <!-- 插入项目信息 -->
+    <insert id="insertProject" parameterType="com.qingming.jobserver.model.entity.ConstructionProject" 
+            useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO construction_project (
+            company_id, name, address, project_manager_id, 
+            start_date, expected_end_date, project_type, project_scale, 
+            total_area, budget, description, status
+        ) VALUES (
+            #{companyId}, #{name}, #{address}, #{projectManagerId},
+            #{startDate}, #{expectedEndDate}, #{projectType}, #{projectScale},
+            #{totalArea}, #{budget}, #{description}, #{status}
+        )
+    </insert>
+    
+    <!-- 根据ID查询项目详情 -->
+    <select id="getProjectInfoById" resultMap="ProjectInfoResultMap">
+        SELECT 
+            p.id, p.company_id, p.name, p.address, p.project_manager_id, u.username as project_manager_name,
+            p.start_date, p.expected_end_date, p.project_type, p.project_scale,
+            p.total_area, p.budget, p.description, p.status, p.create_time, p.update_time
+        FROM 
+            construction_project p
+        LEFT JOIN 
+            user u ON p.project_manager_id = u.id
+        WHERE 
+            p.id = #{projectId}
+    </select>
+</mapper>
