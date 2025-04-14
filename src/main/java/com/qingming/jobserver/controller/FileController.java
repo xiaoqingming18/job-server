@@ -34,6 +34,9 @@ public class FileController {
 
     @Value("${minio.bucketName}")
     private String bucketName;
+    
+    @Value("${minio.public-ip}")
+    private String minioPublicIp;
 
     public FileController(MinioUtil minioUtil, UserService userService) {
         this.minioUtil = minioUtil;
@@ -48,6 +51,8 @@ public class FileController {
     @PostMapping("/upload/avatar")
     public BaseResponse<Map<String, String>> uploadAvatar(@RequestParam("file") MultipartFile file) {
         try {
+            log.info("开始上传头像文件");
+            
             // 检查文件是否为空
             if (file.isEmpty()) {
                 throw new BusinessException(ErrorCode.PARAMS_ERROR, "上传文件不能为空");
@@ -72,15 +77,18 @@ public class FileController {
 
             // 上传文件到MinIO，保存在avatars目录下
             String objectName = minioUtil.uploadFile(file, "avatars");
+            log.info("文件上传到MinIO成功，对象名: {}", objectName);
             
-            // 生成可访问的URL (7天有效期)
-            String avatarUrl = minioUtil.getPresignedUrl(objectName, 7 * 24 * 60 * 60);
+            // 生成简化URL，不包含查询参数
+            String avatarUrl = minioUtil.getSimplifiedUrl(objectName);
+            log.info("生成简化URL: {}", avatarUrl);
             
             // 更新用户头像URL
             boolean updateResult = userService.updateUserAvatar(userId, avatarUrl);
             if (!updateResult) {
                 throw new BusinessException(ErrorCode.SYSTEM_ERROR, "更新头像失败");
             }
+            log.info("用户头像URL更新成功");
             
             // 返回结果
             Map<String, String> result = new HashMap<>();

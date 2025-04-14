@@ -35,6 +35,12 @@ public class MinioUtil {
 
     @Value("${minio.bucketName}")
     private String bucketName;
+    
+    @Value("${minio.endpoint}")
+    private String endpoint;
+    
+    @Value("${minio.public-ip}")
+    private String publicIp;
 
     /**
      * 允许的内容类型白名单
@@ -142,6 +148,7 @@ public class MinioUtil {
     
     /**
      * 获取文件预签名URL（用于前端直接访问）
+     * 将内部IP替换为公网IP
      *
      * @param objectName 对象名称
      * @param expiry 过期时间（秒）
@@ -149,7 +156,8 @@ public class MinioUtil {
      */
     public String getPresignedUrl(String objectName, int expiry) {
         try {
-            return minioClient.getPresignedObjectUrl(
+            // 使用预签名方式生成URL - 此URL不需要认证即可访问
+            String url = minioClient.getPresignedObjectUrl(
                     GetPresignedObjectUrlArgs.builder()
                             .bucket(bucketName)
                             .object(objectName)
@@ -157,9 +165,93 @@ public class MinioUtil {
                             .expiry(expiry, TimeUnit.SECONDS)
                             .build()
             );
+            
+            log.info("Generated presigned URL before replacement: {}", url);
+            
+            // 替换URL中的主机地址为公网IP
+            String modifiedUrl = replaceHostWithPublicIp(url);
+            log.info("Modified URL with public IP: {}", modifiedUrl);
+            
+            return modifiedUrl;
         } catch (Exception e) {
             log.error("获取文件预签名URL失败: {}", e.getMessage(), e);
             throw new BusinessException(ErrorCode.SYSTEM_ERROR, "获取文件访问路径失败");
+        }
+    }
+    
+    /**
+     * 获取简化的文件URL（只保留到文件后缀名，不包含查询参数）
+     *
+     * @param objectName 对象名称
+     * @return 简化的文件URL
+     */
+    public String getSimplifiedUrl(String objectName) {
+        try {
+            if (objectName == null || objectName.isEmpty()) {
+                throw new BusinessException(ErrorCode.PARAMS_ERROR, "文件名不能为空");
+            }
+            
+            // 构建简化URL，格式为：http://publicIp/bucketName/objectName
+            String protocol = "http";
+            if (endpoint.startsWith("https")) {
+                protocol = "https";
+            }
+            
+            // 检查publicIp是否已包含协议部分
+            String publicAddress;
+            if (publicIp.startsWith("http://") || publicIp.startsWith("https://")) {
+                // 如果已包含协议，直接使用publicIp
+                publicAddress = publicIp;
+            } else {
+                // 如果不包含协议，添加协议部分
+                publicAddress = protocol + "://" + publicIp;
+            }
+            
+            String url = publicAddress + "/" + bucketName + "/" + objectName;
+            log.info("生成简化URL: {}", url);
+            
+            return url;
+        } catch (Exception e) {
+            log.error("生成简化URL失败: {}", e.getMessage(), e);
+            throw new BusinessException(ErrorCode.SYSTEM_ERROR, "生成文件URL失败");
+        }
+    }
+    
+    /**
+     * 将URL中的主机地址替换为公网IP
+     *
+     * @param url 原始URL
+     * @return 替换后的URL
+     */
+    private String replaceHostWithPublicIp(String url) {
+        if (url == null || url.isEmpty() || publicIp == null || publicIp.isEmpty()) {
+            return url;
+        }
+        
+        try {
+            // 从endpoint中提取主机名部分，格式可能是http://hostname:port或https://hostname:port
+            String protocol = endpoint.split("://")[0]; // 提取协议部分，如http或https
+            String hostToReplace = endpoint.split("://")[1].split("/")[0];
+            
+            // 检查公网IP是否已包含协议部分
+            String publicAddress;
+            if (publicIp.startsWith("http://") || publicIp.startsWith("https://")) {
+                publicAddress = publicIp;
+            } else {
+                // 使用原始endpoint的协议
+                publicAddress = protocol + "://" + publicIp;
+            }
+            
+            // 替换URL中的主机部分为公网IP
+            String fullHostToReplace = protocol + "://" + hostToReplace;
+            if (url.contains(fullHostToReplace)) {
+                return url.replace(fullHostToReplace, publicAddress);
+            }
+            
+            return url;
+        } catch (Exception e) {
+            log.error("替换主机地址失败: {}", e.getMessage(), e);
+            return url; // 出现异常时返回原始URL
         }
     }
 

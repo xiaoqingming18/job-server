@@ -9,6 +9,7 @@ import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
 import org.springframework.util.AntPathMatcher;
@@ -25,6 +26,9 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     private final ObjectMapper objectMapper;
     private final AntPathMatcher pathMatcher = new AntPathMatcher();
 
+    @Value("${minio.public-ip}")
+    private String minioPublicIp;
+
     // 不需要验证的路径
     private static final List<String> WHITELIST = Arrays.asList(
             "/user/admin-login",
@@ -35,6 +39,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             "/company/register",
             "/company/info/*",
             "/user/verify-token",
+            "/file/public/**",  // 公开访问的文件路径
             // 其他不需要验证的路径
             "/error"
     );
@@ -54,6 +59,12 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             filterChain.doFilter(request, response);
             return;
         }
+        
+        // 检查是否是图片文件请求，例如头像请求 (通常是以.jpg/.png/.gif等后缀结尾)
+        if (isImageRequest(requestPath)) {
+            filterChain.doFilter(request, response);
+            return;
+        }
 
         // 获取Authorization头
         String authHeader = request.getHeader("Authorization");
@@ -65,7 +76,8 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         }
 
         // 提取token
-        String token = authHeader.substring(7);        // 验证token并区分错误类型
+        String token = authHeader.substring(7);        
+        // 验证token并区分错误类型
         int tokenStatus = jwtUtil.validateTokenWithErrorType(token);
         if (tokenStatus != 0) {
             if (tokenStatus == 1) { // token已过期
@@ -91,6 +103,21 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     private boolean isPathInWhitelist(String requestPath) {
         return WHITELIST.stream()
                 .anyMatch(pattern -> pathMatcher.match(pattern, requestPath));
+    }
+    
+    // 检查是否是图片请求
+    private boolean isImageRequest(String path) {
+        String lowerPath = path.toLowerCase();
+        // 图片文件后缀列表
+        List<String> imageExtensions = Arrays.asList(".jpg", ".jpeg", ".png", ".gif", ".bmp", ".webp");
+        
+        // 如果URL中含有MinIO公网IP，直接放行
+        if (minioPublicIp != null && !minioPublicIp.isEmpty() && path.contains(minioPublicIp)) {
+            return true;
+        }
+        
+        // 检查路径是否以图片扩展名结尾
+        return imageExtensions.stream().anyMatch(lowerPath::endsWith);
     }
 
     // 发送错误响应
