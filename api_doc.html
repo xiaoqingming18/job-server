@@ -356,6 +356,7 @@
                 <li class="nav-item" data-target="project">项目模块</li>
                 <li class="nav-item" data-target="job">职位模块</li>
                 <li class="nav-item" data-target="occupation">工种模块</li>
+                <li class="nav-item" data-target="labor-demand">劳务需求模块</li>
             </ul>
         </nav>
 
@@ -2552,6 +2553,690 @@
                 </div>
             </div>
         </section>
+
+        <!-- Labor Demand Module -->
+<section id="labor-demand" class="module" style="display: none;">
+    <div class="module-header">
+        <h2>劳务需求模块</h2>
+    </div>
+    <div class="module-content">
+        <p class="module-description">劳务需求的创建、查询、更新和删除相关接口</p>
+        
+        <!-- Add Labor Demand API -->
+        <div class="api-endpoint">
+            <div class="endpoint-header">
+                <span class="http-method method-post">POST</span>
+                <span class="endpoint-path">/labor-demand/add</span>
+                <span class="endpoint-summary">添加劳务需求</span>
+            </div>
+            <div class="endpoint-content">
+                <p>创建新的劳务需求并返回创建后的详细信息。</p>
+                
+                <h3 class="section-title">请求头</h3>
+                <table class="param-table">
+                    <thead>
+                        <tr>
+                            <th>参数名</th>
+                            <th>类型</th>
+                            <th>是否必须</th>
+                            <th>描述</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Authorization</td>
+                            <td>String</td>
+                            <td class="param-required">必须</td>
+                            <td>JWT令牌，格式为"Bearer {token}"</td>
+                        </tr>
+                    </tbody>
+                </table>
+                
+                <h3 class="section-title">请求参数</h3>
+                <table class="param-table">
+                    <thead>
+                        <tr>
+                            <th>参数名</th>
+                            <th>类型</th>
+                            <th>是否必须</th>
+                            <th>描述</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>projectId</td>
+                            <td>Integer</td>
+                            <td class="param-required">必须</td>
+                            <td>所属项目ID</td>
+                        </tr>                        <tr>
+                            <td>job_type_id</td>
+                            <td>Integer</td>
+                            <td class="param-required">必须</td>
+                            <td>工种ID</td>
+                        </tr>
+                        <tr>
+                            <td>headCount</td>
+                            <td>Integer</td>
+                            <td class="param-required">必须</td>
+                            <td>需求人数</td>
+                        </tr>
+                        <tr>
+                            <td>dailyWage</td>
+                            <td>BigDecimal</td>
+                            <td class="param-required">必须</td>
+                            <td>日薪金额</td>
+                        </tr>
+                        <tr>
+                            <td>startDate</td>
+                            <td>String</td>
+                            <td class="param-required">必须</td>
+                            <td>开始日期，格式为yyyy-MM-dd</td>
+                        </tr>
+                        <tr>
+                            <td>endDate</td>
+                            <td>String</td>
+                            <td class="param-required">必须</td>
+                            <td>结束日期，格式为yyyy-MM-dd</td>
+                        </tr>
+                        <tr>
+                            <td>description</td>
+                            <td>String</td>
+                            <td>可选</td>
+                            <td>需求描述</td>
+                        </tr>
+                        <tr>
+                            <td>requirements</td>
+                            <td>String</td>
+                            <td>可选</td>
+                            <td>特殊要求</td>
+                        </tr>
+                    </tbody>
+                </table>
+                
+                <h3 class="section-title">请求示例</h3>
+                <div class="code-block">
+                    <div class="code-header">
+                        <span>JSON</span>
+                        <button class="copy-button" data-clipboard-target="#add-labor-demand-request">复制</button>
+                    </div>                    <pre id="add-labor-demand-request"><code>{  "projectId": 1,
+  "job_type_id": 2,
+  "headCount": 10,
+  "dailyWage": 350.00,
+  "startDate": "2025-04-20",
+  "endDate": "2025-05-20",
+  "work_hours": "08:00-18:00",
+  "accommodation": true,
+  "meals": true,
+  "description": "负责项目二期主体结构砌筑工作",
+  "requirements": "要求有3年以上工作经验，持有中级泥瓦工证书"
+}</code></pre>
+                </div>
+                
+                <h3 class="section-title">响应示例</h3>
+                <div class="code-block">
+                    <div class="code-header">
+                        <span>JSON</span>
+                        <button class="copy-button" data-clipboard-target="#add-labor-demand-response">复制</button>
+                    </div>
+                    <pre id="add-labor-demand-response"><code>{
+  "code": 0,
+  "data": {
+    "id": 1,
+    "projectId": 1,
+    "projectName": "北京通州万达广场建设项目",
+    "occupationId": 2,
+    "occupationName": "泥瓦工",
+    "count": 10,
+    "dailyWage": 350.00,
+    "startDate": "2025-04-20",
+    "endDate": "2025-05-20",
+    "description": "负责项目二期主体结构砌筑工作",
+    "requirements": "要求有3年以上工作经验，持有中级泥瓦工证书",
+    "status": "active",
+    "statusDesc": "招聘中",
+    "createTime": "2025-04-15T10:20:30",
+    "updateTime": null
+  },
+  "message": "success"
+}</code></pre>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Get Labor Demand Info API -->
+        <div class="api-endpoint">
+            <div class="endpoint-header">
+                <span class="http-method method-get">GET</span>
+                <span class="endpoint-path">/labor-demand/info/{id}</span>
+                <span class="endpoint-summary">获取劳务需求详情</span>
+            </div>
+            <div class="endpoint-content">
+                <p>根据ID获取劳务需求的详细信息。</p>
+                
+                <h3 class="section-title">请求头</h3>
+                <table class="param-table">
+                    <thead>
+                        <tr>
+                            <th>参数名</th>
+                            <th>类型</th>
+                            <th>是否必须</th>
+                            <th>描述</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Authorization</td>
+                            <td>String</td>
+                            <td class="param-required">必须</td>
+                            <td>JWT令牌，格式为"Bearer {token}"</td>
+                        </tr>
+                    </tbody>
+                </table>
+                
+                <h3 class="section-title">路径参数</h3>
+                <table class="param-table">
+                    <thead>
+                        <tr>
+                            <th>参数名</th>
+                            <th>类型</th>
+                            <th>是否必须</th>
+                            <th>描述</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>id</td>
+                            <td>Integer</td>
+                            <td class="param-required">必须</td>
+                            <td>劳务需求ID</td>
+                        </tr>
+                    </tbody>
+                </table>
+                
+                <h3 class="section-title">响应示例</h3>
+                <div class="code-block">
+                    <div class="code-header">
+                        <span>JSON</span>
+                        <button class="copy-button" data-clipboard-target="#get-labor-demand-response">复制</button>
+                    </div>
+                    <pre id="get-labor-demand-response"><code>{
+  "code": 0,
+  "data": {
+    "id": 1,
+    "projectId": 1,
+    "projectName": "北京通州万达广场建设项目",
+    "occupationId": 2,
+    "occupationName": "泥瓦工",
+    "count": 10,
+    "dailyWage": 350.00,
+    "startDate": "2025-04-20",
+    "endDate": "2025-05-20",
+    "description": "负责项目二期主体结构砌筑工作",
+    "requirements": "要求有3年以上工作经验，持有中级泥瓦工证书",
+    "status": "active",
+    "statusDesc": "招聘中",
+    "createTime": "2025-04-15T10:20:30",
+    "updateTime": null
+  },
+  "message": "success"
+}</code></pre>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Update Labor Demand API -->
+        <div class="api-endpoint">
+            <div class="endpoint-header">
+                <span class="http-method method-put">PUT</span>
+                <span class="endpoint-path">/labor-demand/update</span>
+                <span class="endpoint-summary">更新劳务需求</span>
+            </div>
+            <div class="endpoint-content">
+                <p>更新劳务需求信息并返回更新后的详细信息。</p>
+                
+                <h3 class="section-title">请求头</h3>
+                <table class="param-table">
+                    <thead>
+                        <tr>
+                            <th>参数名</th>
+                            <th>类型</th>
+                            <th>是否必须</th>
+                            <th>描述</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Authorization</td>
+                            <td>String</td>
+                            <td class="param-required">必须</td>
+                            <td>JWT令牌，格式为"Bearer {token}"</td>
+                        </tr>
+                    </tbody>
+                </table>
+                
+                <h3 class="section-title">请求参数</h3>
+                <table class="param-table">
+                    <thead>
+                        <tr>
+                            <th>参数名</th>
+                            <th>类型</th>
+                            <th>是否必须</th>
+                            <th>描述</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>id</td>
+                            <td>Integer</td>
+                            <td class="param-required">必须</td>
+                            <td>劳务需求ID</td>
+                        </tr>                        <tr>
+                            <td>headCount</td>
+                            <td>Integer</td>
+                            <td>可选</td>
+                            <td>需求人数</td>
+                        </tr>
+                        <tr>
+                            <td>dailyWage</td>
+                            <td>BigDecimal</td>
+                            <td>可选</td>
+                            <td>日薪金额</td>
+                        </tr>
+                        <tr>
+                            <td>startDate</td>
+                            <td>String</td>
+                            <td>可选</td>
+                            <td>开始日期，格式为yyyy-MM-dd</td>
+                        </tr>
+                        <tr>
+                            <td>endDate</td>
+                            <td>String</td>
+                            <td>可选</td>
+                            <td>结束日期，格式为yyyy-MM-dd</td>
+                        </tr>
+                        <tr>
+                            <td>description</td>
+                            <td>String</td>
+                            <td>可选</td>
+                            <td>需求描述</td>
+                        </tr>
+                        <tr>
+                            <td>requirements</td>
+                            <td>String</td>
+                            <td>可选</td>
+                            <td>特殊要求</td>
+                        </tr>
+                    </tbody>
+                </table>
+                
+                <h3 class="section-title">请求示例</h3>
+                <div class="code-block">
+                    <div class="code-header">
+                        <span>JSON</span>
+                        <button class="copy-button" data-clipboard-target="#update-labor-demand-request">复制</button>
+                    </div>
+                    <pre id="update-labor-demand-request"><code>{
+  "id": 1,
+  "count": 15,
+  "dailyWage": 380.00,
+  "endDate": "2025-05-30",
+  "description": "负责项目二期主体结构砌筑和装饰工作",
+  "requirements": "要求有3年以上工作经验，持有中级或高级泥瓦工证书"
+}</code></pre>
+                </div>
+                
+                <h3 class="section-title">响应示例</h3>
+                <div class="code-block">
+                    <div class="code-header">
+                        <span>JSON</span>
+                        <button class="copy-button" data-clipboard-target="#update-labor-demand-response">复制</button>
+                    </div>
+                    <pre id="update-labor-demand-response"><code>{
+  "code": 0,
+  "data": {
+    "id": 1,
+    "projectId": 1,
+    "projectName": "北京通州万达广场建设项目",
+    "occupationId": 2,
+    "occupationName": "泥瓦工",
+    "count": 15,
+    "dailyWage": 380.00,
+    "startDate": "2025-04-20",
+    "endDate": "2025-05-30",
+    "description": "负责项目二期主体结构砌筑和装饰工作",
+    "requirements": "要求有3年以上工作经验，持有中级或高级泥瓦工证书",
+    "status": "active",
+    "statusDesc": "招聘中",
+    "createTime": "2025-04-15T10:20:30",
+    "updateTime": "2025-04-15T15:30:45"
+  },
+  "message": "success"
+}</code></pre>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Update Labor Demand Status API -->
+        <div class="api-endpoint">
+            <div class="endpoint-header">
+                <span class="http-method method-put">PUT</span>
+                <span class="endpoint-path">/labor-demand/status</span>
+                <span class="endpoint-summary">更新劳务需求状态</span>
+            </div>
+            <div class="endpoint-content">
+                <p>更新劳务需求的状态并返回更新后的详细信息。</p>
+                
+                <h3 class="section-title">请求头</h3>
+                <table class="param-table">
+                    <thead>
+                        <tr>
+                            <th>参数名</th>
+                            <th>类型</th>
+                            <th>是否必须</th>
+                            <th>描述</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Authorization</td>
+                            <td>String</td>
+                            <td class="param-required">必须</td>
+                            <td>JWT令牌，格式为"Bearer {token}"</td>
+                        </tr>
+                    </tbody>
+                </table>
+                
+                <h3 class="section-title">请求参数</h3>
+                <table class="param-table">
+                    <thead>
+                        <tr>
+                            <th>参数名</th>
+                            <th>类型</th>
+                            <th>是否必须</th>
+                            <th>描述</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>id</td>
+                            <td>Integer</td>
+                            <td class="param-required">必须</td>
+                            <td>劳务需求ID</td>
+                        </tr>
+                        <tr>
+                            <td>status</td>
+                            <td>String</td>
+                            <td class="param-required">必须</td>
+                            <td>状态值，可选值：active(招聘中)、paused(已暂停)、completed(已满员)、cancelled(已取消)</td>
+                        </tr>
+                    </tbody>
+                </table>
+                
+                <h3 class="section-title">请求示例</h3>
+                <div class="code-block">
+                    <div class="code-header">
+                        <span>JSON</span>
+                        <button class="copy-button" data-clipboard-target="#update-labor-demand-status-request">复制</button>
+                    </div>
+                    <pre id="update-labor-demand-status-request"><code>{
+  "id": 1,
+  "status": "completed"
+}</code></pre>
+                </div>
+                
+                <h3 class="section-title">响应示例</h3>
+                <div class="code-block">
+                    <div class="code-header">
+                        <span>JSON</span>
+                        <button class="copy-button" data-clipboard-target="#update-labor-demand-status-response">复制</button>
+                    </div>
+                    <pre id="update-labor-demand-status-response"><code>{
+  "code": 0,
+  "data": {
+    "id": 1,
+    "projectId": 1,
+    "projectName": "北京通州万达广场建设项目",
+    "occupationId": 2,
+    "occupationName": "泥瓦工",
+    "count": 15,
+    "dailyWage": 380.00,
+    "startDate": "2025-04-20",
+    "endDate": "2025-05-30",
+    "description": "负责项目二期主体结构砌筑和装饰工作",
+    "requirements": "要求有3年以上工作经验，持有中级或高级泥瓦工证书",
+    "status": "completed",
+    "statusDesc": "已满员",
+    "createTime": "2025-04-15T10:20:30",
+    "updateTime": "2025-04-15T16:45:10"
+  },
+  "message": "success"
+}</code></pre>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Delete Labor Demand API -->
+        <div class="api-endpoint">
+            <div class="endpoint-header">
+                <span class="http-method method-delete">DELETE</span>
+                <span class="endpoint-path">/labor-demand/delete/{id}</span>
+                <span class="endpoint-summary">删除劳务需求</span>
+            </div>
+            <div class="endpoint-content">
+                <p>删除指定ID的劳务需求。</p>
+                
+                <h3 class="section-title">请求头</h3>
+                <table class="param-table">
+                    <thead>
+                        <tr>
+                            <th>参数名</th>
+                            <th>类型</th>
+                            <th>是否必须</th>
+                            <th>描述</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Authorization</td>
+                            <td>String</td>
+                            <td class="param-required">必须</td>
+                            <td>JWT令牌，格式为"Bearer {token}"</td>
+                        </tr>
+                    </tbody>
+                </table>
+                
+                <h3 class="section-title">路径参数</h3>
+                <table class="param-table">
+                    <thead>
+                        <tr>
+                            <th>参数名</th>
+                            <th>类型</th>
+                            <th>是否必须</th>
+                            <th>描述</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>id</td>
+                            <td>Integer</td>
+                            <td class="param-required">必须</td>
+                            <td>劳务需求ID</td>
+                        </tr>
+                    </tbody>
+                </table>
+                
+                <h3 class="section-title">响应示例</h3>
+                <div class="code-block">
+                    <div class="code-header">
+                        <span>JSON</span>
+                        <button class="copy-button" data-clipboard-target="#delete-labor-demand-response">复制</button>
+                    </div>
+                    <pre id="delete-labor-demand-response"><code>{
+  "code": 0,
+  "data": true,
+  "message": "success"
+}</code></pre>
+                </div>
+            </div>
+        </div>
+        
+        <!-- List Labor Demands API -->
+        <div class="api-endpoint">
+            <div class="endpoint-header">
+                <span class="http-method method-post">POST</span>
+                <span class="endpoint-path">/labor-demand/list</span>
+                <span class="endpoint-summary">查询劳务需求列表</span>
+            </div>
+            <div class="endpoint-content">
+                <p>根据条件分页查询劳务需求列表。</p>
+                
+                <h3 class="section-title">请求头</h3>
+                <table class="param-table">
+                    <thead>
+                        <tr>
+                            <th>参数名</th>
+                            <th>类型</th>
+                            <th>是否必须</th>
+                            <th>描述</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Authorization</td>
+                            <td>String</td>
+                            <td class="param-required">必须</td>
+                            <td>JWT令牌，格式为"Bearer {token}"</td>
+                        </tr>
+                    </tbody>
+                </table>
+                
+                <h3 class="section-title">请求参数</h3>
+                <table class="param-table">
+                    <thead>
+                        <tr>
+                            <th>参数名</th>
+                            <th>类型</th>
+                            <th>是否必须</th>
+                            <th>描述</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>projectId</td>
+                            <td>Integer</td>
+                            <td>可选</td>
+                            <td>项目ID</td>
+                        </tr>
+                        <tr>
+                            <td>occupationId</td>
+                            <td>Integer</td>
+                            <td>可选</td>
+                            <td>工种ID</td>
+                        </tr>
+                        <tr>
+                            <td>status</td>
+                            <td>String</td>
+                            <td>可选</td>
+                            <td>状态</td>
+                        </tr>
+                        <tr>
+                            <td>minDailyWage</td>
+                            <td>BigDecimal</td>
+                            <td>可选</td>
+                            <td>最低日薪</td>
+                        </tr>
+                        <tr>
+                            <td>maxDailyWage</td>
+                            <td>BigDecimal</td>
+                            <td>可选</td>
+                            <td>最高日薪</td>
+                        </tr>
+                        <tr>
+                            <td>startDateBegin</td>
+                            <td>String</td>
+                            <td>可选</td>
+                            <td>开始日期范围的起始时间</td>
+                        </tr>
+                        <tr>
+                            <td>startDateEnd</td>
+                            <td>String</td>
+                            <td>可选</td>
+                            <td>开始日期范围的结束时间</td>
+                        </tr>
+                        <tr>
+                            <td>pageNum</td>
+                            <td>Integer</td>
+                            <td>可选</td>
+                            <td>页码，默认为1</td>
+                        </tr>
+                        <tr>
+                            <td>pageSize</td>
+                            <td>Integer</td>
+                            <td>可选</td>
+                            <td>每页数量，默认为10</td>
+                        </tr>
+                    </tbody>
+                </table>
+                
+                <h3 class="section-title">请求示例</h3>
+                <div class="code-block">
+                    <div class="code-header">
+                        <span>JSON</span>
+                        <button class="copy-button" data-clipboard-target="#list-labor-demand-request">复制</button>
+                    </div>
+                    <pre id="list-labor-demand-request"><code>{
+  "projectId": 1,
+  "occupationId": 2,
+  "status": "active",
+  "minDailyWage": 300.00,
+  "maxDailyWage": 500.00,
+  "startDateBegin": "2025-04-01",
+  "startDateEnd": "2025-05-01",
+  "pageNum": 1,
+  "pageSize": 10
+}</code></pre>
+                </div>
+                
+                <h3 class="section-title">响应示例</h3>
+                <div class="code-block">
+                    <div class="code-header">
+                        <span>JSON</span>
+                        <button class="copy-button" data-clipboard-target="#list-labor-demand-response">复制</button>
+                    </div>
+                    <pre id="list-labor-demand-response"><code>{
+  "code": 0,
+  "data": {
+    "records": [
+      {
+        "id": 1,
+        "projectId": 1,
+        "projectName": "北京通州万达广场建设项目",
+        "occupationId": 2,
+        "occupationName": "泥瓦工",
+        "count": 15,
+        "dailyWage": 380.00,
+        "startDate": "2025-04-20",
+        "endDate": "2025-05-30",
+        "description": "负责项目二期主体结构砌筑和装饰工作",
+        "requirements": "要求有3年以上工作经验，持有中级或高级泥瓦工证书",
+        "status": "active",
+        "statusDesc": "招聘中",
+        "createTime": "2025-04-15T10:20:30",
+        "updateTime": "2025-04-15T15:30:45"
+      }
+    ],
+    "total": 1,
+    "size": 10,
+    "current": 1,
+    "pages": 1
+  },
+  "message": "success"
+}</code></pre>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
     </div>
 
     <footer class="footer">

@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.qingming.jobserver.mapper.LaborDemandMapper">
+    
+    <!-- 劳务需求VO结果映射 -->
+    <resultMap id="LaborDemandVOMap" type="com.qingming.jobserver.model.vo.LaborDemandVO">
+        <id property="id" column="id"/>
+        <result property="projectId" column="project_id"/>
+        <result property="projectName" column="project_name"/>
+        <result property="projectAddress" column="project_address"/>
+        <result property="jobTypeId" column="job_type_id"/>
+        <result property="jobTypeName" column="job_type_name"/>
+        <result property="jobTypeCategory" column="job_type_category"/>
+        <result property="headcount" column="headcount"/>
+        <result property="dailyWage" column="daily_wage"/>
+        <result property="startDate" column="start_date"/>
+        <result property="endDate" column="end_date"/>
+        <result property="workHours" column="work_hours"/>
+        <result property="requirements" column="requirements"/>
+        <result property="accommodation" column="accommodation"/>
+        <result property="meals" column="meals"/>
+        <result property="status" column="status"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateTime" column="update_time"/>
+        <result property="companyName" column="company_name"/>
+    </resultMap>
+    
+    <!-- 基础查询SQL -->
+    <sql id="baseLaborDemandQuery">
+        SELECT
+            ld.id,
+            ld.project_id,
+            cp.name AS project_name,
+            cp.address AS project_address,
+            ld.job_type_id,
+            o.name AS job_type_name,
+            o.category AS job_type_category,
+            ld.headcount,
+            ld.daily_wage,
+            ld.start_date,
+            ld.end_date,
+            ld.work_hours,
+            ld.requirements,
+            ld.accommodation,
+            ld.meals,
+            ld.status,
+            ld.create_time,
+            ld.update_time,
+            c.name AS company_name
+        FROM
+            labor_demand ld
+        INNER JOIN construction_project cp ON ld.project_id = cp.id
+        INNER JOIN occupation o ON ld.job_type_id = o.id
+        INNER JOIN company c ON cp.company_id = c.id
+    </sql>
+    
+    <!-- 根据条件查询劳务需求列表 -->
+    <select id="queryLaborDemandList" resultMap="LaborDemandVOMap">
+        <include refid="baseLaborDemandQuery"/>
+        <where>
+            <if test="projectId != null">
+                AND ld.project_id = #{projectId}
+            </if>
+            <if test="jobTypeId != null">
+                AND ld.job_type_id = #{jobTypeId}
+            </if>
+            <if test="minDailyWage != null">
+                AND ld.daily_wage >= #{minDailyWage}
+            </if>
+            <if test="maxDailyWage != null">
+                AND ld.daily_wage &lt;= #{maxDailyWage}
+            </if>
+            <if test="startDate != null">
+                AND ld.end_date >= #{startDate}
+            </if>
+            <if test="endDate != null">
+                AND ld.start_date &lt;= #{endDate}
+            </if>
+            <if test="accommodation != null">
+                AND ld.accommodation = #{accommodation}
+            </if>
+            <if test="meals != null">
+                AND ld.meals = #{meals}
+            </if>
+            <if test="status != null and status != ''">
+                AND ld.status = #{status}
+            </if>
+        </where>
+        ORDER BY ld.create_time DESC
+    </select>
+    
+    <!-- 根据ID查询劳务需求详情 -->
+    <select id="getLaborDemandById" resultMap="LaborDemandVOMap">
+        <include refid="baseLaborDemandQuery"/>
+        WHERE ld.id = #{id}
+    </select>
+    
+    <!-- 获取特定项目的所有劳务需求 -->
+    <select id="getLaborDemandsByProjectId" resultMap="LaborDemandVOMap">
+        <include refid="baseLaborDemandQuery"/>
+        WHERE ld.project_id = #{projectId}
+        ORDER BY ld.create_time DESC
+    </select>
+</mapper>
