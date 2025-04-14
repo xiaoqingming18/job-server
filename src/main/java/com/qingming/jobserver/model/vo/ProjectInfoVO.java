@@ -17,6 +17,9 @@ public class ProjectInfoVO implements Serializable {
     private Integer companyId;
     private String name;
     private String address;
+    private String province;
+    private String city;
+    private String district;
     private Long projectManagerId;
     private String projectManagerName; // 项目经理姓名
     private Date startDate;

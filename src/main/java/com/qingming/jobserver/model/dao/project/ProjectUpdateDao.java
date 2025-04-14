@@ -30,6 +30,24 @@ public class ProjectUpdateDao {
     private String address;
 
     /**
+     * 省份（选填）
+     */
+    @Size(max = 50, message = "省份最长50个字符")
+    private String province;
+
+    /**
+     * 城市（选填）
+     */
+    @Size(max = 50, message = "城市最长50个字符")
+    private String city;
+
+    /**
+     * 区县（选填）
+     */
+    @Size(max = 50, message = "区县最长50个字符")
+    private String district;
+
+    /**
      * 开工日期（选填）
      */
     private Date startDate;

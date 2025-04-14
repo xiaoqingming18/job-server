@@ -6,6 +6,9 @@
         <result column="company_id" property="companyId"/>
         <result column="name" property="name"/>
         <result column="address" property="address"/>
+        <result column="province" property="province"/>
+        <result column="city" property="city"/>
+        <result column="district" property="district"/>
         <result column="project_manager_id" property="projectManagerId"/>
         <result column="start_date" property="startDate"/>
         <result column="expected_end_date" property="expectedEndDate"/>
@@ -25,6 +28,9 @@
         <result column="company_id" property="companyId"/>
         <result column="name" property="name"/>
         <result column="address" property="address"/>
+        <result column="province" property="province"/>
+        <result column="city" property="city"/>
+        <result column="district" property="district"/>
         <result column="project_manager_id" property="projectManagerId"/>
         <result column="project_manager_name" property="projectManagerName"/>
         <result column="start_date" property="startDate"/>
@@ -43,11 +49,11 @@
     <insert id="insertProject" parameterType="com.qingming.jobserver.model.entity.ConstructionProject" 
             useGeneratedKeys="true" keyProperty="id">
         INSERT INTO construction_project (
-            company_id, name, address, project_manager_id, 
+            company_id, name, address, province, city, district, project_manager_id, 
             start_date, expected_end_date, project_type, project_scale, 
             total_area, budget, description, status
         ) VALUES (
-            #{companyId}, #{name}, #{address}, #{projectManagerId},
+            #{companyId}, #{name}, #{address}, #{province}, #{city}, #{district}, #{projectManagerId},
             #{startDate}, #{expectedEndDate}, #{projectType}, #{projectScale},
             #{totalArea}, #{budget}, #{description}, #{status}
         )
@@ -56,7 +62,8 @@
     <!-- 根据ID查询项目详情 -->
     <select id="getProjectInfoById" resultMap="ProjectInfoResultMap">
         SELECT 
-            p.id, p.company_id, p.name, p.address, p.project_manager_id, u.username as project_manager_name,
+            p.id, p.company_id, p.name, p.address, p.province, p.city, p.district,
+            p.project_manager_id, u.username as project_manager_name,
             p.start_date, p.expected_end_date, p.project_type, p.project_scale,
             p.total_area, p.budget, p.description, p.status, p.create_time, p.update_time
         FROM 
@@ -73,6 +80,9 @@
         <set>
             <if test="name != null">name = #{name},</if>
             <if test="address != null">address = #{address},</if>
+            <if test="province != null">province = #{province},</if>
+            <if test="city != null">city = #{city},</if>
+            <if test="district != null">district = #{district},</if>
             <if test="startDate != null">start_date = #{startDate},</if>
             <if test="expectedEndDate != null">expected_end_date = #{expectedEndDate},</if>
             <if test="projectType != null">project_type = #{projectType},</if>

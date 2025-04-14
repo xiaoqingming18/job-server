@@ -28,6 +28,15 @@ public class ConstructionProject implements Serializable {
     @TableField("address")
     private String address;
     
+    @TableField("province")
+    private String province;
+    
+    @TableField("city")
+    private String city;
+    
+    @TableField("district")
+    private String district;
+    
     @TableField("project_manager_id")
     private Long projectManagerId;
     

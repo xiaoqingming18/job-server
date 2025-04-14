@@ -1528,196 +1528,7 @@
                         <span class="endpoint-summary">添加建筑项目</span>
                     </div>
                     <div class="endpoint-content">
-                        <p>创建新的建筑项目。注意：求职者(job_seeker)角色不允许添加项目。</p>
-                        
-                        <h3 class="section-title">请求头</h3>
-                        <table class="param-table">
-                            <thead>
-                                <tr>
-                                    <th>参数名</th>
-                                    <th>类型</th>
-                                    <th>是否必须</th>
-                                    <th>描述</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr>
-                                    <td>Authorization</td>
-                                    <td>String</td>
-                                    <td class="param-required">必须</td>
-                                    <td>Bearer 令牌（项目经理或企业管理员令牌）</td>
-                                </tr>
-                            </tbody>
-                        </table>
-                        
-                        <h3 class="section-title">请求参数</h3>
-                        <table class="param-table">
-                            <thead>
-                                <tr>
-                                    <th>参数名</th>
-                                    <th>类型</th>
-                                    <th>是否必须</th>
-                                    <th>描述</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr>
-                                    <td>companyId</td>
-                                    <td>Integer</td>
-                                    <td class="param-required">必须</td>
-                                    <td>关联企业ID</td>
-                                </tr>
-                                <tr>
-                                    <td>name</td>
-                                    <td>String</td>
-                                    <td class="param-required">必须</td>
-                                    <td>项目名称（最多100个字符）</td>
-                                </tr>
-                                <tr>
-                                    <td>address</td>
-                                    <td>String</td>
-                                    <td class="param-required">必须</td>
-                                    <td>项目地址（最多255个字符）</td>
-                                </tr>
-                                <tr>
-                                    <td>startDate</td>
-                                    <td>Date</td>
-                                    <td class="param-required">必须</td>
-                                    <td>开工日期（YYYY-MM-DD格式）</td>
-                                </tr>
-                                <tr>
-                                    <td>expectedEndDate</td>
-                                    <td>Date</td>
-                                    <td class="param-required">必须</td>
-                                    <td>预计竣工日期（YYYY-MM-DD格式）</td>
-                                </tr>
-                                <tr>
-                                    <td>projectType</td>
-                                    <td>String</td>
-                                    <td class="param-required">必须</td>
-                                    <td>项目类型（residence：住宅，commerce：商业，industry：工业，municipal：市政）</td>
-                                </tr>
-                                <tr>
-                                    <td>projectScale</td>
-                                    <td>String</td>
-                                    <td class="param-required">必须</td>
-                                    <td>项目规模（small：小型，medium：中型，big：大型）</td>
-                                </tr>
-                                <tr>
-                                    <td>totalArea</td>
-                                    <td>Decimal</td>
-                                    <td class="param-required">必须</td>
-                                    <td>总建筑面积（平方米）</td>
-                                </tr>
-                                <tr>
-                                    <td>budget</td>
-                                    <td>Decimal</td>
-                                    <td class="param-required">必须</td>
-                                    <td>项目预算（元）</td>
-                                </tr>
-                                <tr>
-                                    <td>description</td>
-                                    <td>String</td>
-                                    <td>可选</td>
-                                    <td>项目描述</td>
-                                </tr>
-                            </tbody>
-                        </table>
-                        
-                        <h3 class="section-title">请求示例</h3>
-                        <div class="code-block">
-                            <div class="code-header">
-                                <span>JSON</span>
-                                <button class="copy-button" data-clipboard-target="#add-project-request">复制</button>
-                            </div>
-                            <pre id="add-project-request"><code>{
-  "companyId": 1,
-  "name": "华安花园住宅小区",
-  "address": "北京市朝阳区建国路88号",
-  "startDate": "2025-06-01",
-  "expectedEndDate": "2026-12-31",
-  "projectType": "residence",
-  "projectScale": "big",
-  "totalArea": 50000.00,
-  "budget": 80000000.00,
-  "description": "大型住宅小区建设项目，包含10栋高层住宅楼及配套设施"
-}</code></pre>
-                        </div>
-                        
-                        <h3 class="section-title">响应示例</h3>
-                        <div class="code-block">
-                            <div class="code-header">
-                                <span>JSON</span>
-                                <button class="copy-button" data-clipboard-target="#add-project-response">复制</button>
-                            </div>
-                            <pre id="add-project-response"><code>{
-  "code": 0,
-  "data": {
-    "id": 1,
-    "companyId": 1,
-    "name": "华安花园住宅小区",
-    "address": "北京市朝阳区建国路88号",
-    "projectManagerId": 5,
-    "projectManagerName": "manager1",
-    "startDate": "2025-06-01",
-    "expectedEndDate": "2026-12-31", 
-    "projectType": "residence",
-    "projectScale": "big",
-    "totalArea": 50000.00,
-    "budget": 80000000.00,
-    "description": "大型住宅小区建设项目，包含10栋高层住宅楼及配套设施",
-    "status": "pending",
-    "createTime": "2025-04-14T10:30:00",
-    "updateTime": null
-  },
-  "message": "success"
-}</code></pre>
-                        </div>
-                        
-                        <h3 class="section-title">错误响应示例</h3>
-                        <div class="code-block">
-                            <div class="code-header">
-                                <span>JSON</span>
-                                <button class="copy-button" data-clipboard-target="#add-project-error">复制</button>
-                            </div>
-                            <pre id="add-project-error"><code>{
-  "code": 40007,
-  "data": null,
-  "message": "您所属的用户组不允许添加项目"
-}</code></pre>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Get Project Info API -->
-                <div class="api-endpoint">
-                    <div class="endpoint-header">
-                        <span class="http-method method-get">GET</span>
-                        <span class="endpoint-path">/project/info/{id}</span>
-                        <span class="endpoint-summary">获取项目详情</span>
-                    </div>
-                    <div class="endpoint-content">
-                        <p>根据ID获取项目详细信息。</p>
-                        
-                        <h3 class="section-title">路径参数</h3>
-                        <table class="param-table">
-                            <thead>
-                                <tr>
-                                    <th>参数名</th>
-                                    <th>类型</th>
-                                    <th>是否必须</th>
-                                    <th>描述</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr>
-                                    <td>id</td>
-                                    <td>Integer</td>
-                                    <td class="param-required">必须</td>
-                                    <td>项目ID</td>
-                                </tr>
-                            </tbody>
-                        </table>
+                        <p>添加新的建筑项目，仅企业管理员和项目经理可操作。</p>
                         
                         <h3 class="section-title">请求头</h3>
                         <table class="param-table">
@@ -1739,39 +1550,255 @@
                             </tbody>
                         </table>
                         
+                        <h3 class="section-title">请求参数</h3>
+                        <table class="param-table">
+                            <thead>
+                                <tr>
+                                    <th>参数名</th>
+                                    <th>类型</th>
+                                    <th>是否必须</th>
+                                    <th>描述</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>companyId</td>
+                                    <td>Integer</td>
+                                    <td class="param-required">必须</td>
+                                    <td>企业ID</td>
+                                </tr>
+                                <tr>
+                                    <td>name</td>
+                                    <td>String</td>
+                                    <td class="param-required">必须</td>
+                                    <td>项目名称</td>
+                                </tr>
+                                <tr>
+                                    <td>address</td>
+                                    <td>String</td>
+                                    <td class="param-required">必须</td>
+                                    <td>项目地址</td>
+                                </tr>
+                                <tr>
+                                    <td>province</td>
+                                    <td>String</td>
+                                    <td class="param-required">必须</td>
+                                    <td>省份</td>
+                                </tr>
+                                <tr>
+                                    <td>city</td>
+                                    <td>String</td>
+                                    <td class="param-required">必须</td>
+                                    <td>城市</td>
+                                </tr>
+                                <tr>
+                                    <td>district</td>
+                                    <td>String</td>
+                                    <td class="param-required">必须</td>
+                                    <td>区县</td>
+                                </tr>
+                                <tr>
+                                    <td>startDate</td>
+                                    <td>Date</td>
+                                    <td class="param-required">必须</td>
+                                    <td>开工日期</td>
+                                </tr>
+                                <tr>
+                                    <td>expectedEndDate</td>
+                                    <td>Date</td>
+                                    <td class="param-required">必须</td>
+                                    <td>预计竣工日期</td>
+                                </tr>
+                                <tr>
+                                    <td>projectType</td>
+                                    <td>String</td>
+                                    <td class="param-required">必须</td>
+                                    <td>项目类型（residence/commerce/industry/municipal）</td>
+                                </tr>
+                                <tr>
+                                    <td>projectScale</td>
+                                    <td>String</td>
+                                    <td class="param-required">必须</td>
+                                    <td>项目规模（small/medium/big）</td>
+                                </tr>
+                                <tr>
+                                    <td>totalArea</td>
+                                    <td>BigDecimal</td>
+                                    <td class="param-required">必须</td>
+                                    <td>总建筑面积（平方米）</td>
+                                </tr>
+                                <tr>
+                                    <td>budget</td>
+                                    <td>BigDecimal</td>
+                                    <td class="param-required">必须</td>
+                                    <td>项目预算（元）</td>
+                                </tr>
+                                <tr>
+                                    <td>description</td>
+                                    <td>String</td>
+                                    <td>可选</td>
+                                    <td>项目描述</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        
+                        <h3 class="section-title">请求示例</h3>
+                        <div class="code-block">
+                            <div class="code-header">
+                                <span>JSON</span>
+                                <button class="copy-button" data-clipboard-target="#project-add-request">复制</button>
+                            </div>
+                            <pre id="project-add-request"><code>{
+    "companyId": 1,
+    "name": "华安花园住宅小区",
+    "address": "建国路88号",
+    "province": "北京市",
+    "city": "北京市",
+    "district": "朝阳区",
+    "startDate": "2025-06-01",
+    "expectedEndDate": "2026-12-31",
+    "projectType": "residence",
+    "projectScale": "big",
+    "totalArea": 50000.00,
+    "budget": 100000000.00,
+    "description": "高端住宅项目，配套设施齐全"
+}</code></pre>
+                        </div>
+                        
                         <h3 class="section-title">响应示例</h3>
                         <div class="code-block">
                             <div class="code-header">
                                 <span>JSON</span>
-                                <button class="copy-button" data-clipboard-target="#get-project-response">复制</button>
+                                <button class="copy-button" data-clipboard-target="#project-add-response">复制</button>
                             </div>
-                            <pre id="get-project-response"><code>{
-  "code": 0,
-  "data": {
-    "id": 1,
-    "companyId": 1,
-    "name": "华安花园住宅小区",
-    "address": "北京市朝阳区建国路88号",
-    "projectManagerId": 5,
-    "projectManagerName": "manager1",
-    "startDate": "2025-06-01",
-    "expectedEndDate": "2026-12-31", 
-    "projectType": "residence",
-    "projectScale": "big",
-    "totalArea": 50000.00,
-    "budget": 80000000.00,
-    "description": "大型住宅小区建设项目，包含10栋高层住宅楼及配套设施",
-    "status": "pending",
-    "createTime": "2025-04-14T10:30:00",
-    "updateTime": null
-  },
-  "message": "success"
+                            <pre id="project-add-response"><code>{
+    "code": 0,
+    "data": {
+        "id": 1,
+        "companyId": 1,
+        "name": "华安花园住宅小区",
+        "address": "建国路88号",
+        "province": "北京市",
+        "city": "北京市",
+        "district": "朝阳区",
+        "projectManagerId": 10001,
+        "projectManagerName": "张三",
+        "startDate": "2025-06-01",
+        "expectedEndDate": "2026-12-31",
+        "projectType": "residence",
+        "projectScale": "big",
+        "totalArea": 50000.00,
+        "budget": 100000000.00,
+        "description": "高端住宅项目，配套设施齐全",
+        "status": "pending",
+        "createTime": "2024-03-15T10:30:00",
+        "updateTime": null
+    },
+    "message": "success"
+}</code></pre>
+                        </div>
+                        
+                        <h3 class="section-title">错误响应示例</h3>
+                        <div class="code-block">
+                            <div class="code-header">
+                                <span>JSON</span>
+                                <button class="copy-button" data-clipboard-target="#project-add-error">复制</button>
+                            </div>
+                            <pre id="project-add-error"><code>{
+    "code": 40300,
+    "data": null,
+    "message": "您所属的用户组不允许添加项目"
 }</code></pre>
                         </div>
                     </div>
                 </div>
                 
-                <!-- Update Project API -->
+                <!-- Get Project Info API -->
+                <div class="api-endpoint">
+                    <div class="endpoint-header">
+                        <span class="http-method method-get">GET</span>
+                        <span class="endpoint-path">/project/info/{id}</span>
+                        <span class="endpoint-summary">获取项目详情</span>
+                    </div>
+                    <div class="endpoint-content">
+                        <p>根据项目ID获取项目详细信息。</p>
+                        
+                        <h3 class="section-title">请求头</h3>
+                        <table class="param-table">
+                            <thead>
+                                <tr>
+                                    <th>参数名</th>
+                                    <th>类型</th>
+                                    <th>是否必须</th>
+                                    <th>描述</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>Authorization</td>
+                                    <td>String</td>
+                                    <td class="param-required">必须</td>
+                                    <td>Bearer 令牌</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        
+                        <h3 class="section-title">路径参数</h3>
+                        <table class="param-table">
+                            <thead>
+                                <tr>
+                                    <th>参数名</th>
+                                    <th>类型</th>
+                                    <th>是否必须</th>
+                                    <th>描述</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>id</td>
+                                    <td>Integer</td>
+                                    <td class="param-required">必须</td>
+                                    <td>项目ID</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        
+                        <h3 class="section-title">响应示例</h3>
+                        <div class="code-block">
+                            <div class="code-header">
+                                <span>JSON</span>
+                                <button class="copy-button" data-clipboard-target="#project-info-response">复制</button>
+                            </div>
+                            <pre id="project-info-response"><code>{
+    "code": 0,
+    "data": {
+        "id": 1,
+        "companyId": 1,
+        "name": "华安花园住宅小区",
+        "address": "建国路88号",
+        "province": "北京市",
+        "city": "北京市",
+        "district": "朝阳区",
+        "projectManagerId": 10001,
+        "projectManagerName": "张三",
+        "startDate": "2025-06-01",
+        "expectedEndDate": "2026-12-31",
+        "projectType": "residence",
+        "projectScale": "big",
+        "totalArea": 50000.00,
+        "budget": 100000000.00,
+        "description": "高端住宅项目，配套设施齐全",
+        "status": "in_progress",
+        "createTime": "2024-03-15T10:30:00",
+        "updateTime": null
+    },
+    "message": "success"
+}</code></pre>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Update Project Info API -->
                 <div class="api-endpoint">
                     <div class="endpoint-header">
                         <span class="http-method method-put">PUT</span>
@@ -1779,7 +1806,7 @@
                         <span class="endpoint-summary">更新项目信息</span>
                     </div>
                     <div class="endpoint-content">
-                        <p>更新项目的基本信息。系统管理员和项目经理有权限更新项目信息。</p>
+                        <p>更新项目基本信息，仅项目经理和系统管理员可操作。</p>
                         
                         <h3 class="section-title">请求头</h3>
                         <table class="param-table">
@@ -1831,28 +1858,46 @@
                                     <td>项目地址</td>
                                 </tr>
                                 <tr>
+                                    <td>province</td>
+                                    <td>String</td>
+                                    <td>可选</td>
+                                    <td>省份</td>
+                                </tr>
+                                <tr>
+                                    <td>city</td>
+                                    <td>String</td>
+                                    <td>可选</td>
+                                    <td>城市</td>
+                                </tr>
+                                <tr>
+                                    <td>district</td>
+                                    <td>String</td>
+                                    <td>可选</td>
+                                    <td>区县</td>
+                                </tr>
+                                <tr>
                                     <td>startDate</td>
                                     <td>Date</td>
                                     <td>可选</td>
-                                    <td>开工日期（YYYY-MM-DD格式）</td>
+                                    <td>开工日期</td>
                                 </tr>
                                 <tr>
                                     <td>expectedEndDate</td>
                                     <td>Date</td>
                                     <td>可选</td>
-                                    <td>预计竣工日期（YYYY-MM-DD格式）</td>
+                                    <td>预计竣工日期</td>
                                 </tr>
                                 <tr>
                                     <td>projectType</td>
                                     <td>String</td>
                                     <td>可选</td>
-                                    <td>项目类型（residence、commerce、industry、municipal）</td>
+                                    <td>项目类型（residence/commerce/industry/municipal）</td>
                                 </tr>
                                 <tr>
                                     <td>projectScale</td>
                                     <td>String</td>
                                     <td>可选</td>
-                                    <td>项目规模（small、medium、big）</td>
+                                    <td>项目规模（small/medium/big）</td>
                                 </tr>
                                 <tr>
                                     <td>totalArea</td>
@@ -1879,16 +1924,19 @@
                         <div class="code-block">
                             <div class="code-header">
                                 <span>JSON</span>
-                                <button class="copy-button" data-clipboard-target="#update-project-request">复制</button>
+                                <button class="copy-button" data-clipboard-target="#project-update-request">复制</button>
                             </div>
-                            <pre id="update-project-request"><code>{
-  "id": 1,
-  "name": "华安花园高端住宅小区",
-  "address": "北京市朝阳区建国路88号",
-  "startDate": "2025-07-01",
-  "expectedEndDate": "2027-01-31",
-  "budget": 85000000.00,
-  "description": "高端住宅小区建设项目，包含10栋高层住宅楼及先进配套设施"
+                            <pre id="project-update-request"><code>{
+    "id": 1,
+    "name": "华安花园二期住宅小区",
+    "address": "建国路88号",
+    "province": "北京市",
+    "city": "北京市",
+    "district": "朝阳区",
+    "expectedEndDate": "2027-06-30",
+    "totalArea": 55000.00,
+    "budget": 120000000.00,
+    "description": "高端住宅项目二期工程，配套设施升级"
 }</code></pre>
                         </div>
                         
@@ -1896,48 +1944,37 @@
                         <div class="code-block">
                             <div class="code-header">
                                 <span>JSON</span>
-                                <button class="copy-button" data-clipboard-target="#update-project-response">复制</button>
+                                <button class="copy-button" data-clipboard-target="#project-update-response">复制</button>
                             </div>
-                            <pre id="update-project-response"><code>{
-  "code": 0,
-  "data": {
-    "id": 1,
-    "companyId": 1,
-    "name": "华安花园高端住宅小区",
-    "address": "北京市朝阳区建国路88号",
-    "projectManagerId": 5,
-    "projectManagerName": "manager1",
-    "startDate": "2025-07-01",
-    "expectedEndDate": "2027-01-31", 
-    "projectType": "residence",
-    "projectScale": "big",
-    "totalArea": 50000.00,
-    "budget": 85000000.00,
-    "description": "高端住宅小区建设项目，包含10栋高层住宅楼及先进配套设施",
-    "status": "pending",
-    "createTime": "2025-04-14T10:30:00",
-    "updateTime": "2025-04-14T15:45:20"
-  },
-  "message": "success"
-}</code></pre>
-                        </div>
-                        
-                        <h3 class="section-title">错误响应示例</h3>
-                        <div class="code-block">
-                            <div class="code-header">
-                                <span>JSON</span>
-                                <button class="copy-button" data-clipboard-target="#update-project-error">复制</button>
-                            </div>
-                            <pre id="update-project-error"><code>{
-  "code": 40100,
-  "data": null,
-  "message": "您无权更新此项目"
+                            <pre id="project-update-response"><code>{
+    "code": 0,
+    "data": {
+        "id": 1,
+        "companyId": 1,
+        "name": "华安花园二期住宅小区",
+        "address": "建国路88号",
+        "province": "北京市",
+        "city": "北京市",
+        "district": "朝阳区",
+        "projectManagerId": 10001,
+        "projectManagerName": "张三",
+        "startDate": "2025-06-01",
+        "expectedEndDate": "2027-06-30",
+        "projectType": "residence",
+        "projectScale": "big",
+        "totalArea": 55000.00,
+        "budget": 120000000.00,
+        "description": "高端住宅项目二期工程，配套设施升级",
+        "status": "in_progress",
+        "createTime": "2024-03-15T10:30:00",
+        "updateTime": "2024-03-15T16:45:00"
+    },
+    "message": "success"
 }</code></pre>
                         </div>
                     </div>
                 </div>
-                
-                <!-- Update Project Status API -->
+                <!-- 更新项目状态接口 -->
                 <div class="api-endpoint">
                     <div class="endpoint-header">
                         <span class="http-method method-put">PUT</span>
@@ -1945,7 +1982,7 @@
                         <span class="endpoint-summary">更新项目状态</span>
                     </div>
                     <div class="endpoint-content">
-                        <p>更新项目的状态。系统管理员和项目经理有权限更新项目状态。</p>
+                        <p>更新项目状态，仅项目经理和系统管理员可操作。</p>
                         
                         <h3 class="section-title">请求头</h3>
                         <table class="param-table">
@@ -1988,7 +2025,7 @@
                                     <td>status</td>
                                     <td>String</td>
                                     <td class="param-required">必须</td>
-                                    <td>项目状态（pending、in_progress、completed、paused、cancelled）</td>
+                                    <td>项目状态（pending/in_progress/completed/paused/cancelled）</td>
                                 </tr>
                             </tbody>
                         </table>
@@ -1997,11 +2034,11 @@
                         <div class="code-block">
                             <div class="code-header">
                                 <span>JSON</span>
-                                <button class="copy-button" data-clipboard-target="#update-project-status-request">复制</button>
+                                <button class="copy-button" data-clipboard-target="#project-status-request">复制</button>
                             </div>
-                            <pre id="update-project-status-request"><code>{
-  "id": 1,
-  "status": "in_progress"
+                            <pre id="project-status-request"><code>{
+    "id": 1,
+    "status": "in_progress"
 }</code></pre>
                         </div>
                         
@@ -2009,29 +2046,32 @@
                         <div class="code-block">
                             <div class="code-header">
                                 <span>JSON</span>
-                                <button class="copy-button" data-clipboard-target="#update-project-status-response">复制</button>
+                                <button class="copy-button" data-clipboard-target="#project-status-response">复制</button>
                             </div>
-                            <pre id="update-project-status-response"><code>{
-  "code": 0,
-  "data": {
-    "id": 1,
-    "companyId": 1,
-    "name": "华安花园住宅小区",
-    "address": "北京市朝阳区建国路88号",
-    "projectManagerId": 5,
-    "projectManagerName": "manager1",
-    "startDate": "2025-06-01",
-    "expectedEndDate": "2026-12-31", 
-    "projectType": "residence",
-    "projectScale": "big",
-    "totalArea": 50000.00,
-    "budget": 80000000.00,
-    "description": "大型住宅小区建设项目，包含10栋高层住宅楼及配套设施",
-    "status": "in_progress",
-    "createTime": "2025-04-14T10:30:00",
-    "updateTime": "2025-04-14T16:20:10"
-  },
-  "message": "success"
+                            <pre id="project-status-response"><code>{
+    "code": 0,
+    "data": {
+        "id": 1,
+        "companyId": 1,
+        "name": "华安花园住宅小区",
+        "address": "建国路88号",
+        "province": "北京市",
+        "city": "北京市",
+        "district": "朝阳区",
+        "projectManagerId": 10001,
+        "projectManagerName": "张三",
+        "startDate": "2025-06-01",
+        "expectedEndDate": "2026-12-31",
+        "projectType": "residence",
+        "projectScale": "big",
+        "totalArea": 50000.00,
+        "budget": 100000000.00,
+        "description": "高端住宅项目，配套设施齐全",
+        "status": "in_progress",
+        "createTime": "2024-03-15T10:30:00",
+        "updateTime": "2024-03-15T15:20:00"
+    },
+    "message": "success"
 }</code></pre>
                         </div>
                         
@@ -2039,12 +2079,12 @@
                         <div class="code-block">
                             <div class="code-header">
                                 <span>JSON</span>
-                                <button class="copy-button" data-clipboard-target="#update-project-status-error">复制</button>
+                                <button class="copy-button" data-clipboard-target="#project-status-error">复制</button>
                             </div>
-                            <pre id="update-project-status-error"><code>{
-  "code": 40000,
-  "data": null,
-  "message": "项目状态必须为：pending、in_progress、completed、paused或cancelled"
+                            <pre id="project-status-error"><code>{
+    "code": 40300,
+    "data": null,
+    "message": "您无权更新此项目状态"
 }</code></pre>
                         </div>
                     </div>

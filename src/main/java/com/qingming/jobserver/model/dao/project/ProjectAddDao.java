@@ -32,6 +32,27 @@ public class ProjectAddDao {
     private String address;
 
     /**
+     * 省份（必填）
+     */
+    @NotBlank(message = "省份不能为空")
+    @Size(max = 50, message = "省份最长50个字符")
+    private String province;
+
+    /**
+     * 城市（必填）
+     */
+    @NotBlank(message = "城市不能为空")
+    @Size(max = 50, message = "城市最长50个字符")
+    private String city;
+
+    /**
+     * 区县（必填）
+     */
+    @NotBlank(message = "区县不能为空")
+    @Size(max = 50, message = "区县最长50个字符")
+    private String district;
+
+    /**
      * 开工日期（必填）
      */
     @NotNull(message = "开工日期不能为空")
