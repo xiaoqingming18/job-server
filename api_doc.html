@@ -2397,7 +2397,7 @@
                         <span class="endpoint-summary">获取职位详情</span>
                     </div>
                     <div class="endpoint-content">
-                        <p>获取指定职位的详细信息。</p>
+                        <p>根据劳务需求ID获取职位的详细信息，包括项目信息、工种信息和企业信息等。</p>
                         
                         <h3 class="section-title">请求头</h3>
                         <table class="param-table">
@@ -2434,7 +2434,7 @@
                                     <td>id</td>
                                     <td>Integer</td>
                                     <td class="param-required">必须</td>
-                                    <td>职位ID</td>
+                                    <td>劳务需求ID（labor_demand表的主键）</td>
                                 </tr>
                             </tbody>
                         </table>
@@ -2446,31 +2446,31 @@
                                 <button class="copy-button" data-clipboard-target="#job-detail-response">复制</button>
                             </div>
                             <pre id="job-detail-response"><code>{
-  "code": 0,
-  "data": {
-    "id": 1,
-    "projectId": 1,
-    "projectName": "华安花园住宅小区",
-    "projectAddress": "北京市朝阳区建国路88号",
-    "province": "北京市",
-    "city": "北京市",
-    "district": "朝阳区",
-    "projectType": "residence",
-    "jobTypeId": 1,
-    "jobTypeName": "木工",
-    "jobTypeCategory": "装修",
-    "headcount": 15,
-    "dailyWage": 380.00,
-    "startDate": "2025-06-15",
-    "endDate": "2025-09-15",
-    "workHours": "8:00-17:00，周一至周六",
-    "requirements": "需要有高空作业证，5年以上工作经验",
-    "accommodation": true,
-    "meals": true,
-    "companyName": "北京智慧科技有限公司",
-    "createTime": "2025-04-14T10:30:00"
-  },
-  "message": "success"
+    "code": 0,
+    "data": {
+        "id": 1,
+        "projectId": 1,
+        "projectName": "华安花园住宅小区",
+        "projectAddress": "建国路88号",
+        "province": "北京市",
+        "city": "北京市",
+        "district": "朝阳区",
+        "projectType": "residence",
+        "jobTypeId": 1,
+        "jobTypeName": "木工",
+        "jobTypeCategory": "土建",
+        "headcount": 10,
+        "dailyWage": 400.00,
+        "startDate": "2024-04-01",
+        "endDate": "2024-06-30",
+        "workHours": "8:00-17:00",
+        "requirements": "3年以上工作经验，持有木工证书",
+        "accommodation": true,
+        "meals": true,
+        "companyName": "华安建设有限公司",
+        "createTime": "2024-03-15T10:30:00"
+    },
+    "message": "success"
 }</code></pre>
                         </div>
                     </div>
