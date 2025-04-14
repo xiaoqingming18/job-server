@@ -355,6 +355,7 @@
                 <li class="nav-item" data-target="company">企业模块</li>
                 <li class="nav-item" data-target="project">项目模块</li>
                 <li class="nav-item" data-target="job">职位模块</li>
+                <li class="nav-item" data-target="occupation">工种模块</li>
             </ul>
         </nav>
 
@@ -2159,6 +2160,398 @@
         </div>
     </div>
 </section>
+
+        <!-- Occupation Module -->
+        <section id="occupation" class="module" style="display: none;">
+            <div class="module-header">
+                <h2>工种模块</h2>
+            </div>
+            <div class="module-content">
+                <p class="module-description">工种信息的管理与查询相关接口</p>
+                
+                <!-- Add Occupation API -->
+                <div class="api-endpoint">
+                    <div class="endpoint-header">
+                        <span class="http-method method-post">POST</span>
+                        <span class="endpoint-path">/occupation/add</span>
+                        <span class="endpoint-summary">添加工种</span>
+                    </div>
+                    <div class="endpoint-content">
+                        <p>新增工种信息并返回新增后的详细信息。</p>
+                        
+                        <h3 class="section-title">请求参数</h3>
+                        <table class="param-table">
+                            <thead>
+                                <tr>
+                                    <th>参数名</th>
+                                    <th>类型</th>
+                                    <th>是否必须</th>
+                                    <th>描述</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>name</td>
+                                    <td>String</td>
+                                    <td class="param-required">必须</td>
+                                    <td>工种名称（最多50个字符）</td>
+                                </tr>
+                                <tr>
+                                    <td>category</td>
+                                    <td>String</td>
+                                    <td class="param-required">必须</td>
+                                    <td>工种类别（最多50个字符，如：土建/装修/水电等）</td>
+                                </tr>
+                                <tr>
+                                    <td>description</td>
+                                    <td>String</td>
+                                    <td>可选</td>
+                                    <td>工种描述（最多1000个字符）</td>
+                                </tr>
+                                <tr>
+                                    <td>requiredCertificates</td>
+                                    <td>String</td>
+                                    <td>可选</td>
+                                    <td>所需证书要求（JSON格式）</td>
+                                </tr>
+                                <tr>
+                                    <td>averageDailyWage</td>
+                                    <td>Decimal</td>
+                                    <td>可选</td>
+                                    <td>平均日薪（元）</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        
+                        <h3 class="section-title">请求示例</h3>
+                        <div class="code-block">
+                            <div class="code-header">
+                                <span>JSON</span>
+                                <button class="copy-button" data-clipboard-target="#add-occupation-request">复制</button>
+                            </div>
+                            <pre id="add-occupation-request"><code>{
+  "name": "木工",
+  "category": "装修",
+  "description": "负责建筑装修过程中的木质结构施工、家具制作等工作",
+  "requiredCertificates": "[\"初级木工证\", \"中级木工证\"]",
+  "averageDailyWage": 320.00
+}</code></pre>
+                        </div>
+                        
+                        <h3 class="section-title">响应示例</h3>
+                        <div class="code-block">
+                            <div class="code-header">
+                                <span>JSON</span>
+                                <button class="copy-button" data-clipboard-target="#add-occupation-response">复制</button>
+                            </div>
+                            <pre id="add-occupation-response"><code>{
+  "code": 0,
+  "data": {
+    "id": 1,
+    "name": "木工",
+    "category": "装修",
+    "description": "负责建筑装修过程中的木质结构施工、家具制作等工作",
+    "requiredCertificates": "[\"初级木工证\", \"中级木工证\"]",
+    "averageDailyWage": 320.00,
+    "createTime": "2025-04-14T14:30:00",
+    "updateTime": null
+  },
+  "message": "success"
+}</code></pre>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Update Occupation API -->
+                <div class="api-endpoint">
+                    <div class="endpoint-header">
+                        <span class="http-method method-put">PUT</span>
+                        <span class="endpoint-path">/occupation/update</span>
+                        <span class="endpoint-summary">更新工种信息</span>
+                    </div>
+                    <div class="endpoint-content">
+                        <p>更新已有工种的信息并返回更新后的详细信息。</p>
+                        
+                        <h3 class="section-title">请求参数</h3>
+                        <table class="param-table">
+                            <thead>
+                                <tr>
+                                    <th>参数名</th>
+                                    <th>类型</th>
+                                    <th>是否必须</th>
+                                    <th>描述</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>id</td>
+                                    <td>Integer</td>
+                                    <td class="param-required">必须</td>
+                                    <td>工种ID</td>
+                                </tr>
+                                <tr>
+                                    <td>name</td>
+                                    <td>String</td>
+                                    <td>可选</td>
+                                    <td>工种名称（最多50个字符）</td>
+                                </tr>
+                                <tr>
+                                    <td>category</td>
+                                    <td>String</td>
+                                    <td>可选</td>
+                                    <td>工种类别（最多50个字符）</td>
+                                </tr>
+                                <tr>
+                                    <td>description</td>
+                                    <td>String</td>
+                                    <td>可选</td>
+                                    <td>工种描述（最多1000个字符）</td>
+                                </tr>
+                                <tr>
+                                    <td>requiredCertificates</td>
+                                    <td>String</td>
+                                    <td>可选</td>
+                                    <td>所需证书要求（JSON格式）</td>
+                                </tr>
+                                <tr>
+                                    <td>averageDailyWage</td>
+                                    <td>Decimal</td>
+                                    <td>可选</td>
+                                    <td>平均日薪（元）</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        
+                        <h3 class="section-title">请求示例</h3>
+                        <div class="code-block">
+                            <div class="code-header">
+                                <span>JSON</span>
+                                <button class="copy-button" data-clipboard-target="#update-occupation-request">复制</button>
+                            </div>
+                            <pre id="update-occupation-request"><code>{
+  "id": 1,
+  "name": "高级木工",
+  "description": "负责建筑装修过程中的精细木质结构施工、高端定制家具制作等工作",
+  "averageDailyWage": 380.00
+}</code></pre>
+                        </div>
+                        
+                        <h3 class="section-title">响应示例</h3>
+                        <div class="code-block">
+                            <div class="code-header">
+                                <span>JSON</span>
+                                <button class="copy-button" data-clipboard-target="#update-occupation-response">复制</button>
+                            </div>
+                            <pre id="update-occupation-response"><code>{
+  "code": 0,
+  "data": {
+    "id": 1,
+    "name": "高级木工",
+    "category": "装修",
+    "description": "负责建筑装修过程中的精细木质结构施工、高端定制家具制作等工作",
+    "requiredCertificates": "[\"初级木工证\", \"中级木工证\"]",
+    "averageDailyWage": 380.00,
+    "createTime": "2025-04-14T14:30:00",
+    "updateTime": "2025-04-14T15:45:20"
+  },
+  "message": "success"
+}</code></pre>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Get Occupation List API -->
+                <div class="api-endpoint">
+                    <div class="endpoint-header">
+                        <span class="http-method method-get">GET</span>
+                        <span class="endpoint-path">/occupation/list</span>
+                        <span class="endpoint-summary">查询工种列表</span>
+                    </div>
+                    <div class="endpoint-content">
+                        <p>获取工种列表，可选择按类别过滤。</p>
+                        
+                        <h3 class="section-title">请求参数</h3>
+                        <table class="param-table">
+                            <thead>
+                                <tr>
+                                    <th>参数名</th>
+                                    <th>类型</th>
+                                    <th>是否必须</th>
+                                    <th>描述</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>category</td>
+                                    <td>String</td>
+                                    <td>可选</td>
+                                    <td>工种类别（如不指定，则查询所有工种）</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        
+                        <h3 class="section-title">响应示例</h3>
+                        <div class="code-block">
+                            <div class="code-header">
+                                <span>JSON</span>
+                                <button class="copy-button" data-clipboard-target="#list-occupation-response">复制</button>
+                            </div>
+                            <pre id="list-occupation-response"><code>{
+  "code": 0,
+  "data": [
+    {
+      "id": 1,
+      "name": "高级木工",
+      "category": "装修",
+      "description": "负责建筑装修过程中的精细木质结构施工、高端定制家具制作等工作",
+      "requiredCertificates": "[\"初级木工证\", \"中级木工证\"]",
+      "averageDailyWage": 380.00,
+      "createTime": "2025-04-14T14:30:00",
+      "updateTime": "2025-04-14T15:45:20"
+    },
+    {
+      "id": 2,
+      "name": "泥瓦工",
+      "category": "装修",
+      "description": "负责瓷砖铺贴、地面找平、墙面抹灰等工作",
+      "requiredCertificates": "[\"泥瓦工技能证书\"]",
+      "averageDailyWage": 300.00,
+      "createTime": "2025-04-14T14:35:00",
+      "updateTime": null
+    }
+  ],
+  "message": "success"
+}</code></pre>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Get Occupation Detail API -->
+                <div class="api-endpoint">
+                    <div class="endpoint-header">
+                        <span class="http-method method-get">GET</span>
+                        <span class="endpoint-path">/occupation/info/{id}</span>
+                        <span class="endpoint-summary">查询工种详情</span>
+                    </div>
+                    <div class="endpoint-content">
+                        <p>根据工种ID获取工种详细信息。</p>
+                        
+                        <h3 class="section-title">路径参数</h3>
+                        <table class="param-table">
+                            <thead>
+                                <tr>
+                                    <th>参数名</th>
+                                    <th>类型</th>
+                                    <th>是否必须</th>
+                                    <th>描述</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>id</td>
+                                    <td>Integer</td>
+                                    <td class="param-required">必须</td>
+                                    <td>工种ID</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        
+                        <h3 class="section-title">响应示例</h3>
+                        <div class="code-block">
+                            <div class="code-header">
+                                <span>JSON</span>
+                                <button class="copy-button" data-clipboard-target="#get-occupation-response">复制</button>
+                            </div>
+                            <pre id="get-occupation-response"><code>{
+  "code": 0,
+  "data": {
+    "id": 1,
+    "name": "高级木工",
+    "category": "装修",
+    "description": "负责建筑装修过程中的精细木质结构施工、高端定制家具制作等工作",
+    "requiredCertificates": "[\"初级木工证\", \"中级木工证\"]",
+    "averageDailyWage": 380.00,
+    "createTime": "2025-04-14T14:30:00",
+    "updateTime": "2025-04-14T15:45:20"
+  },
+  "message": "success"
+}</code></pre>
+                        </div>
+                        
+                        <h3 class="section-title">错误响应示例</h3>
+                        <div class="code-block">
+                            <div class="code-header">
+                                <span>JSON</span>
+                                <button class="copy-button" data-clipboard-target="#get-occupation-error">复制</button>
+                            </div>
+                            <pre id="get-occupation-error"><code>{
+  "code": 40400,
+  "data": null,
+  "message": "未找到指定工种"
+}</code></pre>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Delete Occupation API -->
+                <div class="api-endpoint">
+                    <div class="endpoint-header">
+                        <span class="http-method method-delete">DELETE</span>
+                        <span class="endpoint-path">/occupation/delete/{id}</span>
+                        <span class="endpoint-summary">删除工种</span>
+                    </div>
+                    <div class="endpoint-content">
+                        <p>根据工种ID删除工种信息。</p>
+                        
+                        <h3 class="section-title">路径参数</h3>
+                        <table class="param-table">
+                            <thead>
+                                <tr>
+                                    <th>参数名</th>
+                                    <th>类型</th>
+                                    <th>是否必须</th>
+                                    <th>描述</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>id</td>
+                                    <td>Integer</td>
+                                    <td class="param-required">必须</td>
+                                    <td>工种ID</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        
+                        <h3 class="section-title">响应示例</h3>
+                        <div class="code-block">
+                            <div class="code-header">
+                                <span>JSON</span>
+                                <button class="copy-button" data-clipboard-target="#delete-occupation-response">复制</button>
+                            </div>
+                            <pre id="delete-occupation-response"><code>{
+  "code": 0,
+  "data": "删除成功",
+  "message": "success"
+}</code></pre>
+                        </div>
+                        
+                        <h3 class="section-title">错误响应示例</h3>
+                        <div class="code-block">
+                            <div class="code-header">
+                                <span>JSON</span>
+                                <button class="copy-button" data-clipboard-target="#delete-occupation-error">复制</button>
+                            </div>
+                            <pre id="delete-occupation-error"><code>{
+  "code": 40400,
+  "data": null,
+  "message": "未找到指定工种"
+}</code></pre>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
     </div>
 
     <footer class="footer">
