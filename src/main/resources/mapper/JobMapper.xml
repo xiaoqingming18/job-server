@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.qingming.jobserver.mapper.JobMapper">
+    <resultMap id="jobResultMap" type="com.qingming.jobserver.model.vo.JobVO">
+        <id column="id" property="id"/>
+        <result column="project_id" property="projectId"/>
+        <result column="project_name" property="projectName"/>
+        <result column="project_address" property="projectAddress"/>
+        <result column="province" property="province"/>
+        <result column="city" property="city"/>
+        <result column="district" property="district"/>
+        <result column="project_type" property="projectType"/>
+        <result column="job_type_id" property="jobTypeId"/>
+        <result column="job_type_name" property="jobTypeName"/>
+        <result column="job_type_category" property="jobTypeCategory"/>
+        <result column="headcount" property="headcount"/>
+        <result column="daily_wage" property="dailyWage"/>
+        <result column="start_date" property="startDate"/>
+        <result column="end_date" property="endDate"/>
+        <result column="work_hours" property="workHours"/>
+        <result column="requirements" property="requirements"/>
+        <result column="accommodation" property="accommodation"/>
+        <result column="meals" property="meals"/>
+        <result column="company_name" property="companyName"/>
+        <result column="create_time" property="createTime"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        ld.id, ld.project_id, p.name as project_name, p.address as project_address,
+        p.province, p.city, p.district, p.project_type,
+        ld.job_type_id, o.name as job_type_name, o.category as job_type_category,
+        ld.headcount, ld.daily_wage, ld.start_date, ld.end_date,
+        ld.work_hours, ld.requirements, ld.accommodation, ld.meals,
+        c.name as company_name, ld.create_time
+    </sql>
+
+    <select id="queryJobList" resultMap="jobResultMap">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM labor_demand ld
+        LEFT JOIN construction_project p ON ld.project_id = p.id
+        LEFT JOIN occupation o ON ld.job_type_id = o.id
+        LEFT JOIN company c ON p.company_id = c.id
+        <where>
+            ld.status = 'open'
+            <if test="query.jobTypeId != null">
+                AND ld.job_type_id = #{query.jobTypeId}
+            </if>
+            <if test="query.jobTypeCategory != null and query.jobTypeCategory != ''">
+                AND o.category = #{query.jobTypeCategory}
+            </if>
+            <if test="query.projectType != null and query.projectType != ''">
+                AND p.project_type = #{query.projectType}
+            </if>
+            <if test="query.province != null and query.province != ''">
+                AND p.province = #{query.province}
+            </if>
+            <if test="query.city != null and query.city != ''">
+                AND p.city = #{query.city}
+            </if>
+            <if test="query.district != null and query.district != ''">
+                AND p.district = #{query.district}
+            </if>
+            <if test="query.minDailyWage != null">
+                AND ld.daily_wage >= #{query.minDailyWage}
+            </if>
+            <if test="query.maxDailyWage != null">
+                AND ld.daily_wage &lt;= #{query.maxDailyWage}
+            </if>
+            <if test="query.accommodation != null">
+                AND ld.accommodation = #{query.accommodation}
+            </if>
+            <if test="query.meals != null">
+                AND ld.meals = #{query.meals}
+            </if>
+            <if test="query.startDate != null">
+                AND ld.start_date >= #{query.startDate}
+            </if>
+            <if test="query.endDate != null">
+                AND ld.end_date &lt;= #{query.endDate}
+            </if>
+        </where>
+        <if test="query.sortField != null and query.sortField != ''">
+            ORDER BY ${query.sortField} ${query.sortOrder == 'desc' ? 'DESC' : 'ASC'}
+        </if>
+        <if test="query.sortField == null or query.sortField == ''">
+            ORDER BY ld.create_time DESC
+        </if>
+    </select>
+
+    <select id="queryHotJobTypes" resultMap="jobResultMap">
+        SELECT o.id as job_type_id, o.name as job_type_name, o.category as job_type_category,
+        COUNT(ld.id) as job_count
+        FROM occupation o
+        LEFT JOIN labor_demand ld ON o.id = ld.job_type_id AND ld.status = 'open'
+        GROUP BY o.id, o.name, o.category
+        ORDER BY job_count DESC
+        LIMIT #{limit}
+    </select>
+
+    <select id="getJobDetail" resultMap="jobResultMap">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM labor_demand ld
+        LEFT JOIN construction_project p ON ld.project_id = p.id
+        LEFT JOIN occupation o ON ld.job_type_id = o.id
+        LEFT JOIN company c ON p.company_id = c.id
+        WHERE ld.id = #{id}
+    </select>
+
+    <select id="queryRecommendJobs" resultMap="jobResultMap">
+        SELECT DISTINCT
+        <include refid="Base_Column_List"/>
+        FROM labor_demand ld
+        LEFT JOIN construction_project p ON ld.project_id = p.id
+        LEFT JOIN occupation o ON ld.job_type_id = o.id
+        LEFT JOIN company c ON p.company_id = c.id
+        LEFT JOIN job_seeker js ON js.user_id = #{userId}
+        WHERE ld.status = 'open'
+        AND (
+            o.category = js.expect_position
+            OR p.province = (
+                SELECT province FROM construction_project cp
+                INNER JOIN labor_demand ld2 ON cp.id = ld2.project_id
+                WHERE ld2.id IN (
+                    SELECT DISTINCT labor_demand_id
+                    FROM job_application
+                    WHERE user_id = #{userId}
+                )
+                LIMIT 1
+            )
+        )
+        ORDER BY ld.create_time DESC
+        LIMIT #{limit}
+    </select>
+</mapper> 

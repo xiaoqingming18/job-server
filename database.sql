@@ -69,6 +69,13 @@ CREATE TABLE `construction_project` (
   CONSTRAINT `project_manager_fk` FOREIGN KEY (`project_manager_id`) REFERENCES `user` (`id`) ON DELETE RESTRICT
 ) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='建筑项目表';
 
+-- 为建筑项目表添加省市区字段
+ALTER TABLE `construction_project`
+ADD COLUMN `province` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL COMMENT '省份' AFTER `address`,
+ADD COLUMN `city` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL COMMENT '城市' AFTER `province`,
+ADD COLUMN `district` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL COMMENT '区县' AFTER `city`,
+ADD INDEX `idx_location` (`province`, `city`, `district`) COMMENT '地理位置索引';
+
 -- 求职者扩展表
 CREATE TABLE `job_seeker` (
   `user_id` bigint unsigned NOT NULL COMMENT '关联用户ID',
