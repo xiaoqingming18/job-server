@@ -66,4 +66,38 @@
         WHERE 
             p.id = #{projectId}
     </select>
+    
+    <!-- 选择性更新项目信息（只更新非null字段） -->
+    <update id="updateProjectSelective" parameterType="com.qingming.jobserver.model.entity.ConstructionProject">
+        UPDATE construction_project
+        <set>
+            <if test="name != null">name = #{name},</if>
+            <if test="address != null">address = #{address},</if>
+            <if test="startDate != null">start_date = #{startDate},</if>
+            <if test="expectedEndDate != null">expected_end_date = #{expectedEndDate},</if>
+            <if test="projectType != null">project_type = #{projectType},</if>
+            <if test="projectScale != null">project_scale = #{projectScale},</if>
+            <if test="totalArea != null">total_area = #{totalArea},</if>
+            <if test="budget != null">budget = #{budget},</if>
+            <if test="description != null">description = #{description},</if>
+            update_time = NOW()
+        </set>
+        WHERE id = #{id}
+    </update>
+    
+    <!-- 更新项目状态 -->
+    <update id="updateProjectStatus">
+        UPDATE construction_project
+        SET 
+            status = #{status},
+            update_time = NOW()
+        WHERE id = #{projectId}
+    </update>
+    
+    <!-- 检查用户是否为项目的项目经理 -->
+    <select id="isProjectManager" resultType="java.lang.Integer">
+        SELECT COUNT(1)
+        FROM construction_project
+        WHERE id = #{projectId} AND project_manager_id = #{userId}
+    </select>
 </mapper>

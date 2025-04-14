@@ -6,6 +6,8 @@ import com.qingming.jobserver.common.ErrorCode;
 import com.qingming.jobserver.common.ResultUtils;
 import com.qingming.jobserver.exception.BusinessException;
 import com.qingming.jobserver.model.dao.project.ProjectAddDao;
+import com.qingming.jobserver.model.dao.project.ProjectStatusUpdateDao;
+import com.qingming.jobserver.model.dao.project.ProjectUpdateDao;
 import com.qingming.jobserver.model.vo.ProjectInfoVO;
 import com.qingming.jobserver.service.ProjectService;
 import jakarta.validation.Valid;
@@ -79,6 +81,66 @@ public class ProjectController {
             // 捕获其他异常并返回系统错误
             log.error("获取项目信息发生系统异常", e);
             return ResultUtils.error(ErrorCode.SYSTEM_ERROR.getCode(), "获取项目信息失败，系统异常");
+        }
+    }
+    
+    /**
+     * 更新项目信息
+     * @param projectUpdateDao 项目更新信息
+     * @return 更新后的项目信息
+     */
+    @PutMapping("/update")
+    public BaseResponse<ProjectInfoVO> updateProject(@RequestBody @Valid ProjectUpdateDao projectUpdateDao) {
+        try {
+            // 获取当前登录用户ID
+            Long currentUserId = CurrentUserUtils.getCurrentUserId();
+            if (currentUserId == null) {
+                return ResultUtils.error(ErrorCode.NOT_LOGIN.getCode(), "用户未登录");
+            }
+            
+            // 调用服务层更新项目
+            ProjectInfoVO projectInfo = projectService.updateProject(projectUpdateDao, currentUserId);
+            
+            // 返回成功响应
+            return ResultUtils.success(projectInfo);
+        } catch (BusinessException e) {
+            // 捕获业务异常并返回错误响应
+            log.error("更新项目信息失败: {}", e.getMessage());
+            return ResultUtils.error(e.getCode(), e.getMessage());
+        } catch (Exception e) {
+            // 捕获其他异常并返回系统错误
+            log.error("更新项目信息发生系统异常", e);
+            return ResultUtils.error(ErrorCode.SYSTEM_ERROR.getCode(), "更新项目信息失败，系统异常");
+        }
+    }
+    
+    /**
+     * 更新项目状态
+     * @param statusUpdateDao 项目状态更新信息
+     * @return 更新后的项目信息
+     */
+    @PutMapping("/status")
+    public BaseResponse<ProjectInfoVO> updateProjectStatus(@RequestBody @Valid ProjectStatusUpdateDao statusUpdateDao) {
+        try {
+            // 获取当前登录用户ID
+            Long currentUserId = CurrentUserUtils.getCurrentUserId();
+            if (currentUserId == null) {
+                return ResultUtils.error(ErrorCode.NOT_LOGIN.getCode(), "用户未登录");
+            }
+            
+            // 调用服务层更新项目状态
+            ProjectInfoVO projectInfo = projectService.updateProjectStatus(statusUpdateDao, currentUserId);
+            
+            // 返回成功响应
+            return ResultUtils.success(projectInfo);
+        } catch (BusinessException e) {
+            // 捕获业务异常并返回错误响应
+            log.error("更新项目状态失败: {}", e.getMessage());
+            return ResultUtils.error(e.getCode(), e.getMessage());
+        } catch (Exception e) {
+            // 捕获其他异常并返回系统错误
+            log.error("更新项目状态发生系统异常", e);
+            return ResultUtils.error(ErrorCode.SYSTEM_ERROR.getCode(), "更新项目状态失败，系统异常");
         }
     }
 }

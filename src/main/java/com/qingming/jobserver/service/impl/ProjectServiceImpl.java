@@ -5,6 +5,8 @@ import com.qingming.jobserver.exception.BusinessException;
 import com.qingming.jobserver.mapper.ProjectMapper;
 import com.qingming.jobserver.mapper.UserMapper;
 import com.qingming.jobserver.model.dao.project.ProjectAddDao;
+import com.qingming.jobserver.model.dao.project.ProjectStatusUpdateDao;
+import com.qingming.jobserver.model.dao.project.ProjectUpdateDao;
 import com.qingming.jobserver.model.entity.ConstructionProject;
 import com.qingming.jobserver.model.entity.User;
 import com.qingming.jobserver.model.enums.UserRoleEnum;
@@ -76,5 +78,91 @@ public class ProjectServiceImpl implements ProjectService {
             throw new BusinessException(ErrorCode.NOT_FOUND, "项目不存在");
         }
         return projectInfo;
+    }
+
+    @Override
+    @Transactional
+    public ProjectInfoVO updateProject(ProjectUpdateDao projectUpdateDao, Long userId) {
+        // 1. 参数校验
+        if (projectUpdateDao == null || projectUpdateDao.getId() == null || projectUpdateDao.getId() <= 0) {
+            throw new BusinessException(ErrorCode.PARAMS_ERROR, "项目ID无效");
+        }
+        
+        // 2. 检查项目是否存在
+        ProjectInfoVO existingProject = projectMapper.getProjectInfoById(projectUpdateDao.getId());
+        if (existingProject == null) {
+            throw new BusinessException(ErrorCode.NOT_FOUND, "项目不存在");
+        }
+        
+        // 3. 校验用户是否有权限更新项目
+        checkProjectUpdatePermission(userId, existingProject.getId(), existingProject.getProjectManagerId());
+        
+        // 4. 构建更新实体对象
+        ConstructionProject project = new ConstructionProject();
+        BeanUtils.copyProperties(projectUpdateDao, project);
+        
+        // 5. 执行更新操作
+        int rows = projectMapper.updateProjectSelective(project);
+        if (rows <= 0) {
+            throw new BusinessException(ErrorCode.SYSTEM_ERROR, "更新项目信息失败");
+        }
+        
+        // 6. 查询并返回更新后的项目信息
+        return projectMapper.getProjectInfoById(project.getId());
+    }
+
+    @Override
+    @Transactional
+    public ProjectInfoVO updateProjectStatus(ProjectStatusUpdateDao statusUpdateDao, Long userId) {
+        // 1. 参数校验
+        if (statusUpdateDao == null || statusUpdateDao.getId() == null || statusUpdateDao.getId() <= 0) {
+            throw new BusinessException(ErrorCode.PARAMS_ERROR, "项目ID无效");
+        }
+        
+        // 2. 检查项目是否存在
+        ProjectInfoVO existingProject = projectMapper.getProjectInfoById(statusUpdateDao.getId());
+        if (existingProject == null) {
+            throw new BusinessException(ErrorCode.NOT_FOUND, "项目不存在");
+        }
+        
+        // 3. 校验用户是否有权限更新项目状态
+        checkProjectUpdatePermission(userId, existingProject.getId(), existingProject.getProjectManagerId());
+        
+        // 4. 执行状态更新操作
+        int rows = projectMapper.updateProjectStatus(statusUpdateDao.getId(), statusUpdateDao.getStatus());
+        if (rows <= 0) {
+            throw new BusinessException(ErrorCode.SYSTEM_ERROR, "更新项目状态失败");
+        }
+        
+        // 5. 查询并返回更新后的项目信息
+        return projectMapper.getProjectInfoById(statusUpdateDao.getId());
+    }
+    
+    /**
+     * 检查用户是否有权限更新项目
+     * 系统管理员、项目经理有权限更新项目
+     * @param userId 当前用户ID
+     * @param projectId 项目ID
+     * @param projectManagerId 项目经理ID
+     */
+    private void checkProjectUpdatePermission(Long userId, Integer projectId, Long projectManagerId) {
+        // 获取当前用户
+        User user = userMapper.selectById(userId);
+        if (user == null) {
+            throw new BusinessException(ErrorCode.NOT_LOGIN, "用户不存在或未登录");
+        }
+        
+        // 系统管理员有权限
+        if (UserRoleEnum.system_admin.name().equals(user.getRole().name())) {
+            return;
+        }
+        
+        // 项目经理本人有权限
+        if (Objects.equals(userId, projectManagerId)) {
+            return;
+        }
+        
+        // 非系统管理员且非项目经理，无权限
+        throw new BusinessException(ErrorCode.ROLE_NO_PERMISSION, "您无权更新此项目");
     }
 }

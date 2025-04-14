@@ -1,6 +1,8 @@
 package com.qingming.jobserver.service;
 
 import com.qingming.jobserver.model.dao.project.ProjectAddDao;
+import com.qingming.jobserver.model.dao.project.ProjectStatusUpdateDao;
+import com.qingming.jobserver.model.dao.project.ProjectUpdateDao;
 import com.qingming.jobserver.model.vo.ProjectInfoVO;
 
 /**
@@ -22,4 +24,20 @@ public interface ProjectService {
      * @return 项目详细信息
      */
     ProjectInfoVO getProjectInfo(Integer projectId);
+    
+    /**
+     * 更新项目信息
+     * @param projectUpdateDao 项目更新参数
+     * @param userId 当前用户ID
+     * @return 更新后的项目信息
+     */
+    ProjectInfoVO updateProject(ProjectUpdateDao projectUpdateDao, Long userId);
+    
+    /**
+     * 更新项目状态
+     * @param statusUpdateDao 项目状态更新参数
+     * @param userId 当前用户ID
+     * @return 更新后的项目信息
+     */
+    ProjectInfoVO updateProjectStatus(ProjectStatusUpdateDao statusUpdateDao, Long userId);
 }

@@ -1,61 +1,48 @@
--- 企业表
+-- 工种分类表
+CREATE TABLE `occupation` (
+  `id` int unsigned NOT NULL AUTO_INCREMENT COMMENT '工种ID',
+  `name` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL COMMENT '工种名称',
+  `category` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL COMMENT '工种类别（土建/装修/水电/钢筋等）',
+  `description` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci COMMENT '工种描述',
+  `required_certificates` json DEFAULT NULL COMMENT '所需证书要求（JSON格式）',
+  `average_daily_wage` decimal(10,2) DEFAULT NULL COMMENT '平均日薪（元）',
+  `create_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+  `update_time` datetime DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `idx_job_type_name` (`name`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='建筑工种分类表';
+
+-- 用户表
+CREATE TABLE `user` (
+  `id` bigint unsigned NOT NULL AUTO_INCREMENT COMMENT '用户ID',
+  `username` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL COMMENT '用户名（唯一）',
+  `password` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL COMMENT '密码（明文）',
+  `mobile` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT '手机号',
+  `email` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL COMMENT '电子邮箱',
+  `avatar` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci COMMENT '头像URL',
+  `role` enum('system_admin','project_manager','job_seeker','company_admin') CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL COMMENT '用户角色',
+  `create_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '注册时间',
+  `account_status` enum('enabled','disabled','pending') CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'pending' COMMENT '账号状态',
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `idx_username` (`username`),
+  UNIQUE KEY `idx_email` (`email`),
+  UNIQUE KEY `idx_mobile` (`mobile`)
+) ENGINE=InnoDB AUTO_INCREMENT=14 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='用户基础信息表';
+
+-- 企业信息表
 CREATE TABLE `company` (
   `id` int unsigned NOT NULL AUTO_INCREMENT COMMENT '企业ID',
-  `name` varchar(100) COLLATE utf8mb4_unicode_ci NOT NULL COMMENT '企业名称',
-  `license_number` varchar(50) COLLATE utf8mb4_unicode_ci NOT NULL COMMENT '营业执照编号',
-  `address` varchar(200) COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT '企业地址',
-  `legal_person` varchar(50) COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT '法人代表',
+  `name` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL COMMENT '企业名称',
+  `license_number` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL COMMENT '营业执照编号',
+  `address` varchar(200) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT '企业地址',
+  `legal_person` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT '法人代表',
   `admin_id` bigint unsigned DEFAULT NULL COMMENT '企业管理员ID',
   `create_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
   PRIMARY KEY (`id`),
   UNIQUE KEY `idx_license` (`license_number`),
   KEY `company_admin_fk` (`admin_id`),
   CONSTRAINT `company_admin_fk` FOREIGN KEY (`admin_id`) REFERENCES `user` (`id`) ON DELETE SET NULL
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='企业信息表';
-
--- 用户表
-CREATE TABLE `user` (
-  `id` bigint unsigned NOT NULL AUTO_INCREMENT COMMENT '用户ID',
-  `username` varchar(50) COLLATE utf8mb4_unicode_ci NOT NULL COMMENT '用户名（唯一）',
-  `password` varchar(50) COLLATE utf8mb4_unicode_ci NOT NULL COMMENT '密码（明文）',
-  `mobile` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT '手机号',
-  `email` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL COMMENT '电子邮箱',
-  `avatar` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT '头像URL',
-  `role` enum('system_admin','project_manager','job_seeker','company_admin') CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL COMMENT '用户角色',
-  `create_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '注册时间',
-  `account_status` enum('enabled','disabled','pending') COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'pending' COMMENT '账号状态',
-  PRIMARY KEY (`id`),
-  UNIQUE KEY `idx_username` (`username`),
-  UNIQUE KEY `idx_email` (`email`),
-  UNIQUE KEY `idx_mobile` (`mobile`)
-) ENGINE=InnoDB AUTO_INCREMENT=9 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='用户基础信息表';
-
--- 求职者扩展表
-CREATE TABLE `job_seeker` (
-  `user_id` bigint unsigned NOT NULL COMMENT '关联用户ID',
-  `real_name` varchar(50) COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT '真实姓名',
-  `gender` enum('male','female','other') COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT '性别',
-  `birthday` date DEFAULT NULL COMMENT '出生日期',
-  `job_status` enum('seeking','employed','inactive') COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'seeking' COMMENT '求职状态',
-  `expect_position` varchar(100) COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT '期望职位',
-  `work_years` tinyint unsigned DEFAULT NULL COMMENT '工作年限',
-  `skill` text COLLATE utf8mb4_unicode_ci COMMENT '技能特长',
-  `certificates` json DEFAULT NULL COMMENT '证书信息（JSON格式）',
-  `resume_url` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT '简历存储路径',
-  PRIMARY KEY (`user_id`),
-  CONSTRAINT `job_seeker_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `user` (`id`) ON DELETE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='求职者扩展表';
-
--- 项目经理扩展表
-CREATE TABLE `project_manager` (
-  `user_id` bigint unsigned NOT NULL COMMENT '关联用户ID',
-  `company_id` int unsigned NOT NULL COMMENT '关联企业ID',
-  `position` varchar(50) COLLATE utf8mb4_unicode_ci NOT NULL COMMENT '职位名称',
-  PRIMARY KEY (`user_id`),
-  KEY `company_id` (`company_id`),
-  CONSTRAINT `project_manager_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `user` (`id`) ON DELETE CASCADE,
-  CONSTRAINT `project_manager_ibfk_2` FOREIGN KEY (`company_id`) REFERENCES `company` (`id`) ON DELETE RESTRICT
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='求职者扩展表';
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='企业信息表';
 
 -- 建筑项目表
 CREATE TABLE `construction_project` (
@@ -80,21 +67,23 @@ CREATE TABLE `construction_project` (
   KEY `idx_status` (`status`),
   CONSTRAINT `project_company_fk` FOREIGN KEY (`company_id`) REFERENCES `company` (`id`) ON DELETE RESTRICT,
   CONSTRAINT `project_manager_fk` FOREIGN KEY (`project_manager_id`) REFERENCES `user` (`id`) ON DELETE RESTRICT
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='建筑项目表';
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='建筑项目表';
 
--- 工种分类表
-CREATE TABLE `occupation` (
-  `id` int unsigned NOT NULL AUTO_INCREMENT COMMENT '工种ID',
-  `name` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL COMMENT '工种名称',
-  `category` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL COMMENT '工种类别（土建/装修/水电/钢筋等）',
-  `description` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci COMMENT '工种描述',
-  `required_certificates` json DEFAULT NULL COMMENT '所需证书要求（JSON格式）',
-  `average_daily_wage` decimal(10,2) DEFAULT NULL COMMENT '平均日薪（元）',
-  `create_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
-  `update_time` datetime DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
-  PRIMARY KEY (`id`),
-  UNIQUE KEY `idx_job_type_name` (`name`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='建筑工种分类表';
+-- 求职者扩展表
+CREATE TABLE `job_seeker` (
+  `user_id` bigint unsigned NOT NULL COMMENT '关联用户ID',
+  `real_name` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT '真实姓名',
+  `gender` enum('male','female','other') CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT '性别',
+  `birthday` date DEFAULT NULL COMMENT '出生日期',
+  `job_status` enum('seeking','employed','inactive') CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'seeking' COMMENT '求职状态',
+  `expect_position` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT '期望职位',
+  `work_years` tinyint unsigned DEFAULT NULL COMMENT '工作年限',
+  `skill` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci COMMENT '技能特长',
+  `certificates` json DEFAULT NULL COMMENT '证书信息（JSON格式）',
+  `resume_url` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT '简历存储路径',
+  PRIMARY KEY (`user_id`),
+  CONSTRAINT `job_seeker_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `user` (`id`) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='求职者扩展表';
 
 -- 劳务需求表
 CREATE TABLE `labor_demand` (
@@ -119,3 +108,14 @@ CREATE TABLE `labor_demand` (
   CONSTRAINT `demand_job_type_fk` FOREIGN KEY (`job_type_id`) REFERENCES `occupation` (`id`) ON DELETE RESTRICT,
   CONSTRAINT `demand_project_fk` FOREIGN KEY (`project_id`) REFERENCES `construction_project` (`id`) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='劳务需求表';
+
+-- 项目经理扩展表
+CREATE TABLE `project_manager` (
+  `user_id` bigint unsigned NOT NULL COMMENT '关联用户ID',
+  `company_id` int unsigned NOT NULL COMMENT '关联企业ID',
+  `position` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL COMMENT '职位名称',
+  PRIMARY KEY (`user_id`),
+  KEY `company_id` (`company_id`),
+  CONSTRAINT `project_manager_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `user` (`id`) ON DELETE CASCADE,
+  CONSTRAINT `project_manager_ibfk_2` FOREIGN KEY (`company_id`) REFERENCES `company` (`id`) ON DELETE RESTRICT
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='项目经理扩展表';

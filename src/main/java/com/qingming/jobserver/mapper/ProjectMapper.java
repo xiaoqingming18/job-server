@@ -23,4 +23,27 @@ public interface ProjectMapper extends BaseMapper<ConstructionProject> {
      * @return 项目详细信息VO
      */
     ProjectInfoVO getProjectInfoById(@Param("projectId") Integer projectId);
+    
+    /**
+     * 更新项目信息（仅更新非null字段）
+     * @param project 项目实体对象
+     * @return 影响行数
+     */
+    int updateProjectSelective(ConstructionProject project);
+    
+    /**
+     * 更新项目状态
+     * @param projectId 项目ID
+     * @param status 新状态
+     * @return 影响行数
+     */
+    int updateProjectStatus(@Param("projectId") Integer projectId, @Param("status") String status);
+    
+    /**
+     * 检查用户是否为项目的项目经理
+     * @param userId 用户ID
+     * @param projectId 项目ID
+     * @return 1表示是项目经理，0表示不是
+     */
+    Integer isProjectManager(@Param("userId") Long userId, @Param("projectId") Integer projectId);
 }
