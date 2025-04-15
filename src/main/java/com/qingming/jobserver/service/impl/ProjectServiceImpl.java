@@ -138,6 +138,39 @@ public class ProjectServiceImpl implements ProjectService {
         return projectMapper.getProjectInfoById(statusUpdateDao.getId());
     }
     
+    @Override
+    @Transactional
+    public boolean deleteProject(Integer projectId, Long userId) {
+        // 1. 参数校验
+        if (projectId == null || projectId <= 0) {
+            throw new BusinessException(ErrorCode.PARAMS_ERROR, "项目ID无效");
+        }
+        
+        if (userId == null || userId <= 0) {
+            throw new BusinessException(ErrorCode.NOT_LOGIN, "用户未登录");
+        }
+        
+        // 2. 检查项目是否存在
+        ProjectInfoVO existingProject = projectMapper.getProjectInfoById(projectId);
+        if (existingProject == null) {
+            throw new BusinessException(ErrorCode.NOT_FOUND, "项目不存在");
+        }
+        
+        // 3. 校验用户是否有权限删除项目（仅系统管理员和项目经理可以删除）
+        checkProjectUpdatePermission(userId, existingProject.getId(), existingProject.getProjectManagerId());
+        
+        // 4. 检查项目是否有关联的劳务需求，如果有则不允许删除
+        int laborDemandCount = projectMapper.countRelatedLaborDemands(projectId);
+        if (laborDemandCount > 0) {
+            throw new BusinessException(ErrorCode.FORBIDDEN, "该项目存在关联的劳务需求数据，无法删除");
+        }
+        
+        // 5. 执行删除操作
+        int result = projectMapper.deleteProjectById(projectId);
+        
+        return result > 0;
+    }
+    
     /**
      * 检查用户是否有权限更新项目
      * 系统管理员、项目经理有权限更新项目
@@ -163,6 +196,6 @@ public class ProjectServiceImpl implements ProjectService {
         }
         
         // 非系统管理员且非项目经理，无权限
-        throw new BusinessException(ErrorCode.ROLE_NO_PERMISSION, "您无权更新此项目");
+        throw new BusinessException(ErrorCode.ROLE_NO_PERMISSION, "您无权操作此项目");
     }
 }

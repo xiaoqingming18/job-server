@@ -110,4 +110,17 @@
         FROM construction_project
         WHERE id = #{projectId} AND project_manager_id = #{userId}
     </select>
+    
+    <!-- 删除项目 -->
+    <delete id="deleteProjectById">
+        DELETE FROM construction_project
+        WHERE id = #{projectId}
+    </delete>
+    
+    <!-- 检查项目是否有关联的劳务需求 -->
+    <select id="countRelatedLaborDemands" resultType="java.lang.Integer">
+        SELECT COUNT(1)
+        FROM labor_demand
+        WHERE project_id = #{projectId}
+    </select>
 </mapper>

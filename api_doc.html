@@ -2193,6 +2193,110 @@
                         </div>
                     </div>
                 </div>
+                
+                <!-- 删除项目接口 -->
+                <div class="api-endpoint">
+                    <div class="endpoint-header">
+                        <span class="http-method method-delete">DELETE</span>
+                        <span class="endpoint-path">/project/delete/{id}</span>
+                        <span class="endpoint-summary">删除项目</span>
+                    </div>
+                    <div class="endpoint-content">
+                        <p>删除指定ID的项目。仅系统管理员和项目经理可以删除项目，且不能删除存在关联劳务需求的项目。</p>
+                        
+                        <h3 class="section-title">请求头</h3>
+                        <table class="param-table">
+                            <thead>
+                                <tr>
+                                    <th>参数名</th>
+                                    <th>类型</th>
+                                    <th>是否必须</th>
+                                    <th>描述</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>Authorization</td>
+                                    <td>String</td>
+                                    <td class="param-required">必须</td>
+                                    <td>Bearer 令牌</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        
+                        <h3 class="section-title">路径参数</h3>
+                        <table class="param-table">
+                            <thead>
+                                <tr>
+                                    <th>参数名</th>
+                                    <th>类型</th>
+                                    <th>是否必须</th>
+                                    <th>描述</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>id</td>
+                                    <td>Integer</td>
+                                    <td class="param-required">必须</td>
+                                    <td>项目ID</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        
+                        <h3 class="section-title">响应示例</h3>
+                        <div class="code-block">
+                            <div class="code-header">
+                                <span>JSON</span>
+                                <button class="copy-button" data-clipboard-target="#delete-project-response">复制</button>
+                            </div>
+                            <pre id="delete-project-response"><code>{
+    "code": 0,
+    "data": "删除成功",
+    "message": "success"
+}</code></pre>
+                        </div>
+                        
+                        <h3 class="section-title">错误响应示例 - 无权限</h3>
+                        <div class="code-block">
+                            <div class="code-header">
+                                <span>JSON</span>
+                                <button class="copy-button" data-clipboard-target="#delete-project-error-auth">复制</button>
+                            </div>
+                            <pre id="delete-project-error-auth"><code>{
+    "code": 40300,
+    "data": null,
+    "message": "您无权操作此项目"
+}</code></pre>
+                        </div>
+                        
+                        <h3 class="section-title">错误响应示例 - 项目有关联劳务需求</h3>
+                        <div class="code-block">
+                            <div class="code-header">
+                                <span>JSON</span>
+                                <button class="copy-button" data-clipboard-target="#delete-project-error-demands">复制</button>
+                            </div>
+                            <pre id="delete-project-error-demands"><code>{
+    "code": 40300,
+    "data": null,
+    "message": "该项目存在关联的劳务需求数据，无法删除"
+}</code></pre>
+                        </div>
+                        
+                        <h3 class="section-title">错误响应示例 - 项目不存在</h3>
+                        <div class="code-block">
+                            <div class="code-header">
+                                <span>JSON</span>
+                                <button class="copy-button" data-clipboard-target="#delete-project-error-notfound">复制</button>
+                            </div>
+                            <pre id="delete-project-error-notfound"><code>{
+    "code": 40400,
+    "data": null,
+    "message": "项目不存在"
+}</code></pre>
+                        </div>
+                    </div>
+                </div>
             </div>
         </section>
 

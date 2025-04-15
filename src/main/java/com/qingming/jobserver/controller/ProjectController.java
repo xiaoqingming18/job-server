@@ -143,4 +143,34 @@ public class ProjectController {
             return ResultUtils.error(ErrorCode.SYSTEM_ERROR.getCode(), "更新项目状态失败，系统异常");
         }
     }
+    
+    /**
+     * 删除项目
+     * @param id 项目ID
+     * @return 删除结果
+     */
+    @DeleteMapping("/delete/{id}")
+    public BaseResponse<String> deleteProject(@PathVariable("id") Integer id) {
+        try {
+            // 获取当前登录用户ID
+            Long currentUserId = CurrentUserUtils.getCurrentUserId();
+            if (currentUserId == null) {
+                return ResultUtils.error(ErrorCode.NOT_LOGIN.getCode(), "用户未登录");
+            }
+            
+            // 调用服务层删除项目
+            boolean result = projectService.deleteProject(id, currentUserId);
+            
+            // 返回成功响应
+            return ResultUtils.success("删除成功");
+        } catch (BusinessException e) {
+            // 捕获业务异常并返回错误响应
+            log.error("删除项目失败: {}", e.getMessage());
+            return ResultUtils.error(e.getCode(), e.getMessage());
+        } catch (Exception e) {
+            // 捕获其他异常并返回系统错误
+            log.error("删除项目发生系统异常", e);
+            return ResultUtils.error(ErrorCode.SYSTEM_ERROR.getCode(), "删除项目失败，系统异常");
+        }
+    }
 }

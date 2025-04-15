@@ -40,4 +40,12 @@ public interface ProjectService {
      * @return 更新后的项目信息
      */
     ProjectInfoVO updateProjectStatus(ProjectStatusUpdateDao statusUpdateDao, Long userId);
+    
+    /**
+     * 删除项目
+     * @param projectId 项目ID
+     * @param userId 当前用户ID
+     * @return 删除成功返回true，否则返回false
+     */
+    boolean deleteProject(Integer projectId, Long userId);
 }

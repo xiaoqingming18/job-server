@@ -46,4 +46,18 @@ public interface ProjectMapper extends BaseMapper<ConstructionProject> {
      * @return 1表示是项目经理，0表示不是
      */
     Integer isProjectManager(@Param("userId") Long userId, @Param("projectId") Integer projectId);
+    
+    /**
+     * 删除项目
+     * @param projectId 项目ID
+     * @return 影响行数
+     */
+    int deleteProjectById(@Param("projectId") Integer projectId);
+    
+    /**
+     * 检查项目是否有关联的劳务需求
+     * @param projectId 项目ID
+     * @return 关联的劳务需求数量
+     */
+    int countRelatedLaborDemands(@Param("projectId") Integer projectId);
 }
