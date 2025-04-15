@@ -26,9 +26,9 @@
     
     <insert id="insertCompany" parameterType="com.qingming.jobserver.model.entity.Company" useGeneratedKeys="true" keyProperty="id">
         INSERT INTO company (
-            name, license_number, address, legal_person
+            name, license_number, address, legal_person, admin_id, create_time
         ) VALUES (
-            #{name}, #{licenseNumber}, #{address}, #{legalPerson}
+            #{name}, #{licenseNumber}, #{address}, #{legalPerson}, #{adminId}, #{createTime}
         )
     </insert>
     
@@ -58,6 +58,7 @@
             <if test="name != null">name = #{name},</if>
             <if test="address != null">address = #{address},</if>
             <if test="legalPerson != null">legal_person = #{legalPerson},</if>
+            <if test="adminId != null">admin_id = #{adminId},</if>
         </set>
         WHERE id = #{id}
     </update>
@@ -93,5 +94,17 @@
         SELECT COUNT(1)
         FROM construction_project
         WHERE company_id = #{companyId}
+    </select>
+    
+    <!-- 分页查询企业列表 -->
+    <select id="queryCompanyList" resultMap="CompanyInfoResultMap">
+        SELECT id, name, license_number, address, legal_person, create_time
+        FROM company
+        <where>
+            <if test="name != null and name != ''">
+                name LIKE CONCAT('%', #{name}, '%')
+            </if>
+        </where>
+        ORDER BY create_time DESC
     </select>
 </mapper>

@@ -1,6 +1,8 @@
 package com.qingming.jobserver.service;
 
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.qingming.jobserver.model.dao.company.AddProjectManagerDao;
+import com.qingming.jobserver.model.dao.company.CompanyQueryDao;
 import com.qingming.jobserver.model.dao.company.CompanyRegisterDao;
 import com.qingming.jobserver.model.dao.company.CompanyUpdateDao;
 import com.qingming.jobserver.model.entity.Company;
@@ -65,25 +67,32 @@ public interface CompanyService {
     
     /**
      * 添加项目经理
-     * @param addProjectManagerDao 添加项目经理请求参数
-     * @param currentUserId 当前操作用户ID
-     * @return 添加成功返回true，否则返回false
+     * @param addProjectManagerDao 添加项目经理信息
+     * @param currentUserId 当前用户ID
+     * @return 成功返回true，失败返回false
      */
     boolean addProjectManager(AddProjectManagerDao addProjectManagerDao, Long currentUserId);
     
     /**
      * 删除企业
      * @param companyId 企业ID
-     * @param currentUserId 当前操作用户ID
-     * @return 删除成功返回true，否则返回false
+     * @param currentUserId 当前用户ID
+     * @return 成功返回true，失败返回false
      */
     boolean deleteCompany(Integer companyId, Long currentUserId);
     
     /**
-     * 强制删除企业（先删除企业下所有项目，然后删除企业）
+     * 强制删除企业（包括相关的项目）
      * @param companyId 企业ID
-     * @param currentUserId 当前操作用户ID
-     * @return 删除成功返回true，否则返回false
+     * @param currentUserId 当前用户ID
+     * @return 成功返回true，失败返回false
      */
     boolean forceDeleteCompany(Integer companyId, Long currentUserId);
+    
+    /**
+     * 分页查询企业列表
+     * @param queryDao 查询参数
+     * @return 分页结果
+     */
+    Page<CompanyInfoVO> queryCompanyList(CompanyQueryDao queryDao);
 }

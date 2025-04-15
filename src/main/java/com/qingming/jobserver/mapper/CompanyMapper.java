@@ -1,6 +1,7 @@
 package com.qingming.jobserver.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.qingming.jobserver.model.entity.Company;
 import com.qingming.jobserver.model.vo.CompanyInfoVO;
 import org.apache.ibatis.annotations.Param;
@@ -82,4 +83,12 @@ public interface CompanyMapper extends BaseMapper<Company> {
      * @return 关联的项目数量
      */
     int countRelatedProjects(@Param("companyId") Integer companyId);
+    
+    /**
+     * 分页查询企业列表
+     * @param page 分页参数
+     * @param name 企业名称（可为null，模糊查询）
+     * @return 企业信息分页列表
+     */
+    Page<CompanyInfoVO> queryCompanyList(Page<CompanyInfoVO> page, @Param("name") String name);
 }

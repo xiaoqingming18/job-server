@@ -1,11 +1,13 @@
 package com.qingming.jobserver.service.impl;
 
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.qingming.jobserver.common.ErrorCode;
 import com.qingming.jobserver.exception.BusinessException;
 import com.qingming.jobserver.mapper.CompanyMapper;
 import com.qingming.jobserver.mapper.ProjectMapper;
 import com.qingming.jobserver.mapper.UserMapper;
 import com.qingming.jobserver.model.dao.company.AddProjectManagerDao;
+import com.qingming.jobserver.model.dao.company.CompanyQueryDao;
 import com.qingming.jobserver.model.dao.company.CompanyRegisterDao;
 import com.qingming.jobserver.model.dao.company.CompanyUpdateDao;
 import com.qingming.jobserver.model.entity.Company;
@@ -71,6 +73,7 @@ public class CompanyServiceImpl implements CompanyService {
         company.setLicenseNumber(registerDao.getLicenseNumber());
         company.setAddress(registerDao.getAddress());
         company.setLegalPerson(registerDao.getLegalPerson());
+        company.setCreateTime(new Date());
         companyMapper.insertCompany(company);
         
         // 5. 获取最新的用户ID并为新用户递增ID
@@ -355,5 +358,19 @@ public class CompanyServiceImpl implements CompanyService {
         int result = companyMapper.deleteCompanyById(companyId);
         
         return result > 0;
+    }
+    
+    @Override
+    public Page<CompanyInfoVO> queryCompanyList(CompanyQueryDao queryDao) {
+        // 参数校验
+        if (queryDao == null) {
+            queryDao = new CompanyQueryDao();
+        }
+        
+        // 创建分页对象
+        Page<CompanyInfoVO> page = new Page<>(queryDao.getPageNum(), queryDao.getPageSize());
+        
+        // 调用Mapper执行查询
+        return companyMapper.queryCompanyList(page, queryDao.getName());
     }
 }

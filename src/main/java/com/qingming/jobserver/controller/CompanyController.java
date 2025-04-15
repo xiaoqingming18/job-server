@@ -1,5 +1,6 @@
 package com.qingming.jobserver.controller;
 
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.qingming.jobserver.common.BaseResponse;
 import com.qingming.jobserver.common.CurrentUserUtils;
 import com.qingming.jobserver.common.ErrorCode;
@@ -7,6 +8,7 @@ import com.qingming.jobserver.common.JwtUtil;
 import com.qingming.jobserver.common.ResultUtils;
 import com.qingming.jobserver.exception.BusinessException;
 import com.qingming.jobserver.model.dao.company.AddProjectManagerDao;
+import com.qingming.jobserver.model.dao.company.CompanyQueryDao;
 import com.qingming.jobserver.model.dao.company.CompanyRegisterDao;
 import com.qingming.jobserver.model.dao.company.CompanyUpdateDao;
 import com.qingming.jobserver.model.entity.User;
@@ -201,6 +203,30 @@ public class CompanyController {
             // 捕获其他异常并返回系统错误
             log.error("强制删除企业发生系统异常", e);
             return ResultUtils.error(ErrorCode.SYSTEM_ERROR.getCode(), "强制删除企业失败，系统异常");
+        }
+    }
+    
+    /**
+     * 分页查询企业列表
+     * @param queryDao 查询参数
+     * @return 企业列表分页结果
+     */
+    @PostMapping("/list")
+    public BaseResponse<Page<CompanyInfoVO>> listCompanies(@RequestBody(required = false) CompanyQueryDao queryDao) {
+        try {
+            // 调用服务层查询企业列表
+            Page<CompanyInfoVO> companiesPage = companyService.queryCompanyList(queryDao);
+            
+            // 返回成功响应
+            return ResultUtils.success(companiesPage);
+        } catch (BusinessException e) {
+            // 捕获业务异常并返回错误响应
+            log.error("查询企业列表失败: {}", e.getMessage());
+            return ResultUtils.error(e.getCode(), e.getMessage());
+        } catch (Exception e) {
+            // 捕获其他异常并返回系统错误
+            log.error("查询企业列表发生系统异常", e);
+            return ResultUtils.error(ErrorCode.SYSTEM_ERROR.getCode(), "查询企业列表失败，系统异常");
         }
     }
 }
