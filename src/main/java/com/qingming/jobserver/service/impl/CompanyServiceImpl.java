@@ -252,4 +252,42 @@ public class CompanyServiceImpl implements CompanyService {
         
         return true;
     }
+    
+    @Override
+    @Transactional
+    public boolean deleteCompany(Integer companyId, Long currentUserId) {
+        // 1. 参数验证
+        if (companyId == null || companyId <= 0) {
+            throw new BusinessException(ErrorCode.PARAMS_ERROR, "企业ID不合法");
+        }
+        
+        if (currentUserId == null || currentUserId <= 0) {
+            throw new BusinessException(ErrorCode.NOT_LOGIN, "用户未登录");
+        }
+        
+        // 2. 验证企业是否存在
+        Company company = companyMapper.selectById(companyId);
+        if (company == null) {
+            throw new BusinessException(ErrorCode.NOT_FOUND, "企业不存在");
+        }
+        
+        // 3. 验证用户权限
+        if (!isSystemAdmin(currentUserId)) {
+            throw new BusinessException(ErrorCode.FORBIDDEN, "只有系统管理员才能删除企业");
+        }
+        
+        // 4. 检查企业是否有关联项目，如果有则不允许删除
+        int projectCount = companyMapper.countRelatedProjects(companyId);
+        if (projectCount > 0) {
+            throw new BusinessException(ErrorCode.FORBIDDEN, "该企业存在关联的项目数据，无法删除");
+        }
+        
+        // 5. 先删除企业相关的项目经理关联记录
+        companyMapper.deleteProjectManagersByCompanyId(companyId);
+        
+        // 6. 删除企业记录
+        int result = companyMapper.deleteCompanyById(companyId);
+        
+        return result > 0;
+    }
 }

@@ -143,4 +143,34 @@ public class CompanyController {
             return ResultUtils.error(ErrorCode.SYSTEM_ERROR.getCode(), "添加项目经理失败，系统异常");
         }
     }
+    
+    /**
+     * 删除企业
+     * @param id 企业ID
+     * @return 删除结果响应
+     */
+    @DeleteMapping("/delete/{id}")
+    public BaseResponse<String> deleteCompany(@PathVariable("id") Integer id) {
+        try {
+            // 获取当前登录用户ID
+            Long currentUserId = CurrentUserUtils.getCurrentUserId();
+            if (currentUserId == null) {
+                return ResultUtils.error(ErrorCode.NOT_LOGIN.getCode(), "用户未登录");
+            }
+            
+            // 调用服务层删除企业
+            boolean result = companyService.deleteCompany(id, currentUserId);
+            
+            // 返回成功响应
+            return ResultUtils.success("删除成功");
+        } catch (BusinessException e) {
+            // 捕获业务异常并返回错误响应
+            log.error("删除企业失败: {}", e.getMessage());
+            return ResultUtils.error(e.getCode(), e.getMessage());
+        } catch (Exception e) {
+            // 捕获其他异常并返回系统错误
+            log.error("删除企业发生系统异常", e);
+            return ResultUtils.error(ErrorCode.SYSTEM_ERROR.getCode(), "删除企业失败，系统异常");
+        }
+    }
 }

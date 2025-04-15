@@ -61,4 +61,25 @@ public interface CompanyMapper extends BaseMapper<Company> {
      * @return 影响行数
      */
     int updateAdminId(@Param("companyId") Integer companyId, @Param("adminId") Long adminId);
+    
+    /**
+     * 删除企业记录
+     * @param companyId 企业ID
+     * @return 影响行数
+     */
+    int deleteCompanyById(@Param("companyId") Integer companyId);
+    
+    /**
+     * 删除企业相关的项目经理记录
+     * @param companyId 企业ID
+     * @return 影响行数
+     */
+    int deleteProjectManagersByCompanyId(@Param("companyId") Integer companyId);
+    
+    /**
+     * 检查企业是否有关联的项目
+     * @param companyId 企业ID
+     * @return 关联的项目数量
+     */
+    int countRelatedProjects(@Param("companyId") Integer companyId);
 }

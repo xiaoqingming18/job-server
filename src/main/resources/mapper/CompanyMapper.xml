@@ -75,4 +75,23 @@
         FROM project_manager
         WHERE user_id = #{userId} AND company_id = #{companyId}
     </select>
+    
+    <!-- 删除企业记录 -->
+    <delete id="deleteCompanyById">
+        DELETE FROM company
+        WHERE id = #{companyId}
+    </delete>
+    
+    <!-- 删除企业相关的项目经理记录 -->
+    <delete id="deleteProjectManagersByCompanyId">
+        DELETE FROM project_manager
+        WHERE company_id = #{companyId}
+    </delete>
+    
+    <!-- 检查企业是否有关联的项目 -->
+    <select id="countRelatedProjects" resultType="java.lang.Integer">
+        SELECT COUNT(1)
+        FROM construction_project
+        WHERE company_id = #{companyId}
+    </select>
 </mapper>
