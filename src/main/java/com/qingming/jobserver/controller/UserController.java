@@ -10,6 +10,7 @@ import com.qingming.jobserver.model.dao.user.UpdatePasswordDao;
 import com.qingming.jobserver.model.entity.User;
 import com.qingming.jobserver.model.dao.user.JobSeekerRegisterDao;
 import com.qingming.jobserver.model.dao.user.JobSeekerUpdateInfoDao;
+import com.qingming.jobserver.model.enums.UserRoleEnum;
 import com.qingming.jobserver.model.vo.JobSeekerProfileVO;
 import com.qingming.jobserver.model.vo.TokenVO;
 import com.qingming.jobserver.service.UserService;
@@ -37,13 +38,26 @@ public class UserController {
 
     @PostMapping("/admin-login")
     public BaseResponse<TokenVO> adminLogin(@RequestBody @Valid AdminLoginDao loginRequest) {
-        User user = userService.getByUsernameAndPassword(loginRequest.getUsername(), loginRequest.getPassword());
-        if (user != null) {
+        try {
+            // 先检查用户名密码是否正确
+            User user = userService.getByUsernameAndPassword(loginRequest.getUsername(), loginRequest.getPassword());
+            if (user == null) {
+                return ResultUtils.error(ErrorCode.LOGIN_PARAMS_ERROR.getCode(), "用户名或密码错误");
+            }
+            
+            // 检查是否是系统管理员
+            if (user.getRole() != UserRoleEnum.system_admin) {
+                return ResultUtils.error(ErrorCode.FORBIDDEN.getCode(), "此账号并不是系统管理员账户");
+            }
+            
+            // 生成JWT令牌
             String token = jwtUtil.generateToken(user.getId(), user.getUsername());
             TokenVO tokenVO = new TokenVO(token);
             return ResultUtils.success(tokenVO);
+        } catch (Exception e) {
+            log.error("系统管理员登录发生异常", e);
+            return ResultUtils.error(ErrorCode.SYSTEM_ERROR.getCode(), "登录失败，系统异常");
         }
-        return ResultUtils.error(ErrorCode.LOGIN_PARAMS_ERROR.getCode(), ErrorCode.LOGIN_PARAMS_ERROR.getMessage());
     }
     
     /**

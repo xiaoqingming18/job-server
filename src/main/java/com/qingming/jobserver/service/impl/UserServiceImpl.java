@@ -19,6 +19,7 @@ import java.util.HashMap;
 import java.util.Map;
 import com.qingming.jobserver.model.dao.user.JobSeekerRegisterDao;
 import org.springframework.transaction.annotation.Transactional;
+import com.qingming.jobserver.model.dao.user.AdminLoginDao;
 
 @Service
 public class UserServiceImpl implements UserService {
@@ -222,6 +223,24 @@ public class UserServiceImpl implements UserService {
         // 判断用户角色是否为项目经理
         if (user.getRole() != UserRoleEnum.project_manager) {
             throw new BusinessException(ErrorCode.FORBIDDEN, "非项目经理账号，无法登录");
+        }
+        
+        return user;
+    }
+
+    @Override
+    public User adminLogin(AdminLoginDao loginDao) {
+        // 根据用户名和密码查询用户
+        User user = userMapper.selectByUsernameAndPassword(loginDao.getUsername(), loginDao.getPassword());
+        
+        // 判断用户是否存在
+        if (user == null) {
+            throw new BusinessException(ErrorCode.LOGIN_PARAMS_ERROR);
+        }
+        
+        // 判断用户角色是否为系统管理员
+        if (user.getRole() != UserRoleEnum.system_admin) {
+            throw new BusinessException(ErrorCode.FORBIDDEN, "非系统管理员账号，无法登录");
         }
         
         return user;

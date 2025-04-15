@@ -1,5 +1,6 @@
 package com.qingming.jobserver.service;
 
+import com.qingming.jobserver.model.dao.user.AdminLoginDao;
 import com.qingming.jobserver.model.dao.user.CompanyAdminLoginDao;
 import com.qingming.jobserver.model.dao.user.JobSeekerLoginDao;
 import com.qingming.jobserver.model.dao.user.JobSeekerRegisterDao;
@@ -72,4 +73,11 @@ public interface UserService {
      * @return 登录成功的用户信息
      */
     User projectManagerLogin(ProjectManagerLoginDao loginDao);
+
+    /**
+     * 系统管理员登录
+     * @param loginDao 登录信息DAO对象
+     * @return 登录成功的用户信息
+     */
+    User adminLogin(AdminLoginDao loginDao);
 }
