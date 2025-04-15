@@ -31,6 +31,11 @@ public class Occupation {
     private String category;
 
     /**
+     * 工种图标URL
+     */
+    private String icon;
+
+    /**
      * 工种描述
      */
     private String description;

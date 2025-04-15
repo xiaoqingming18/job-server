@@ -26,6 +26,11 @@ public class AddOccupationDao {
     private String category;
 
     /**
+     * 工种图标URL
+     */
+    private String icon;
+
+    /**
      * 工种描述
      */
     @Size(max = 1000, message = "工种描述长度不能超过1000个字符")

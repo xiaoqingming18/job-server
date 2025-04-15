@@ -3,6 +3,7 @@ CREATE TABLE `occupation` (
   `id` int unsigned NOT NULL AUTO_INCREMENT COMMENT '工种ID',
   `name` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL COMMENT '工种名称',
   `category` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL COMMENT '工种类别（土建/装修/水电/钢筋等）',
+  `icon` text COLLATE utf8mb4_unicode_ci,
   `description` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci COMMENT '工种描述',
   `required_certificates` json DEFAULT NULL COMMENT '所需证书要求（JSON格式）',
   `average_daily_wage` decimal(10,2) DEFAULT NULL COMMENT '平均日薪（元）',
@@ -10,7 +11,7 @@ CREATE TABLE `occupation` (
   `update_time` datetime DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
   PRIMARY KEY (`id`),
   UNIQUE KEY `idx_job_type_name` (`name`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='建筑工种分类表';
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='建筑工种分类表';
 
 -- 用户表
 CREATE TABLE `user` (

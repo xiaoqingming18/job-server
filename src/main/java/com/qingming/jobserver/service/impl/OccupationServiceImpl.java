@@ -71,6 +71,10 @@ public class OccupationServiceImpl implements OccupationService {
             occupation.setCategory(updateOccupationDao.getCategory());
         }
         
+        if (updateOccupationDao.getIcon() != null) {
+            occupation.setIcon(updateOccupationDao.getIcon());
+        }
+        
         if (updateOccupationDao.getDescription() != null) {
             occupation.setDescription(updateOccupationDao.getDescription());
         }

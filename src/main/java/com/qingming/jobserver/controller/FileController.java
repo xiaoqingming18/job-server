@@ -104,4 +104,50 @@ public class FileController {
             throw new BusinessException(ErrorCode.SYSTEM_ERROR, "上传头像失败: " + e.getMessage());
         }
     }
+
+    /**
+     * 通用文件上传接口
+     * @param file 文件
+     * @param directory 存储目录（可选，默认为common）
+     * @return 文件URL和对象名
+     */
+    @PostMapping("/upload")
+    public BaseResponse<Map<String, String>> uploadFile(
+            @RequestParam("file") MultipartFile file,
+            @RequestParam(value = "directory", required = false, defaultValue = "common") String directory) {
+        try {
+            log.info("开始上传文件，目录: {}", directory);
+            
+            // 检查文件是否为空
+            if (file.isEmpty()) {
+                throw new BusinessException(ErrorCode.PARAMS_ERROR, "上传文件不能为空");
+            }
+
+            // 检查文件大小（20MB以内，与配置文件一致）
+            if (file.getSize() > 20 * 1024 * 1024) {
+                throw new BusinessException(ErrorCode.PARAMS_ERROR, "文件大小不能超过20MB");
+            }
+
+            // 上传文件到MinIO
+            String objectName = minioUtil.uploadFile(file, directory);
+            log.info("文件上传到MinIO成功，对象名: {}", objectName);
+            
+            // 生成简化URL，不包含查询参数
+            String fileUrl = minioUtil.getSimplifiedUrl(objectName);
+            log.info("生成简化URL: {}", fileUrl);
+            
+            // 返回结果
+            Map<String, String> result = new HashMap<>();
+            result.put("url", fileUrl);
+            result.put("objectName", objectName);
+            
+            return ResultUtils.success(result);
+        } catch (BusinessException e) {
+            log.error("上传文件业务异常: {}", e.getMessage());
+            throw e;
+        } catch (Exception e) {
+            log.error("上传文件系统异常", e);
+            throw new BusinessException(ErrorCode.SYSTEM_ERROR, "上传文件失败: " + e.getMessage());
+        }
+    }
 }
