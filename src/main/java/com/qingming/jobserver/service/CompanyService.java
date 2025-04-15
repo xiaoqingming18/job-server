@@ -78,4 +78,12 @@ public interface CompanyService {
      * @return 删除成功返回true，否则返回false
      */
     boolean deleteCompany(Integer companyId, Long currentUserId);
+    
+    /**
+     * 强制删除企业（先删除企业下所有项目，然后删除企业）
+     * @param companyId 企业ID
+     * @param currentUserId 当前操作用户ID
+     * @return 删除成功返回true，否则返回false
+     */
+    boolean forceDeleteCompany(Integer companyId, Long currentUserId);
 }

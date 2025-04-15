@@ -5,6 +5,8 @@ import com.qingming.jobserver.model.entity.ConstructionProject;
 import com.qingming.jobserver.model.vo.ProjectInfoVO;
 import org.apache.ibatis.annotations.Param;
 
+import java.util.List;
+
 /**
  * 建筑项目Mapper接口
  */
@@ -60,4 +62,11 @@ public interface ProjectMapper extends BaseMapper<ConstructionProject> {
      * @return 关联的劳务需求数量
      */
     int countRelatedLaborDemands(@Param("projectId") Integer projectId);
+    
+    /**
+     * 根据企业ID查询项目ID列表
+     * @param companyId 企业ID
+     * @return 项目ID列表
+     */
+    List<Integer> getProjectIdsByCompanyId(@Param("companyId") Integer companyId);
 }

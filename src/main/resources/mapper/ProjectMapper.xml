@@ -123,4 +123,11 @@
         FROM labor_demand
         WHERE project_id = #{projectId}
     </select>
+    
+    <!-- 根据企业ID查询项目ID列表 -->
+    <select id="getProjectIdsByCompanyId" resultType="java.lang.Integer">
+        SELECT id
+        FROM construction_project
+        WHERE company_id = #{companyId}
+    </select>
 </mapper>

@@ -3,6 +3,7 @@ package com.qingming.jobserver.service.impl;
 import com.qingming.jobserver.common.ErrorCode;
 import com.qingming.jobserver.exception.BusinessException;
 import com.qingming.jobserver.mapper.CompanyMapper;
+import com.qingming.jobserver.mapper.ProjectMapper;
 import com.qingming.jobserver.mapper.UserMapper;
 import com.qingming.jobserver.model.dao.company.AddProjectManagerDao;
 import com.qingming.jobserver.model.dao.company.CompanyRegisterDao;
@@ -13,18 +14,22 @@ import com.qingming.jobserver.model.enums.AccountStatusEnum;
 import com.qingming.jobserver.model.enums.UserRoleEnum;
 import com.qingming.jobserver.model.vo.CompanyInfoVO;
 import com.qingming.jobserver.service.CompanyService;
+import com.qingming.jobserver.service.ProjectService;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
  * 公司服务实现类
  */
 @Service
+@Slf4j
 public class CompanyServiceImpl implements CompanyService {
 
     @Autowired
@@ -32,6 +37,12 @@ public class CompanyServiceImpl implements CompanyService {
     
     @Autowired
     private UserMapper userMapper;
+    
+    @Autowired
+    private ProjectMapper projectMapper;
+    
+    @Autowired
+    private ProjectService projectService;
     
     @Override
     @Transactional
@@ -286,6 +297,61 @@ public class CompanyServiceImpl implements CompanyService {
         companyMapper.deleteProjectManagersByCompanyId(companyId);
         
         // 6. 删除企业记录
+        int result = companyMapper.deleteCompanyById(companyId);
+        
+        return result > 0;
+    }
+    
+    @Override
+    @Transactional
+    public boolean forceDeleteCompany(Integer companyId, Long currentUserId) {
+        // 1. 参数验证
+        if (companyId == null || companyId <= 0) {
+            throw new BusinessException(ErrorCode.PARAMS_ERROR, "企业ID不合法");
+        }
+        
+        if (currentUserId == null || currentUserId <= 0) {
+            throw new BusinessException(ErrorCode.NOT_LOGIN, "用户未登录");
+        }
+        
+        // 2. 验证企业是否存在
+        Company company = companyMapper.selectById(companyId);
+        if (company == null) {
+            throw new BusinessException(ErrorCode.NOT_FOUND, "企业不存在");
+        }
+        
+        // 3. 验证用户权限（仅限系统管理员）
+        if (!isSystemAdmin(currentUserId)) {
+            throw new BusinessException(ErrorCode.FORBIDDEN, "只有系统管理员才能强制删除企业");
+        }
+        
+        // 4. 获取企业下所有项目ID
+        List<Integer> projectIds = projectMapper.getProjectIdsByCompanyId(companyId);
+        
+        // 5. 删除企业下所有项目
+        int deletedProjectCount = 0;
+        if (!projectIds.isEmpty()) {
+            log.info("开始强制删除企业[{}]下的所有项目，共{}个项目", companyId, projectIds.size());
+            
+            for (Integer projectId : projectIds) {
+                try {
+                    // 尝试删除项目，忽略劳务需求关联检查
+                    int result = projectMapper.deleteProjectById(projectId);
+                    if (result > 0) {
+                        deletedProjectCount++;
+                    }
+                } catch (Exception e) {
+                    log.error("删除项目[{}]失败：{}", projectId, e.getMessage());
+                }
+            }
+            
+            log.info("成功删除企业[{}]下的{}个项目", companyId, deletedProjectCount);
+        }
+        
+        // 6. 删除企业相关的项目经理关联记录
+        companyMapper.deleteProjectManagersByCompanyId(companyId);
+        
+        // 7. 删除企业记录
         int result = companyMapper.deleteCompanyById(companyId);
         
         return result > 0;
