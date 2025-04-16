@@ -1,8 +1,10 @@
 package com.qingming.jobserver.service;
 
 import com.qingming.jobserver.model.dao.project.ProjectAddDao;
+import com.qingming.jobserver.model.dao.project.ProjectPageRequestDao;
 import com.qingming.jobserver.model.dao.project.ProjectStatusUpdateDao;
 import com.qingming.jobserver.model.dao.project.ProjectUpdateDao;
+import com.qingming.jobserver.model.vo.PageResult;
 import com.qingming.jobserver.model.vo.ProjectInfoVO;
 
 import java.util.List;
@@ -58,4 +60,11 @@ public interface ProjectService {
      * @return 项目列表
      */
     List<ProjectInfoVO> getCompanyProjectList(Integer companyId, Long userId);
+
+    /**
+     * 分页获取项目列表
+     * @param requestDao 分页请求参数
+     * @return 分页结果
+     */
+    PageResult<ProjectInfoVO> getProjectPage(ProjectPageRequestDao requestDao);
 }

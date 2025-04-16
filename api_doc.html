@@ -2664,6 +2664,183 @@
                         </div>
                     </div>
                 </div>
+                <!-- 项目分页查询接口 -->
+                <div class="api-endpoint">
+                    <div class="endpoint-header">
+                        <span class="http-method method-get">GET</span>
+                        <span class="endpoint-path">/project/page</span>
+                        <span class="endpoint-summary">分页获取项目列表</span>
+                    </div>
+                    <div class="endpoint-content">
+                        <p>获取系统中的项目列表，支持分页、过滤和排序功能。</p>
+                        
+                        <h3 class="section-title">请求参数</h3>
+                        <table class="param-table">
+                            <tr>
+                                <th>参数名</th>
+                                <th>类型</th>
+                                <th>是否必须</th>
+                                <th>默认值</th>
+                                <th>说明</th>
+                            </tr>
+                            <tr>
+                                <td>pageNum</td>
+                                <td>Integer</td>
+                                <td>否</td>
+                                <td>1</td>
+                                <td>页码，最小值为1</td>
+                            </tr>
+                            <tr>
+                                <td>pageSize</td>
+                                <td>Integer</td>
+                                <td>否</td>
+                                <td>10</td>
+                                <td>每页数量，范围1-100</td>
+                            </tr>
+                            <tr>
+                                <td>status</td>
+                                <td>String</td>
+                                <td>否</td>
+                                <td>-</td>
+                                <td>项目状态筛选</td>
+                            </tr>
+                            <tr>
+                                <td>projectType</td>
+                                <td>String</td>
+                                <td>否</td>
+                                <td>-</td>
+                                <td>项目类型筛选</td>
+                            </tr>
+                            <tr>
+                                <td>province</td>
+                                <td>String</td>
+                                <td>否</td>
+                                <td>-</td>
+                                <td>省份筛选</td>
+                            </tr>
+                            <tr>
+                                <td>city</td>
+                                <td>String</td>
+                                <td>否</td>
+                                <td>-</td>
+                                <td>城市筛选</td>
+                            </tr>
+                            <tr>
+                                <td>orderBy</td>
+                                <td>String</td>
+                                <td>否</td>
+                                <td>create_time</td>
+                                <td>排序字段（create_time/total_area/budget）</td>
+                            </tr>
+                            <tr>
+                                <td>orderDirection</td>
+                                <td>String</td>
+                                <td>否</td>
+                                <td>desc</td>
+                                <td>排序方向（asc/desc）</td>
+                            </tr>
+                        </table>
+
+                        <h3 class="section-title">响应参数</h3>
+                        <table class="param-table">
+                            <tr>
+                                <th>参数名</th>
+                                <th>类型</th>
+                                <th>说明</th>
+                            </tr>
+                            <tr>
+                                <td>pageNum</td>
+                                <td>Integer</td>
+                                <td>当前页码</td>
+                            </tr>
+                            <tr>
+                                <td>pageSize</td>
+                                <td>Integer</td>
+                                <td>每页数量</td>
+                            </tr>
+                            <tr>
+                                <td>total</td>
+                                <td>Long</td>
+                                <td>总记录数</td>
+                            </tr>
+                            <tr>
+                                <td>totalPages</td>
+                                <td>Integer</td>
+                                <td>总页数</td>
+                            </tr>
+                            <tr>
+                                <td>list</td>
+                                <td>Array</td>
+                                <td>项目列表数据</td>
+                            </tr>
+                        </table>
+
+                        <h3 class="section-title">请求示例</h3>
+                        <div class="code-block">
+                            <div class="code-header">
+                                <span>Request</span>
+                            </div>
+                            <pre><code>GET /project/page?pageNum=1&pageSize=10&status=in_progress&province=浙江省&city=杭州市&orderBy=create_time&orderDirection=desc</code></pre>
+                        </div>
+
+                        <h3 class="section-title">响应示例</h3>
+                        <div class="code-block">
+                            <div class="code-header">
+                                <span>Response</span>
+                            </div>
+                            <pre><code>{
+    "code": 0,
+    "data": {
+        "pageNum": 1,
+        "pageSize": 10,
+        "total": 100,
+        "totalPages": 10,
+        "list": [
+            {
+                "id": 1,
+                "name": "示例项目",
+                "address": "示例地址",
+                "province": "浙江省",
+                "city": "杭州市",
+                "district": "滨江区",
+                "projectManagerId": 1001,
+                "startDate": "2024-03-01",
+                "expectedEndDate": "2024-12-31",
+                "projectType": "residence",
+                "projectScale": "big",
+                "totalArea": 50000.00,
+                "budget": 100000000.00,
+                "status": "in_progress",
+                "createTime": "2024-03-01 10:00:00"
+            }
+            // ... 更多项目数据
+        ]
+    },
+    "message": "ok"
+}</code></pre>
+                        </div>
+
+                        <h3 class="section-title">错误码说明</h3>
+                        <table class="param-table">
+                            <tr>
+                                <th>错误码</th>
+                                <th>说明</th>
+                            </tr>
+                            <tr>
+                                <td>40000</td>
+                                <td>请求参数错误</td>
+                            </tr>
+                            <tr>
+                                <td>40100</td>
+                                <td>未登录</td>
+                            </tr>
+                            <tr>
+                                <td>50000</td>
+                                <td>系统内部错误</td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
             </div>
         </section>
 

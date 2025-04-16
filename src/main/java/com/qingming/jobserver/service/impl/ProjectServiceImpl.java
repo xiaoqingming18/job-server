@@ -6,19 +6,26 @@ import com.qingming.jobserver.mapper.CompanyMapper;
 import com.qingming.jobserver.mapper.ProjectMapper;
 import com.qingming.jobserver.mapper.UserMapper;
 import com.qingming.jobserver.model.dao.project.ProjectAddDao;
+import com.qingming.jobserver.model.dao.project.ProjectPageRequestDao;
 import com.qingming.jobserver.model.dao.project.ProjectStatusUpdateDao;
 import com.qingming.jobserver.model.dao.project.ProjectUpdateDao;
 import com.qingming.jobserver.model.entity.Company;
 import com.qingming.jobserver.model.entity.ConstructionProject;
 import com.qingming.jobserver.model.entity.User;
 import com.qingming.jobserver.model.enums.UserRoleEnum;
+import com.qingming.jobserver.model.vo.PageResult;
 import com.qingming.jobserver.model.vo.ProjectInfoVO;
 import com.qingming.jobserver.service.ProjectService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.StringUtils;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
@@ -32,6 +39,9 @@ public class ProjectServiceImpl implements ProjectService {
     private final ProjectMapper projectMapper;
     private final UserMapper userMapper;
     private final CompanyMapper companyMapper;
+
+    @Autowired
+    private JdbcTemplate jdbcTemplate;
 
     public ProjectServiceImpl(ProjectMapper projectMapper, UserMapper userMapper, CompanyMapper companyMapper) {
         this.projectMapper = projectMapper;
@@ -251,5 +261,72 @@ public class ProjectServiceImpl implements ProjectService {
         
         // 6. 查询并返回企业项目列表
         return projectMapper.getProjectListByCompanyId(companyId);
+    }
+
+    @Override
+    public PageResult<ProjectInfoVO> getProjectPage(ProjectPageRequestDao requestDao) {
+        // 创建分页结果对象
+        PageResult<ProjectInfoVO> pageResult = new PageResult<>();
+        pageResult.setPageNum(requestDao.getPageNum());
+        pageResult.setPageSize(requestDao.getPageSize());
+
+        try {
+            // 构建查询条件
+            StringBuilder sqlBuilder = new StringBuilder();
+            sqlBuilder.append("SELECT * FROM construction_project WHERE 1=1");
+
+            // 添加筛选条件
+            List<Object> params = new ArrayList<>();
+            if (StringUtils.hasText(requestDao.getStatus())) {
+                sqlBuilder.append(" AND status = ?");
+                params.add(requestDao.getStatus());
+            }
+            if (StringUtils.hasText(requestDao.getProjectType())) {
+                sqlBuilder.append(" AND project_type = ?");
+                params.add(requestDao.getProjectType());
+            }
+            if (StringUtils.hasText(requestDao.getProvince())) {
+                sqlBuilder.append(" AND province = ?");
+                params.add(requestDao.getProvince());
+            }
+            if (StringUtils.hasText(requestDao.getCity())) {
+                sqlBuilder.append(" AND city = ?");
+                params.add(requestDao.getCity());
+            }
+
+            // 添加排序
+            String orderBy = StringUtils.hasText(requestDao.getOrderBy()) ? 
+                requestDao.getOrderBy() : "create_time";
+            String orderDirection = "asc".equalsIgnoreCase(requestDao.getOrderDirection()) ? 
+                "asc" : "desc";
+            sqlBuilder.append(" ORDER BY ").append(orderBy).append(" ").append(orderDirection);
+
+            // 计算总记录数
+            String countSql = "SELECT COUNT(*) FROM (" + sqlBuilder.toString() + ") t";
+            Long total = jdbcTemplate.queryForObject(countSql, Long.class, params.toArray());
+            pageResult.setTotal(total);
+
+            // 计算总页数
+            int totalPages = (int) Math.ceil((double) total / requestDao.getPageSize());
+            pageResult.setTotalPages(totalPages);
+
+            // 添加分页
+            sqlBuilder.append(" LIMIT ?, ?");
+            params.add((requestDao.getPageNum() - 1) * requestDao.getPageSize());
+            params.add(requestDao.getPageSize());
+
+            // 执行查询
+            List<ProjectInfoVO> projectList = jdbcTemplate.query(
+                sqlBuilder.toString(),
+                params.toArray(),
+                new BeanPropertyRowMapper<>(ProjectInfoVO.class)
+            );
+
+            pageResult.setList(projectList);
+            return pageResult;
+        } catch (Exception e) {
+            log.error("分页查询项目列表失败", e);
+            throw new BusinessException(ErrorCode.SYSTEM_ERROR, "分页查询项目列表失败");
+        }
     }
 }
