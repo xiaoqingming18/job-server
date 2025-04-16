@@ -2,11 +2,13 @@ package com.qingming.jobserver.service.impl;
 
 import com.qingming.jobserver.common.ErrorCode;
 import com.qingming.jobserver.exception.BusinessException;
+import com.qingming.jobserver.mapper.CompanyMapper;
 import com.qingming.jobserver.mapper.ProjectMapper;
 import com.qingming.jobserver.mapper.UserMapper;
 import com.qingming.jobserver.model.dao.project.ProjectAddDao;
 import com.qingming.jobserver.model.dao.project.ProjectStatusUpdateDao;
 import com.qingming.jobserver.model.dao.project.ProjectUpdateDao;
+import com.qingming.jobserver.model.entity.Company;
 import com.qingming.jobserver.model.entity.ConstructionProject;
 import com.qingming.jobserver.model.entity.User;
 import com.qingming.jobserver.model.enums.UserRoleEnum;
@@ -17,6 +19,7 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.Objects;
 
 /**
@@ -28,10 +31,12 @@ public class ProjectServiceImpl implements ProjectService {
 
     private final ProjectMapper projectMapper;
     private final UserMapper userMapper;
+    private final CompanyMapper companyMapper;
 
-    public ProjectServiceImpl(ProjectMapper projectMapper, UserMapper userMapper) {
+    public ProjectServiceImpl(ProjectMapper projectMapper, UserMapper userMapper, CompanyMapper companyMapper) {
         this.projectMapper = projectMapper;
         this.userMapper = userMapper;
+        this.companyMapper = companyMapper;
     }
 
     @Override
@@ -197,5 +202,39 @@ public class ProjectServiceImpl implements ProjectService {
         
         // 非系统管理员且非项目经理，无权限
         throw new BusinessException(ErrorCode.ROLE_NO_PERMISSION, "您无权操作此项目");
+    }
+
+    @Override
+    public List<ProjectInfoVO> getCompanyProjectList(Integer companyId, Long userId) {
+        // 1. 参数校验
+        if (companyId == null || companyId <= 0) {
+            throw new BusinessException(ErrorCode.PARAMS_ERROR, "企业ID无效");
+        }
+        
+        // 2. 获取当前用户信息
+        User user = userMapper.selectById(userId);
+        if (user == null) {
+            throw new BusinessException(ErrorCode.NOT_LOGIN, "用户不存在或未登录");
+        }
+        
+        // 3. 检查用户权限
+        if (UserRoleEnum.system_admin.name().equals(user.getRole().name())) {
+            // 系统管理员直接放行
+            return projectMapper.getProjectListByCompanyId(companyId);
+        }
+        
+        // 4. 检查是否为企业管理员
+        if (!UserRoleEnum.company_admin.name().equals(user.getRole().name())) {
+            throw new BusinessException(ErrorCode.ROLE_NO_PERMISSION, "所属用户组无查看企业项目列表权限");
+        }
+        
+        // 5. 检查用户是否为该企业的管理员
+        Company company = companyMapper.selectById(companyId);
+        if (company == null || !Objects.equals(company.getAdminId(), userId)) {
+            throw new BusinessException(ErrorCode.ROLE_NO_PERMISSION, "所属用户组无查看企业项目列表权限");
+        }
+        
+        // 6. 查询并返回企业项目列表
+        return projectMapper.getProjectListByCompanyId(companyId);
     }
 }

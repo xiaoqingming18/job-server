@@ -2468,6 +2468,118 @@
                         </div>
                     </div>
                 </div>
+                <!-- 企业项目列表接口 -->
+                <div class="api-endpoint">
+                    <div class="endpoint-header">
+                        <span class="http-method method-get">GET</span>
+                        <span class="endpoint-path">/project/company/{companyId}/list</span>
+                        <span class="endpoint-summary">获取企业项目列表</span>
+                    </div>
+                    <div class="endpoint-content">
+                        <div class="section-title">接口描述</div>
+                        <p>获取指定企业的所有项目列表。系统管理员可以查看任何企业的项目列表，企业管理员只能查看自己所在企业的项目列表。</p>
+                        
+                        <div class="section-title">请求参数</div>
+                        <table class="param-table">
+                            <thead>
+                                <tr>
+                                    <th>参数名</th>
+                                    <th>位置</th>
+                                    <th>类型</th>
+                                    <th>必填</th>
+                                    <th>说明</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>companyId</td>
+                                    <td>path</td>
+                                    <td>Integer</td>
+                                    <td class="param-required">是</td>
+                                    <td>企业ID</td>
+                                </tr>
+                            </tbody>
+                        </table>
+
+                        <div class="section-title">请求头</div>
+                        <table class="param-table">
+                            <thead>
+                                <tr>
+                                    <th>参数名</th>
+                                    <th>必填</th>
+                                    <th>说明</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>Authorization</td>
+                                    <td class="param-required">是</td>
+                                    <td>Bearer {token}</td>
+                                </tr>
+                            </tbody>
+                        </table>
+
+                        <div class="section-title">响应参数</div>
+                        <table class="param-table">
+                            <thead>
+                                <tr>
+                                    <th>参数名</th>
+                                    <th>类型</th>
+                                    <th>说明</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>code</td>
+                                    <td>Integer</td>
+                                    <td>响应码，0表示成功</td>
+                                </tr>
+                                <tr>
+                                    <td>data</td>
+                                    <td>Array</td>
+                                    <td>项目列表数据</td>
+                                </tr>
+                                <tr>
+                                    <td>message</td>
+                                    <td>String</td>
+                                    <td>响应消息</td>
+                                </tr>
+                            </tbody>
+                        </table>
+
+                        <div class="section-title">响应示例</div>
+                        <div class="code-block">
+                            <pre class="code-content">
+{
+    "code": 0,
+    "data": [
+        {
+            "id": 1,
+            "companyId": 1,
+            "name": "示例项目",
+            "address": "项目地址",
+            "province": "省份",
+            "city": "城市",
+            "district": "区域",
+            "projectManagerId": 1,
+            "projectManagerName": "项目经理",
+            "startDate": "2024-01-01",
+            "expectedEndDate": "2024-12-31",
+            "projectType": "住宅",
+            "projectScale": "大型",
+            "totalArea": 10000.0,
+            "budget": 1000000.0,
+            "description": "项目描述",
+            "status": "进行中",
+            "createTime": "2024-01-01 00:00:00",
+            "updateTime": "2024-01-01 00:00:00"
+        }
+    ],
+    "message": "success"
+}</pre>
+                        </div>
+                    </div>
+                </div>
             </div>
         </section>
 

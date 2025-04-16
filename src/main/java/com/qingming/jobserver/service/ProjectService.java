@@ -5,6 +5,8 @@ import com.qingming.jobserver.model.dao.project.ProjectStatusUpdateDao;
 import com.qingming.jobserver.model.dao.project.ProjectUpdateDao;
 import com.qingming.jobserver.model.vo.ProjectInfoVO;
 
+import java.util.List;
+
 /**
  * 项目服务接口
  */
@@ -48,4 +50,12 @@ public interface ProjectService {
      * @return 删除成功返回true，否则返回false
      */
     boolean deleteProject(Integer projectId, Long userId);
+    
+    /**
+     * 获取企业项目列表
+     * @param companyId 企业ID
+     * @param userId 当前用户ID
+     * @return 项目列表
+     */
+    List<ProjectInfoVO> getCompanyProjectList(Integer companyId, Long userId);
 }
