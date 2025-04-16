@@ -34,7 +34,7 @@
             cp.address AS project_address,
             ld.job_type_id,
             o.name AS job_type_name,
-            o.category AS job_type_category,
+            oc.name AS job_type_category,
             ld.headcount,
             ld.daily_wage,
             ld.start_date,
@@ -51,6 +51,7 @@
             labor_demand ld
         INNER JOIN construction_project cp ON ld.project_id = cp.id
         INNER JOIN occupation o ON ld.job_type_id = o.id
+        INNER JOIN occupation_category oc ON o.category_id = oc.id
         INNER JOIN company c ON cp.company_id = c.id
     </sql>
     

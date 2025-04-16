@@ -1,79 +1,68 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.qingming.jobserver.mapper.OccupationMapper">
+    
     <resultMap id="BaseResultMap" type="com.qingming.jobserver.model.entity.Occupation">
-        <id column="id" property="id" />
-        <result column="name" property="name" />
-        <result column="category" property="category" />
-        <result column="description" property="description" />
-        <result column="required_certificates" property="requiredCertificates" />
-        <result column="average_daily_wage" property="averageDailyWage" />
-        <result column="create_time" property="createTime" />
-        <result column="update_time" property="updateTime" />
+        <id property="id" column="id"/>
+        <result property="name" column="name"/>
+        <result property="categoryId" column="category_id"/>
+        <result property="icon" column="icon"/>
+        <result property="description" column="description"/>
+        <result property="requiredCertificates" column="required_certificates" typeHandler="com.baomidou.mybatisplus.extension.handlers.JacksonTypeHandler"/>
+        <result property="averageDailyWage" column="average_daily_wage"/>
+        <result property="difficultyLevel" column="difficulty_level"/>
+        <result property="status" column="status"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateTime" column="update_time"/>
+    </resultMap>
+    
+    <resultMap id="OccupationWithCategoryMap" type="com.qingming.jobserver.model.entity.Occupation">
+        <id property="id" column="id"/>
+        <result property="name" column="name"/>
+        <result property="categoryId" column="category_id"/>
+        <result property="icon" column="icon"/>
+        <result property="description" column="description"/>
+        <result property="requiredCertificates" column="required_certificates" typeHandler="com.baomidou.mybatisplus.extension.handlers.JacksonTypeHandler"/>
+        <result property="averageDailyWage" column="average_daily_wage"/>
+        <result property="difficultyLevel" column="difficulty_level"/>
+        <result property="status" column="status"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateTime" column="update_time"/>
+        <result property="categoryName" column="category_name"/>
     </resultMap>
     
     <!-- 根据名称查询工种 -->
-    <select id="selectByName" resultType="com.qingming.jobserver.model.entity.Occupation">
+    <select id="selectByName" resultMap="BaseResultMap">
         SELECT *
         FROM occupation
         WHERE name = #{name}
         LIMIT 1
     </select>
     
-    <!-- 根据类别查询工种列表 -->
-    <select id="selectByCategory" resultType="com.qingming.jobserver.model.entity.Occupation">
+    <!-- 根据类别ID查询工种列表 -->
+    <select id="selectByCategoryId" resultMap="BaseResultMap">
         SELECT *
         FROM occupation
-        WHERE category = #{category}
-        ORDER BY id DESC
+        WHERE category_id = #{categoryId}
     </select>
     
-    <!-- 插入工种信息 -->
-    <insert id="insertOccupation" parameterType="com.qingming.jobserver.model.entity.Occupation" useGeneratedKeys="true" keyProperty="id">
-        INSERT INTO occupation (
-            name, category, description, required_certificates, average_daily_wage, create_time
-        ) VALUES (
-            #{name}, #{category}, #{description}, #{requiredCertificates}, #{averageDailyWage}, NOW()
-        )
-    </insert>
-    
-    <!-- 更新工种信息（只更新非null字段） -->
-    <update id="updateOccupationSelective" parameterType="com.qingming.jobserver.model.entity.Occupation">
-        UPDATE occupation
-        <set>
-            <if test="name != null">name = #{name},</if>
-            <if test="category != null">category = #{category},</if>
-            <if test="description != null">description = #{description},</if>
-            <if test="requiredCertificates != null">required_certificates = #{requiredCertificates},</if>
-            <if test="averageDailyWage != null">average_daily_wage = #{averageDailyWage},</if>
-            update_time = NOW()
-        </set>
-        WHERE id = #{id}
-    </update>
-    
-    <!-- 删除工种信息 -->
-    <delete id="deleteOccupationById">
-        DELETE FROM occupation
-        WHERE id = #{id}
-    </delete>
-    
-    <!-- 根据ID查询工种详情 -->
-    <select id="getOccupationById" resultMap="BaseResultMap">
-        SELECT 
-            id, name, category, description, required_certificates, average_daily_wage, create_time, update_time
-        FROM 
-            occupation
-        WHERE 
-            id = #{id}
+    <!-- 分页查询工种并关联类别信息 -->
+    <select id="selectPageWithCategory" resultMap="OccupationWithCategoryMap">
+        SELECT o.*, c.name as category_name
+        FROM occupation o
+        LEFT JOIN occupation_category c ON o.category_id = c.id
+        <where>
+            <if test="categoryId != null">
+                o.category_id = #{categoryId}
+            </if>
+        </where>
     </select>
     
-    <!-- 查询所有工种 -->
-    <select id="getAllOccupations" resultMap="BaseResultMap">
-        SELECT 
-            id, name, category, description, required_certificates, average_daily_wage, create_time, update_time
-        FROM 
-            occupation
-        ORDER BY 
-            category, name
+    <!-- 根据ID查询工种（含类别名称） -->
+    <select id="selectByIdWithCategory" resultMap="OccupationWithCategoryMap">
+        SELECT o.*, c.name as category_name
+        FROM occupation o
+        LEFT JOIN occupation_category c ON o.category_id = c.id
+        WHERE o.id = #{id}
     </select>
 </mapper>

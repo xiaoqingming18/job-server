@@ -5,19 +5,21 @@ import com.qingming.jobserver.common.CurrentUserUtils;
 import com.qingming.jobserver.common.ErrorCode;
 import com.qingming.jobserver.common.ResultUtils;
 import com.qingming.jobserver.exception.BusinessException;
-import com.qingming.jobserver.model.dao.occupation.AddOccupationDao;
-import com.qingming.jobserver.model.dao.occupation.UpdateOccupationDao;
+import com.qingming.jobserver.model.dao.occupation.OccupationAddRequest;
+import com.qingming.jobserver.model.dao.occupation.OccupationStatusUpdateRequest;
+import com.qingming.jobserver.model.dao.occupation.OccupationUpdateRequest;
 import com.qingming.jobserver.model.entity.Occupation;
 import com.qingming.jobserver.model.entity.User;
 import com.qingming.jobserver.model.enums.UserRoleEnum;
 import com.qingming.jobserver.service.OccupationService;
 import com.qingming.jobserver.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
 import jakarta.validation.Valid;
+import java.math.BigDecimal;
 import java.util.List;
+import java.util.Map;
 
 /**
  * 工种管理控制器
@@ -46,29 +48,43 @@ public class OccupationController {
 
     /**
      * 添加工种（仅系统管理员可操作）
-     * @param addOccupationDao 添加工种请求对象
+     * @param occupationAddRequest 添加工种请求
      * @return 添加后的工种对象
      */
     @PostMapping("/add")
-    public BaseResponse<Occupation> addOccupation(@RequestBody @Valid AddOccupationDao addOccupationDao) {
+    public BaseResponse<Occupation> addOccupation(@RequestBody @Valid OccupationAddRequest occupationAddRequest) {
         // 检查权限
         checkSystemAdminRole();
         
-        Occupation occupation = occupationService.addOccupation(addOccupationDao);
+        Occupation occupation = occupationService.addOccupation(occupationAddRequest);
         return ResultUtils.success(occupation);
     }
 
     /**
      * 更新工种信息（仅系统管理员可操作）
-     * @param updateOccupationDao 更新工种请求对象
+     * @param occupationUpdateRequest 更新工种请求
      * @return 更新后的工种对象
      */
     @PutMapping("/update")
-    public BaseResponse<Occupation> updateOccupation(@RequestBody @Valid UpdateOccupationDao updateOccupationDao) {
+    public BaseResponse<Occupation> updateOccupation(@RequestBody @Valid OccupationUpdateRequest occupationUpdateRequest) {
         // 检查权限
         checkSystemAdminRole();
         
-        Occupation occupation = occupationService.updateOccupation(updateOccupationDao);
+        Occupation occupation = occupationService.updateOccupation(occupationUpdateRequest);
+        return ResultUtils.success(occupation);
+    }
+
+    /**
+     * 更新工种状态（启用/禁用）（仅系统管理员可操作）
+     * @param statusUpdateRequest 状态更新请求
+     * @return 更新后的工种对象
+     */
+    @PutMapping("/status")
+    public BaseResponse<Occupation> updateOccupationStatus(@RequestBody @Valid OccupationStatusUpdateRequest statusUpdateRequest) {
+        // 检查权限
+        checkSystemAdminRole();
+        
+        Occupation occupation = occupationService.updateOccupationStatus(statusUpdateRequest);
         return ResultUtils.success(occupation);
     }
 
@@ -84,19 +100,89 @@ public class OccupationController {
     }
 
     /**
-     * 获取工种列表，可选择按类别过滤（所有已认证用户可访问）
-     * @param category 工种类别（可选）
+     * 分页获取工种列表（所有已认证用户可访问）
+     * @param page 页码，从1开始
+     * @param size 每页数量
+     * @param categoryId 工种类别ID（可选）
+     * @return 工种列表和分页信息
+     */
+    @GetMapping("/page")
+    public BaseResponse<Map<String, Object>> pageOccupations(
+            @RequestParam(defaultValue = "1") Integer page,
+            @RequestParam(defaultValue = "10") Integer size,
+            @RequestParam(required = false) Integer categoryId) {
+        
+        Map<String, Object> pageResult = occupationService.pageOccupations(page, size, categoryId);
+        return ResultUtils.success(pageResult);
+    }
+
+    /**
+     * 根据类别ID获取工种列表（所有已认证用户可访问）
+     * @param categoryId 类别ID
      * @return 工种列表
      */
-    @GetMapping("/list")
-    public BaseResponse<List<Occupation>> listOccupations(@RequestParam(required = false) String category) {
-        List<Occupation> occupations;
-        if (StringUtils.hasText(category)) {
-            occupations = occupationService.listOccupationsByCategory(category);
-        } else {
-            occupations = occupationService.listOccupations();
-        }
+    @GetMapping("/by-category/{categoryId}")
+    public BaseResponse<List<Occupation>> listOccupationsByCategoryId(@PathVariable Integer categoryId) {
+        List<Occupation> occupations = occupationService.listOccupationsByCategoryId(categoryId);
         return ResultUtils.success(occupations);
+    }
+
+    /**
+     * 根据平均日薪范围查询工种（所有已认证用户可访问）
+     * @param minWage 最低日薪（可选）
+     * @param maxWage 最高日薪（可选）
+     * @return 符合条件的工种列表
+     */
+    @GetMapping("/by-wage")
+    public BaseResponse<List<Occupation>> listOccupationsByWage(
+            @RequestParam(required = false) BigDecimal minWage,
+            @RequestParam(required = false) BigDecimal maxWage) {
+        
+        List<Occupation> occupations = occupationService.listOccupationsByWageRange(minWage, maxWage);
+        return ResultUtils.success(occupations);
+    }
+
+    /**
+     * 根据难度等级查询工种（所有已认证用户可访问）
+     * @param level 难度等级(1-5)
+     * @return 符合条件的工种列表
+     */
+    @GetMapping("/by-difficulty/{level}")
+    public BaseResponse<List<Occupation>> listOccupationsByDifficulty(@PathVariable Integer level) {
+        List<Occupation> occupations = occupationService.listOccupationsByDifficultyLevel(level);
+        return ResultUtils.success(occupations);
+    }
+
+    /**
+     * 工种搜索接口，支持多条件组合查询（所有已认证用户可访问）
+     * @param name 工种名称关键词（可选）
+     * @param categoryId 工种类别ID（可选）
+     * @param minWage 最低日薪（可选）
+     * @param maxWage 最高日薪（可选）
+     * @param difficultyLevel 难度等级（可选）
+     * @return 符合条件的工种列表
+     */
+    @GetMapping("/search")
+    public BaseResponse<List<Occupation>> searchOccupations(
+            @RequestParam(required = false) String name,
+            @RequestParam(required = false) Integer categoryId,
+            @RequestParam(required = false) BigDecimal minWage,
+            @RequestParam(required = false) BigDecimal maxWage,
+            @RequestParam(required = false) Integer difficultyLevel) {
+        
+        List<Occupation> occupations = occupationService.searchOccupations(name, categoryId, minWage, maxWage, difficultyLevel);
+        return ResultUtils.success(occupations);
+    }
+
+    /**
+     * 获取热门工种（按平均日薪排序，取前N个）（所有已认证用户可访问）
+     * @param limit 返回数量，默认5个
+     * @return 热门工种列表
+     */
+    @GetMapping("/hot")
+    public BaseResponse<List<Occupation>> getHotOccupations(@RequestParam(defaultValue = "5") Integer limit) {
+        List<Occupation> hotOccupations = occupationService.listHotOccupations(limit);
+        return ResultUtils.success(hotOccupations);
     }
 
     /**

@@ -28,7 +28,7 @@
     <sql id="Base_Column_List">
         ld.id, ld.project_id, p.name as project_name, p.address as project_address,
         p.province, p.city, p.district, p.project_type,
-        ld.job_type_id, o.name as job_type_name, o.category as job_type_category,
+        ld.job_type_id, o.name as job_type_name, oc.name as job_type_category,
         ld.headcount, ld.daily_wage, ld.start_date, ld.end_date,
         ld.work_hours, ld.requirements, ld.accommodation, ld.meals,
         c.name as company_name, ld.create_time
@@ -40,6 +40,7 @@
         FROM labor_demand ld
         LEFT JOIN construction_project p ON ld.project_id = p.id
         LEFT JOIN occupation o ON ld.job_type_id = o.id
+        LEFT JOIN occupation_category oc ON o.category_id = oc.id
         LEFT JOIN company c ON p.company_id = c.id
         <where>
             ld.status = 'open'
@@ -47,7 +48,7 @@
                 AND ld.job_type_id = #{query.jobTypeId}
             </if>
             <if test="query.jobTypeCategory != null and query.jobTypeCategory != ''">
-                AND o.category = #{query.jobTypeCategory}
+                AND oc.name = #{query.jobTypeCategory}
             </if>
             <if test="query.projectType != null and query.projectType != ''">
                 AND p.project_type = #{query.projectType}
@@ -89,11 +90,12 @@
     </select>
 
     <select id="queryHotJobTypes" resultMap="jobResultMap">
-        SELECT o.id as job_type_id, o.name as job_type_name, o.category as job_type_category,
+        SELECT o.id as job_type_id, o.name as job_type_name, oc.name as job_type_category,
         COUNT(ld.id) as job_count
         FROM occupation o
+        LEFT JOIN occupation_category oc ON o.category_id = oc.id
         LEFT JOIN labor_demand ld ON o.id = ld.job_type_id AND ld.status = 'open'
-        GROUP BY o.id, o.name, o.category
+        GROUP BY o.id, o.name, oc.name
         ORDER BY job_count DESC
         LIMIT #{limit}
     </select>
@@ -104,6 +106,7 @@
         FROM labor_demand ld
         LEFT JOIN construction_project p ON ld.project_id = p.id
         LEFT JOIN occupation o ON ld.job_type_id = o.id
+        LEFT JOIN occupation_category oc ON o.category_id = oc.id
         LEFT JOIN company c ON p.company_id = c.id
         WHERE ld.id = #{id}
     </select>
@@ -114,11 +117,12 @@
         FROM labor_demand ld
         LEFT JOIN construction_project p ON ld.project_id = p.id
         LEFT JOIN occupation o ON ld.job_type_id = o.id
+        LEFT JOIN occupation_category oc ON o.category_id = oc.id
         LEFT JOIN company c ON p.company_id = c.id
         LEFT JOIN job_seeker js ON js.user_id = #{userId}
         WHERE ld.status = 'open'
         AND (
-            o.category = js.expect_position
+            oc.name = js.expect_position
             OR p.province = (
                 SELECT province FROM construction_project cp
                 INNER JOIN labor_demand ld2 ON cp.id = ld2.project_id
