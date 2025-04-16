@@ -178,7 +178,7 @@ public class ProjectServiceImpl implements ProjectService {
     
     /**
      * 检查用户是否有权限更新项目
-     * 系统管理员、项目经理有权限更新项目
+     * 系统管理员、企业管理员和项目经理有权限更新项目
      * @param userId 当前用户ID
      * @param projectId 项目ID
      * @param projectManagerId 项目经理ID
@@ -199,8 +199,23 @@ public class ProjectServiceImpl implements ProjectService {
         if (Objects.equals(userId, projectManagerId)) {
             return;
         }
+
+        // 企业管理员有权限
+        if (UserRoleEnum.company_admin.name().equals(user.getRole().name())) {
+            // 获取项目信息
+            ProjectInfoVO project = projectMapper.getProjectInfoById(projectId);
+            if (project == null) {
+                throw new BusinessException(ErrorCode.NOT_FOUND, "项目不存在");
+            }
+            
+            // 获取企业信息
+            Company company = companyMapper.selectById(project.getCompanyId());
+            if (company != null && Objects.equals(userId, company.getAdminId())) {
+                return;
+            }
+        }
         
-        // 非系统管理员且非项目经理，无权限
+        // 其他情况，无权限
         throw new BusinessException(ErrorCode.ROLE_NO_PERMISSION, "您无权操作此项目");
     }
 

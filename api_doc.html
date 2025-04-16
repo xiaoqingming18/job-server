@@ -1122,6 +1122,90 @@
                         </ul>
                     </div>
                 </div>
+                
+                <!-- 获取用户所属企业信息接口 -->
+                <div class="api-endpoint">
+                    <div class="endpoint-header">
+                        <span class="http-method method-get">GET</span>
+                        <span class="endpoint-path">/user/company-info</span>
+                        <span class="endpoint-summary">获取用户所属企业信息</span>
+                    </div>
+                    <div class="endpoint-content">
+                        <div class="section-title">接口描述</div>
+                        <p>获取当前登录用户所属的企业信息。仅企业管理员和项目经理可以使用此接口，其他角色用户将返回无权限错误。</p>
+                        
+                        <div class="section-title">请求头</div>
+                        <table class="param-table">
+                            <thead>
+                                <tr>
+                                    <th>参数名</th>
+                                    <th>必填</th>
+                                    <th>说明</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>Authorization</td>
+                                    <td class="param-required">是</td>
+                                    <td>Bearer {token}</td>
+                                </tr>
+                            </tbody>
+                        </table>
+
+                        <div class="section-title">响应参数</div>
+                        <table class="param-table">
+                            <thead>
+                                <tr>
+                                    <th>参数名</th>
+                                    <th>类型</th>
+                                    <th>说明</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>code</td>
+                                    <td>Integer</td>
+                                    <td>响应码，0表示成功</td>
+                                </tr>
+                                <tr>
+                                    <td>data</td>
+                                    <td>Object</td>
+                                    <td>企业信息数据</td>
+                                </tr>
+                                <tr>
+                                    <td>message</td>
+                                    <td>String</td>
+                                    <td>响应消息</td>
+                                </tr>
+                            </tbody>
+                        </table>
+
+                        <div class="section-title">响应示例</div>
+                        <div class="code-block">
+                            <pre class="code-content">
+{
+    "code": 0,
+    "data": {
+        "id": 1,
+        "name": "示例企业",
+        "licenseNumber": "123456789",
+        "address": "企业地址",
+        "province": "省份",
+        "city": "城市",
+        "district": "区域",
+        "adminId": 1,
+        "adminName": "管理员姓名",
+        "contactPhone": "13800138000",
+        "email": "company@example.com",
+        "description": "企业描述",
+        "createTime": "2024-01-01 00:00:00",
+        "updateTime": "2024-01-01 00:00:00"
+    },
+    "message": "success"
+}</pre>
+                        </div>
+                    </div>
+                </div>
             </div>
         </section>
 

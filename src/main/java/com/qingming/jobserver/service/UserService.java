@@ -8,6 +8,7 @@ import com.qingming.jobserver.model.dao.user.JobSeekerUpdateInfoDao;
 import com.qingming.jobserver.model.dao.user.ProjectManagerLoginDao;
 import com.qingming.jobserver.model.dao.user.UpdatePasswordDao;
 import com.qingming.jobserver.model.entity.User;
+import com.qingming.jobserver.model.vo.CompanyInfoVO;
 import com.qingming.jobserver.model.vo.JobSeekerProfileVO;
 
 public interface UserService {
@@ -80,4 +81,11 @@ public interface UserService {
      * @return 登录成功的用户信息
      */
     User adminLogin(AdminLoginDao loginDao);
+
+    /**
+     * 获取用户所属企业信息
+     * @param userId 用户ID
+     * @return 企业信息VO，如果用户不属于任何企业则返回null
+     */
+    CompanyInfoVO getUserCompanyInfo(Long userId);
 }

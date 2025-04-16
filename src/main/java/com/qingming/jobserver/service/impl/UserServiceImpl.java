@@ -2,6 +2,7 @@ package com.qingming.jobserver.service.impl;
 
 import com.qingming.jobserver.common.ErrorCode;
 import com.qingming.jobserver.exception.BusinessException;
+import com.qingming.jobserver.mapper.CompanyMapper;
 import com.qingming.jobserver.mapper.UserMapper;
 import com.qingming.jobserver.model.dao.user.CompanyAdminLoginDao;
 import com.qingming.jobserver.model.dao.user.JobSeekerLoginDao;
@@ -10,6 +11,7 @@ import com.qingming.jobserver.model.dao.user.ProjectManagerLoginDao;
 import com.qingming.jobserver.model.dao.user.UpdatePasswordDao;
 import com.qingming.jobserver.model.entity.User;
 import com.qingming.jobserver.model.enums.UserRoleEnum;
+import com.qingming.jobserver.model.vo.CompanyInfoVO;
 import com.qingming.jobserver.model.vo.JobSeekerProfileVO;
 import com.qingming.jobserver.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,7 +27,12 @@ import com.qingming.jobserver.model.dao.user.AdminLoginDao;
 public class UserServiceImpl implements UserService {
     
     @Autowired
-    private UserMapper userMapper;    @Override
+    private UserMapper userMapper;
+    
+    @Autowired
+    private CompanyMapper companyMapper;
+    
+    @Override
     public User getById(Long userId) {
         return userMapper.selectById(userId);
     }
@@ -244,5 +251,41 @@ public class UserServiceImpl implements UserService {
         }
         
         return user;
+    }
+
+    @Override
+    public CompanyInfoVO getUserCompanyInfo(Long userId) {
+        // 1. 参数校验
+        if (userId == null || userId <= 0) {
+            throw new BusinessException(ErrorCode.PARAMS_ERROR, "用户ID无效");
+        }
+        
+        // 2. 获取用户信息
+        User user = userMapper.selectById(userId);
+        if (user == null) {
+            throw new BusinessException(ErrorCode.NOT_LOGIN, "用户不存在或未登录");
+        }
+        
+        // 3. 检查用户角色
+        if (!UserRoleEnum.company_admin.name().equals(user.getRole().name()) && 
+            !UserRoleEnum.project_manager.name().equals(user.getRole().name())) {
+            throw new BusinessException(ErrorCode.ROLE_NO_PERMISSION, "非企业管理员或项目经理用户");
+        }
+        
+        // 4. 获取企业信息
+        CompanyInfoVO companyInfo = null;
+        if (UserRoleEnum.company_admin.name().equals(user.getRole().name())) {
+            // 如果是企业管理员，通过管理员ID查询企业信息
+            companyInfo = companyMapper.getCompanyInfoByAdminId(userId);
+        } else {
+            // 如果是项目经理，通过用户ID查询关联的企业信息
+            companyInfo = companyMapper.getCompanyInfoByProjectManagerId(userId);
+        }
+        
+        if (companyInfo == null) {
+            throw new BusinessException(ErrorCode.NOT_FOUND, "未找到相关企业信息");
+        }
+        
+        return companyInfo;
     }
 }

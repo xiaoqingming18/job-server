@@ -19,6 +19,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import jakarta.validation.Valid;
+import com.qingming.jobserver.model.vo.CompanyInfoVO;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -238,6 +239,35 @@ public class UserController {
         } catch (Exception e) {
             log.error("验证token时发生错误", e);
             return ResultUtils.error(ErrorCode.SYSTEM_ERROR.getCode(), "验证token时发生系统错误");
+        }
+    }
+
+    /**
+     * 获取用户所属企业信息
+     * @return 企业信息
+     */
+    @GetMapping("/company-info")
+    public BaseResponse<CompanyInfoVO> getUserCompanyInfo() {
+        try {
+            // 从token中获取当前用户ID
+            Long currentUserId = CurrentUserUtils.getCurrentUserId();
+            if (currentUserId == null) {
+                return ResultUtils.error(ErrorCode.NOT_LOGIN.getCode(), "用户未登录");
+            }
+            
+            // 调用Service层获取企业信息
+            CompanyInfoVO companyInfo = userService.getUserCompanyInfo(currentUserId);
+            
+            // 返回成功响应
+            return ResultUtils.success(companyInfo);
+        } catch (BusinessException e) {
+            // 捕获业务异常并返回错误响应
+            log.error("获取用户所属企业信息失败: {}", e.getMessage());
+            return ResultUtils.error(e.getCode(), e.getMessage());
+        } catch (Exception e) {
+            // 捕获其他异常并返回系统错误
+            log.error("获取用户所属企业信息发生系统异常", e);
+            return ResultUtils.error(ErrorCode.SYSTEM_ERROR.getCode(), "获取用户所属企业信息失败，系统异常");
         }
     }
 }

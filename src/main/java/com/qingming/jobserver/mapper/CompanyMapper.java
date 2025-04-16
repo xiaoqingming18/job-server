@@ -91,4 +91,18 @@ public interface CompanyMapper extends BaseMapper<Company> {
      * @return 企业信息分页列表
      */
     Page<CompanyInfoVO> queryCompanyList(Page<CompanyInfoVO> page, @Param("name") String name);
+    
+    /**
+     * 根据管理员ID查询企业信息
+     * @param adminId 管理员用户ID
+     * @return 企业详细信息VO
+     */
+    CompanyInfoVO getCompanyInfoByAdminId(@Param("adminId") Long adminId);
+    
+    /**
+     * 根据项目经理ID查询企业信息
+     * @param projectManagerId 项目经理用户ID
+     * @return 企业详细信息VO
+     */
+    CompanyInfoVO getCompanyInfoByProjectManagerId(@Param("projectManagerId") Long projectManagerId);
 }

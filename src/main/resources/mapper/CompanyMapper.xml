@@ -107,4 +107,31 @@
         </where>
         ORDER BY create_time DESC
     </select>
+    
+    <!-- 根据管理员ID查询企业信息 -->
+    <select id="getCompanyInfoByAdminId" resultMap="CompanyInfoResultMap">
+        SELECT 
+            c.*, u.username as admin_name
+        FROM 
+            company c
+        LEFT JOIN 
+            user u ON c.admin_id = u.id
+        WHERE 
+            c.admin_id = #{adminId}
+    </select>
+    
+    <!-- 根据项目经理ID查询企业信息 -->
+    <select id="getCompanyInfoByProjectManagerId" resultMap="CompanyInfoResultMap">
+        SELECT 
+            c.*, u.username as admin_name
+        FROM 
+            company c
+        INNER JOIN 
+            project_manager pm ON c.id = pm.company_id
+        LEFT JOIN 
+            user u ON c.admin_id = u.id
+        WHERE 
+            pm.user_id = #{projectManagerId}
+        LIMIT 1
+    </select>
 </mapper>
