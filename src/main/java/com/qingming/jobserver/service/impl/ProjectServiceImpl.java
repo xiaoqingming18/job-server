@@ -62,24 +62,37 @@ public class ProjectServiceImpl implements ProjectService {
         if (UserRoleEnum.job_seeker.name().equals(user.getRole().name())) {
             throw new BusinessException(ErrorCode.ROLE_NO_PERMISSION, "您所属的用户组不允许添加项目");
         }
+        
+        // 3. 校验项目经理ID是否有效
+        if (projectAddDao.getProjectManagerId() == null || projectAddDao.getProjectManagerId() <= 0) {
+            throw new BusinessException(ErrorCode.PARAMS_ERROR, "项目经理ID无效");
+        }
+        
+        // 4. 验证项目经理是否存在
+        User projectManager = userMapper.selectById(projectAddDao.getProjectManagerId());
+        if (projectManager == null) {
+            throw new BusinessException(ErrorCode.NOT_FOUND, "项目经理不存在");
+        }
+        
+        // 5. 验证指定用户是否为项目经理角色
+        if (!UserRoleEnum.project_manager.equals(projectManager.getRole())) {
+            throw new BusinessException(ErrorCode.PARAMS_ERROR, "指定用户不是项目经理角色");
+        }
 
-        // 3. 构建项目实体并设置字段
+        // 6. 构建项目实体并设置字段
         ConstructionProject project = new ConstructionProject();
         BeanUtils.copyProperties(projectAddDao, project);
         
-        // 4. 设置项目经理ID为当前用户ID
-        project.setProjectManagerId(userId);
-        
-        // 5. 设置默认状态为待开工
+        // 7. 设置默认状态为待开工
         project.setStatus("pending");
         
-        // 6. 执行插入操作
+        // 8. 执行插入操作
         int rows = projectMapper.insertProject(project);
         if (rows <= 0) {
             throw new BusinessException(ErrorCode.SYSTEM_ERROR, "添加项目失败");
         }
         
-        // 7. 查询并返回刚添加的项目信息
+        // 9. 查询并返回刚添加的项目信息
         return projectMapper.getProjectInfoById(project.getId());
     }
 
@@ -328,5 +341,27 @@ public class ProjectServiceImpl implements ProjectService {
             log.error("分页查询项目列表失败", e);
             throw new BusinessException(ErrorCode.SYSTEM_ERROR, "分页查询项目列表失败");
         }
+    }
+    
+    @Override
+    public List<ProjectInfoVO> getManagerProjectList(Long projectManagerId) {
+        // 1. 参数校验
+        if (projectManagerId == null || projectManagerId <= 0) {
+            throw new BusinessException(ErrorCode.PARAMS_ERROR, "项目经理ID无效");
+        }
+        
+        // 2. 验证项目经理是否存在
+        User manager = userMapper.selectById(projectManagerId);
+        if (manager == null) {
+            throw new BusinessException(ErrorCode.NOT_FOUND, "项目经理不存在");
+        }
+        
+        // 3. 验证用户是否为项目经理角色
+        if (!UserRoleEnum.project_manager.equals(manager.getRole())) {
+            throw new BusinessException(ErrorCode.ROLE_NO_PERMISSION, "该用户不是项目经理");
+        }
+        
+        // 4. 查询并返回项目经理管理的项目列表
+        return projectMapper.getProjectListByManagerId(projectManagerId);
     }
 }

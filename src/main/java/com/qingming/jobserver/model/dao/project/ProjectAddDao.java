@@ -18,6 +18,12 @@ public class ProjectAddDao {
     private Integer companyId;
 
     /**
+     * 项目经理ID（必填）
+     */
+    @NotNull(message = "项目经理ID不能为空")
+    private Long projectManagerId;
+
+    /**
      * 项目名称（必填）
      */
     @NotBlank(message = "项目名称不能为空")

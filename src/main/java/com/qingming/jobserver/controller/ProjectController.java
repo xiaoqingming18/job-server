@@ -238,4 +238,34 @@ public class ProjectController {
             return ResultUtils.error(ErrorCode.SYSTEM_ERROR.getCode(), "获取项目分页列表失败，系统异常");
         }
     }
+    
+    /**
+     * 获取项目经理管理的项目列表
+     * @param managerId 项目经理ID
+     * @return 项目列表
+     */
+    @GetMapping("/manager/{managerId}")
+    public BaseResponse<List<ProjectInfoVO>> getManagerProjectList(@PathVariable("managerId") Long managerId) {
+        try {
+            // 获取当前登录用户ID
+            Long currentUserId = CurrentUserUtils.getCurrentUserId();
+            if (currentUserId == null) {
+                return ResultUtils.error(ErrorCode.NOT_LOGIN.getCode(), "用户未登录");
+            }
+            
+            // 调用服务层获取项目经理管理的项目列表
+            List<ProjectInfoVO> projectList = projectService.getManagerProjectList(managerId);
+            
+            // 返回成功响应
+            return ResultUtils.success(projectList);
+        } catch (BusinessException e) {
+            // 捕获业务异常并返回错误响应
+            log.error("获取项目经理管理的项目列表失败: {}", e.getMessage());
+            return ResultUtils.error(e.getCode(), e.getMessage());
+        } catch (Exception e) {
+            // 捕获其他异常并返回系统错误
+            log.error("获取项目经理管理的项目列表发生系统异常", e);
+            return ResultUtils.error(ErrorCode.SYSTEM_ERROR.getCode(), "获取项目经理管理的项目列表失败，系统异常");
+        }
+    }
 }

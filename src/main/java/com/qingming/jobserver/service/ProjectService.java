@@ -67,4 +67,11 @@ public interface ProjectService {
      * @return 分页结果
      */
     PageResult<ProjectInfoVO> getProjectPage(ProjectPageRequestDao requestDao);
+    
+    /**
+     * 获取项目经理管理的项目列表
+     * @param projectManagerId 项目经理ID
+     * @return 项目列表
+     */
+    List<ProjectInfoVO> getManagerProjectList(Long projectManagerId);
 }

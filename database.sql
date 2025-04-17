@@ -42,7 +42,7 @@ CREATE TABLE `construction_project` (
   KEY `idx_location` (`province`,`city`,`district`) COMMENT '地理位置索引',
   CONSTRAINT `project_company_fk` FOREIGN KEY (`company_id`) REFERENCES `company` (`id`) ON DELETE RESTRICT,
   CONSTRAINT `project_manager_fk` FOREIGN KEY (`project_manager_id`) REFERENCES `user` (`id`) ON DELETE RESTRICT
-) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='建筑项目表';
+) ENGINE=InnoDB AUTO_INCREMENT=11 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='建筑项目表';
 
 CREATE TABLE `job_seeker` (
   `user_id` bigint unsigned NOT NULL COMMENT '关联用户ID',
@@ -98,7 +98,7 @@ CREATE TABLE `occupation` (
   UNIQUE KEY `idx_occupation_name` (`name`),
   KEY `idx_category_id` (`category_id`),
   CONSTRAINT `fk_occupation_category` FOREIGN KEY (`category_id`) REFERENCES `occupation_category` (`id`) ON DELETE RESTRICT
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='工种表';
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='工种表';
 
 CREATE TABLE `occupation_category` (
   `id` int unsigned NOT NULL AUTO_INCREMENT COMMENT '类别ID',
@@ -110,7 +110,7 @@ CREATE TABLE `occupation_category` (
   `update_time` datetime DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
   PRIMARY KEY (`id`),
   UNIQUE KEY `idx_category_name` (`name`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='工种类别表';
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='工种类别表';
 
 CREATE TABLE `project_manager` (
   `user_id` bigint unsigned NOT NULL COMMENT '关联用户ID',
@@ -136,4 +136,4 @@ CREATE TABLE `user` (
   UNIQUE KEY `idx_username` (`username`),
   UNIQUE KEY `idx_email` (`email`),
   UNIQUE KEY `idx_mobile` (`mobile`)
-) ENGINE=InnoDB AUTO_INCREMENT=28 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='用户基础信息表';
+) ENGINE=InnoDB AUTO_INCREMENT=30 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='用户基础信息表';

@@ -76,4 +76,11 @@ public interface ProjectMapper extends BaseMapper<ConstructionProject> {
      * @return 项目列表
      */
     List<ProjectInfoVO> getProjectListByCompanyId(@Param("companyId") Integer companyId);
+    
+    /**
+     * 根据项目经理ID查询项目列表
+     * @param projectManagerId 项目经理ID
+     * @return 项目列表
+     */
+    List<ProjectInfoVO> getProjectListByManagerId(@Param("projectManagerId") Long projectManagerId);
 }
