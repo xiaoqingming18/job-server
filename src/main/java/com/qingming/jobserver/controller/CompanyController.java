@@ -13,6 +13,7 @@ import com.qingming.jobserver.model.dao.company.CompanyRegisterDao;
 import com.qingming.jobserver.model.dao.company.CompanyUpdateDao;
 import com.qingming.jobserver.model.entity.User;
 import com.qingming.jobserver.model.vo.CompanyInfoVO;
+import com.qingming.jobserver.model.vo.ProjectManagerVO;
 import com.qingming.jobserver.model.vo.TokenVO;
 import com.qingming.jobserver.service.CompanyService;
 import lombok.extern.slf4j.Slf4j;
@@ -20,6 +21,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import jakarta.validation.Valid;
+import java.util.List;
 
 /**
  * 公司管理控制器
@@ -227,6 +229,30 @@ public class CompanyController {
             // 捕获其他异常并返回系统错误
             log.error("查询企业列表发生系统异常", e);
             return ResultUtils.error(ErrorCode.SYSTEM_ERROR.getCode(), "查询企业列表失败，系统异常");
+        }
+    }
+    
+    /**
+     * 获取企业项目经理列表
+     * @param companyId 企业ID
+     * @return 项目经理列表
+     */
+    @GetMapping("/project-managers/{companyId}")
+    public BaseResponse<List<ProjectManagerVO>> getCompanyManagerList(@PathVariable("companyId") Integer companyId) {
+        try {
+            // 调用服务层获取企业项目经理列表
+            List<ProjectManagerVO> managerList = companyService.getCompanyManagerList(companyId);
+            
+            // 返回成功响应
+            return ResultUtils.success(managerList);
+        } catch (BusinessException e) {
+            // 捕获业务异常并返回错误响应
+            log.error("获取企业项目经理列表失败: {}", e.getMessage());
+            return ResultUtils.error(e.getCode(), e.getMessage());
+        } catch (Exception e) {
+            // 捕获其他异常并返回系统错误
+            log.error("获取企业项目经理列表发生系统异常", e);
+            return ResultUtils.error(ErrorCode.SYSTEM_ERROR.getCode(), "获取企业项目经理列表失败，系统异常");
         }
     }
 }

@@ -15,6 +15,7 @@ import com.qingming.jobserver.model.entity.User;
 import com.qingming.jobserver.model.enums.AccountStatusEnum;
 import com.qingming.jobserver.model.enums.UserRoleEnum;
 import com.qingming.jobserver.model.vo.CompanyInfoVO;
+import com.qingming.jobserver.model.vo.ProjectManagerVO;
 import com.qingming.jobserver.service.CompanyService;
 import com.qingming.jobserver.service.ProjectService;
 import lombok.extern.slf4j.Slf4j;
@@ -227,9 +228,14 @@ public class CompanyServiceImpl implements CompanyService {
             throw new BusinessException(ErrorCode.NOT_FOUND, "企业不存在");
         }
         
-        // 3. 验证当前用户是否为该企业的管理员
-        if (!isCompanyAdmin(currentUserId, addProjectManagerDao.getCompanyId())) {
-            throw new BusinessException(ErrorCode.NO_COMPANY_AUTH, "只有企业管理员才能添加项目经理");
+        // 添加日志，记录当前用户ID和企业的adminId，以便排查问题
+        log.info("添加项目经理 - 当前用户ID: {}, 企业ID: {}, 企业管理员ID: {}", 
+                currentUserId, addProjectManagerDao.getCompanyId(), company.getAdminId());
+        
+        // 3. 验证当前用户权限 - 系统管理员或企业管理员都可以添加项目经理
+        boolean isAdmin = isSystemAdmin(currentUserId) || isCompanyAdmin(currentUserId, addProjectManagerDao.getCompanyId());
+        if (!isAdmin) {
+            throw new BusinessException(ErrorCode.NO_COMPANY_AUTH, "只有企业管理员或系统管理员才能添加项目经理");
         }
         
         // 4. 验证用户名是否已存在
@@ -372,5 +378,24 @@ public class CompanyServiceImpl implements CompanyService {
         
         // 调用Mapper执行查询
         return companyMapper.queryCompanyList(page, queryDao.getName());
+    }
+    
+    @Override
+    public List<ProjectManagerVO> getCompanyManagerList(Integer companyId) {
+        // 参数验证
+        if (companyId == null || companyId <= 0) {
+            throw new BusinessException(ErrorCode.PARAMS_ERROR, "企业ID不合法");
+        }
+        
+        // 验证企业是否存在
+        CompanyInfoVO existingCompany = companyMapper.getCompanyInfoById(companyId);
+        if (existingCompany == null) {
+            throw new BusinessException(ErrorCode.NOT_FOUND, "企业信息不存在");
+        }
+        
+        // 查询企业的项目经理列表
+        List<ProjectManagerVO> managerList = companyMapper.getProjectManagersByCompanyId(companyId);
+        
+        return managerList;
     }
 }

@@ -134,4 +134,43 @@
             pm.user_id = #{projectManagerId}
         LIMIT 1
     </select>
+    
+    <!-- 项目经理结果映射 -->
+    <resultMap id="ProjectManagerResultMap" type="com.qingming.jobserver.model.vo.ProjectManagerVO">
+        <id column="user_id" property="userId"/>
+        <result column="username" property="username"/>
+        <result column="mobile" property="mobile"/>
+        <result column="email" property="email"/>
+        <result column="avatar" property="avatar"/>
+        <result column="position" property="position"/>
+        <result column="company_id" property="companyId"/>
+        <result column="company_name" property="companyName"/>
+        <result column="create_time" property="createTime"/>
+        <result column="account_status" property="accountStatus"/>
+    </resultMap>
+    
+    <!-- 根据企业ID查询项目经理列表 -->
+    <select id="getProjectManagersByCompanyId" resultMap="ProjectManagerResultMap">
+        SELECT 
+            u.id as user_id, 
+            u.username, 
+            u.mobile, 
+            u.email, 
+            u.avatar, 
+            u.create_time,
+            u.account_status,
+            pm.position, 
+            pm.company_id,
+            c.name as company_name
+        FROM 
+            project_manager pm
+        INNER JOIN 
+            user u ON pm.user_id = u.id
+        INNER JOIN
+            company c ON pm.company_id = c.id
+        WHERE 
+            pm.company_id = #{companyId}
+        ORDER BY 
+            u.create_time DESC
+    </select>
 </mapper>

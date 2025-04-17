@@ -8,6 +8,9 @@ import com.qingming.jobserver.model.dao.company.CompanyUpdateDao;
 import com.qingming.jobserver.model.entity.Company;
 import com.qingming.jobserver.model.entity.User;
 import com.qingming.jobserver.model.vo.CompanyInfoVO;
+import com.qingming.jobserver.model.vo.ProjectManagerVO;
+
+import java.util.List;
 
 /**
  * 公司服务接口
@@ -95,4 +98,11 @@ public interface CompanyService {
      * @return 分页结果
      */
     Page<CompanyInfoVO> queryCompanyList(CompanyQueryDao queryDao);
+    
+    /**
+     * 获取企业项目经理列表
+     * @param companyId 企业ID
+     * @return 项目经理列表
+     */
+    List<ProjectManagerVO> getCompanyManagerList(Integer companyId);
 }

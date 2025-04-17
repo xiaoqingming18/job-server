@@ -4,7 +4,10 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.qingming.jobserver.model.entity.Company;
 import com.qingming.jobserver.model.vo.CompanyInfoVO;
+import com.qingming.jobserver.model.vo.ProjectManagerVO;
 import org.apache.ibatis.annotations.Param;
+
+import java.util.List;
 
 /**
  * 企业信息Mapper接口
@@ -105,4 +108,11 @@ public interface CompanyMapper extends BaseMapper<Company> {
      * @return 企业详细信息VO
      */
     CompanyInfoVO getCompanyInfoByProjectManagerId(@Param("projectManagerId") Long projectManagerId);
+    
+    /**
+     * 根据企业ID查询项目经理列表
+     * @param companyId 企业ID
+     * @return 项目经理列表
+     */
+    List<ProjectManagerVO> getProjectManagersByCompanyId(@Param("companyId") Integer companyId);
 }
