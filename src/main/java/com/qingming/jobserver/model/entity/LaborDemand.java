@@ -23,6 +23,12 @@ public class LaborDemand {
     private Integer id;
     
     /**
+     * 需求标题
+     */
+    @TableField("title")
+    private String title;
+    
+    /**
      * 关联项目ID
      */
     @TableField("project_id")

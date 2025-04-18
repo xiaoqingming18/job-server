@@ -202,7 +202,7 @@ public class LaborDemandController {
     
     /**
      * 分页查询劳务需求
-     * @param queryDao 查询参数
+     * @param queryDao 查询参数，支持按公司ID、项目ID、工种ID等多条件过滤
      * @return 劳务需求分页列表
      */
     @PostMapping("/list")

@@ -14,6 +14,12 @@ import java.util.Date;
 public class LaborDemandAddDao {
     
     /**
+     * 需求标题
+     */
+    @NotNull(message = "需求标题不能为空")
+    private String title;
+    
+    /**
      * 项目ID
      */
     @NotNull(message = "项目ID不能为空")

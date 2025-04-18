@@ -17,6 +17,11 @@ public class LaborDemandVO {
     private Integer id;
     
     /**
+     * 需求标题
+     */
+    private String title;
+    
+    /**
      * 项目ID
      */
     private Integer projectId;

@@ -5,6 +5,7 @@
     <!-- 劳务需求VO结果映射 -->
     <resultMap id="LaborDemandVOMap" type="com.qingming.jobserver.model.vo.LaborDemandVO">
         <id property="id" column="id"/>
+        <result property="title" column="title"/>
         <result property="projectId" column="project_id"/>
         <result property="projectName" column="project_name"/>
         <result property="projectAddress" column="project_address"/>
@@ -29,6 +30,7 @@
     <sql id="baseLaborDemandQuery">
         SELECT
             ld.id,
+            ld.title,
             ld.project_id,
             cp.name AS project_name,
             cp.address AS project_address,
@@ -61,6 +63,9 @@
         <where>
             <if test="projectId != null">
                 AND ld.project_id = #{projectId}
+            </if>
+            <if test="companyId != null">
+                AND cp.company_id = #{companyId}
             </if>
             <if test="jobTypeId != null">
                 AND ld.job_type_id = #{jobTypeId}
@@ -109,7 +114,8 @@
         <where>
             <if test="keyword != null and keyword != ''">
                 AND (
-                    cp.name LIKE CONCAT('%', #{keyword}, '%')
+                    ld.title LIKE CONCAT('%', #{keyword}, '%')
+                    OR cp.name LIKE CONCAT('%', #{keyword}, '%')
                     OR o.name LIKE CONCAT('%', #{keyword}, '%')
                     OR ld.requirements LIKE CONCAT('%', #{keyword}, '%')
                     OR c.name LIKE CONCAT('%', #{keyword}, '%')

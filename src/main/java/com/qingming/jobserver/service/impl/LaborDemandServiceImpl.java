@@ -197,6 +197,7 @@ public class LaborDemandServiceImpl extends ServiceImpl<LaborDemandMapper, Labor
         return laborDemandMapper.queryLaborDemandList(
                 page,
                 queryDao.getProjectId(),
+                queryDao.getCompanyId(),
                 queryDao.getJobTypeId(),
                 queryDao.getMinDailyWage(),
                 queryDao.getMaxDailyWage(),

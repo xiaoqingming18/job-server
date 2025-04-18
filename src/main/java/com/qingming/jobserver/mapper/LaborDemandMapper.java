@@ -22,6 +22,7 @@ public interface LaborDemandMapper extends BaseMapper<LaborDemand> {
      * 根据条件分页查询劳务需求
      * @param page 分页参数
      * @param projectId 项目ID
+     * @param companyId 公司ID
      * @param jobTypeId 工种ID
      * @param minDailyWage 最小日薪
      * @param maxDailyWage 最大日薪
@@ -35,6 +36,7 @@ public interface LaborDemandMapper extends BaseMapper<LaborDemand> {
     Page<LaborDemandVO> queryLaborDemandList(
             Page<LaborDemandVO> page,
             @Param("projectId") Integer projectId,
+            @Param("companyId") Integer companyId,
             @Param("jobTypeId") Integer jobTypeId,
             @Param("minDailyWage") BigDecimal minDailyWage,
             @Param("maxDailyWage") BigDecimal maxDailyWage,

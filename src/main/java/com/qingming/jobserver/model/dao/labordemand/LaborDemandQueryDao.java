@@ -17,6 +17,11 @@ public class LaborDemandQueryDao {
     private Integer projectId;
     
     /**
+     * 公司ID
+     */
+    private Integer companyId;
+    
+    /**
      * 工种ID
      */
     private Integer jobTypeId;
