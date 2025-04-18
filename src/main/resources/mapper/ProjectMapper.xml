@@ -167,4 +167,47 @@
         ORDER BY 
             p.create_time DESC
     </select>
+    
+    <!-- 获取企业的所有项目 -->
+    <select id="getProjectsByCompany" resultType="com.qingming.jobserver.model.entity.ConstructionProject">
+        SELECT *
+        FROM construction_project
+        WHERE company_id = #{companyId}
+        ORDER BY create_time DESC
+    </select>
+    
+    <!-- 获取指定地区的项目数量 -->
+    <select id="getProjectCountByLocation" resultType="java.lang.Integer">
+        SELECT COUNT(id)
+        FROM construction_project
+        WHERE province = #{province}
+        <if test="city != null and city != ''">
+            AND city = #{city}
+        </if>
+    </select>
+    
+    <!-- 根据项目类型获取项目ID列表 -->
+    <select id="getProjectIdsByType" resultType="java.lang.Integer">
+        SELECT id
+        FROM construction_project
+        WHERE project_type_id = #{projectType}
+        AND is_deleted = 0
+    </select>
+    
+    <!-- 根据地区信息获取项目ID列表 -->
+    <select id="getProjectIdsByLocation" resultType="java.lang.Integer">
+        SELECT id
+        FROM construction_project
+        WHERE 1=1
+        <if test="province != null and province != ''">
+            AND province = #{province}
+        </if>
+        <if test="city != null and city != ''">
+            AND city = #{city}
+        </if>
+        <if test="district != null and district != ''">
+            AND district = #{district}
+        </if>
+        AND is_deleted = 0
+    </select>
 </mapper>

@@ -102,4 +102,208 @@
         WHERE ld.project_id = #{projectId}
         ORDER BY ld.create_time DESC
     </select>
+
+    <!-- 根据关键词和地区等条件搜索劳务需求 -->
+    <select id="searchLaborDemands" resultMap="LaborDemandVOMap">
+        <include refid="baseLaborDemandQuery"/>
+        <where>
+            <if test="keyword != null and keyword != ''">
+                AND (
+                    cp.name LIKE CONCAT('%', #{keyword}, '%')
+                    OR o.name LIKE CONCAT('%', #{keyword}, '%')
+                    OR ld.requirements LIKE CONCAT('%', #{keyword}, '%')
+                    OR c.name LIKE CONCAT('%', #{keyword}, '%')
+                )
+            </if>
+            <if test="province != null and province != ''">
+                AND cp.province = #{province}
+            </if>
+            <if test="city != null and city != ''">
+                AND cp.city = #{city}
+            </if>
+            <if test="district != null and district != ''">
+                AND cp.district = #{district}
+            </if>
+            <if test="minDailyWage != null">
+                AND ld.daily_wage >= #{minDailyWage}
+            </if>
+            <if test="maxDailyWage != null">
+                AND ld.daily_wage &lt;= #{maxDailyWage}
+            </if>
+            <if test="startDateFrom != null">
+                AND ld.start_date >= #{startDateFrom}
+            </if>
+            <if test="startDateTo != null">
+                AND ld.start_date &lt;= #{startDateTo}
+            </if>
+            AND ld.status = 'open'
+        </where>
+        ORDER BY ld.create_time DESC
+    </select>
+    
+    <!-- 获取推荐的劳务需求 -->
+    <select id="getRecommendedLaborDemands" resultMap="LaborDemandVOMap">
+        <include refid="baseLaborDemandQuery"/>
+        WHERE ld.status = 'open'
+        ORDER BY ld.daily_wage DESC, ld.create_time DESC
+        LIMIT #{limit}
+    </select>
+    
+    <!-- 获取项目的总人数 -->
+    <select id="getTotalHeadcountByProject" resultType="java.lang.Integer">
+        SELECT SUM(headcount) 
+        FROM labor_demand 
+        WHERE project_id = #{projectId}
+    </select>
+    
+    <!-- 计算项目的总成本 -->
+    <select id="getTotalCostByProject" resultType="java.math.BigDecimal">
+        SELECT SUM(headcount * daily_wage * DATEDIFF(end_date, start_date))
+        FROM labor_demand
+        WHERE project_id = #{projectId}
+    </select>
+    
+    <!-- 获取项目的工种分布 -->
+    <select id="getOccupationDistributionByProject" resultType="java.util.Map">
+        SELECT 
+            o.id AS occupationId,
+            o.name AS occupationName,
+            SUM(ld.headcount) AS count,
+            SUM(ld.headcount * ld.daily_wage * DATEDIFF(ld.end_date, ld.start_date)) AS totalWage
+        FROM 
+            labor_demand ld
+        JOIN 
+            occupation o ON ld.job_type_id = o.id
+        WHERE 
+            ld.project_id = #{projectId}
+        GROUP BY 
+            o.id, o.name
+        ORDER BY 
+            count DESC
+    </select>
+    
+    <!-- 获取公司的总需求数 -->
+    <select id="getTotalDemandsByCompany" resultType="java.lang.Integer">
+        SELECT COUNT(ld.id)
+        FROM labor_demand ld
+        JOIN construction_project cp ON ld.project_id = cp.id
+        WHERE cp.company_id = #{companyId}
+    </select>
+    
+    <!-- 获取公司的总人数 -->
+    <select id="getTotalHeadcountByCompany" resultType="java.lang.Integer">
+        SELECT SUM(ld.headcount)
+        FROM labor_demand ld
+        JOIN construction_project cp ON ld.project_id = cp.id
+        WHERE cp.company_id = #{companyId}
+    </select>
+    
+    <!-- 计算公司的总成本 -->
+    <select id="getTotalCostByCompany" resultType="java.math.BigDecimal">
+        SELECT SUM(ld.headcount * ld.daily_wage * DATEDIFF(ld.end_date, ld.start_date))
+        FROM labor_demand ld
+        JOIN construction_project cp ON ld.project_id = cp.id
+        WHERE cp.company_id = #{companyId}
+    </select>
+    
+    <!-- 获取公司的项目分布 -->
+    <select id="getProjectDistributionByCompany" resultType="java.util.Map">
+        SELECT 
+            cp.id AS projectId,
+            cp.name AS projectName,
+            COUNT(ld.id) AS demandCount,
+            SUM(ld.headcount) AS headcount,
+            SUM(ld.headcount * ld.daily_wage * DATEDIFF(ld.end_date, ld.start_date)) AS cost
+        FROM 
+            labor_demand ld
+        JOIN 
+            construction_project cp ON ld.project_id = cp.id
+        WHERE 
+            cp.company_id = #{companyId}
+        GROUP BY 
+            cp.id, cp.name
+        ORDER BY 
+            demandCount DESC
+    </select>
+    
+    <!-- 获取工种需求热度统计 -->
+    <select id="getOccupationHeatStats" resultType="java.util.Map">
+        SELECT 
+            o.id AS occupationId,
+            o.name AS occupationName,
+            COUNT(ld.id) AS demandCount,
+            AVG(ld.daily_wage) AS averageWage,
+            SUM(ld.headcount) AS totalHeadcount
+        FROM 
+            labor_demand ld
+        JOIN 
+            occupation o ON ld.job_type_id = o.id
+        WHERE 
+            ld.create_time >= #{startDate}
+        GROUP BY 
+            o.id, o.name
+        ORDER BY 
+            demandCount DESC, totalHeadcount DESC
+    </select>
+    
+    <!-- 根据工种获取劳务需求 -->
+    <select id="getLaborDemandsByOccupation" resultMap="LaborDemandVOMap">
+        <include refid="baseLaborDemandQuery"/>
+        WHERE ld.job_type_id = #{occupationId}
+        <if test="status != null and status != ''">
+            AND ld.status = #{status}
+        </if>
+        ORDER BY ld.create_time DESC
+    </select>
+    
+    <!-- 根据地区获取劳务需求 -->
+    <select id="getLaborDemandsByLocation" resultMap="LaborDemandVOMap">
+        <include refid="baseLaborDemandQuery"/>
+        <where>
+            <if test="province != null and province != ''">
+                AND cp.province = #{province}
+            </if>
+            <if test="city != null and city != ''">
+                AND cp.city = #{city}
+            </if>
+            <if test="district != null and district != ''">
+                AND cp.district = #{district}
+            </if>
+            AND ld.status = 'open'
+        </where>
+        ORDER BY ld.create_time DESC
+    </select>
+    
+    <!-- 获取劳务需求最多的热门地区 -->
+    <select id="getHotDemandLocations" resultType="java.util.Map">
+        SELECT 
+            cp.province,
+            cp.city,
+            COUNT(ld.id) AS demandCount
+        FROM 
+            labor_demand ld
+        JOIN 
+            construction_project cp ON ld.project_id = cp.id
+        WHERE 
+            ld.status = 'open'
+        GROUP BY 
+            cp.province, cp.city
+        ORDER BY 
+            demandCount DESC
+        LIMIT #{limit}
+    </select>
+    
+    <!-- 获取地区的平均日薪 -->
+    <select id="getAverageWageByLocation" resultType="java.math.BigDecimal">
+        SELECT 
+            AVG(ld.daily_wage)
+        FROM 
+            labor_demand ld
+        JOIN 
+            construction_project cp ON ld.project_id = cp.id
+        WHERE 
+            cp.province = #{province}
+            AND cp.city = #{city}
+            AND ld.status = 'open'
+    </select>
 </mapper>

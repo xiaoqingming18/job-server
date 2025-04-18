@@ -83,4 +83,35 @@ public interface ProjectMapper extends BaseMapper<ConstructionProject> {
      * @return 项目列表
      */
     List<ProjectInfoVO> getProjectListByManagerId(@Param("projectManagerId") Long projectManagerId);
+    
+    /**
+     * 获取企业的所有项目
+     * @param companyId 企业ID
+     * @return 项目列表
+     */
+    List<ConstructionProject> getProjectsByCompany(@Param("companyId") Integer companyId);
+    
+    /**
+     * 获取指定地区的项目数量
+     * @param province 省份
+     * @param city 城市
+     * @return 项目数量
+     */
+    Integer getProjectCountByLocation(@Param("province") String province, @Param("city") String city);
+    
+    /**
+     * 根据项目类型获取项目ID列表
+     * @param projectType 项目类型ID
+     * @return 项目ID列表
+     */
+    List<Integer> getProjectIdsByType(@Param("projectType") Integer projectType);
+    
+    /**
+     * 根据地区信息获取项目ID列表
+     * @param province 省份
+     * @param city 城市
+     * @param district 区县
+     * @return 项目ID列表
+     */
+    List<Integer> getProjectIdsByLocation(@Param("province") String province, @Param("city") String city, @Param("district") String district);
 }
